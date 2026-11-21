@@ -13,14 +13,14 @@ export async function AccessStatus({ locale, status }: { locale: AppLocale; stat
   const Icon = needsLogin ? Lock : ShieldLock;
 
   return <section aria-labelledby="access-status-title" className="mx-auto grid w-full max-w-2xl flex-1 place-items-center px-4 py-10 sm:px-6">
-    <div className="w-full rounded-lg border border-panel-border bg-panel p-6 text-panel-foreground shadow-panel sm:p-8">
+    <div className="glass-panel w-full p-6 sm:p-8">
       <div className="mb-5 flex items-center gap-3">
-        <span className="inline-flex size-11 items-center justify-center rounded-md bg-primary/10 text-primary">
+        <span className="glass-icon inline-flex size-11 items-center justify-center rounded-xl">
           <Icon aria-hidden="true" className="size-6" />
         </span>
         <span className="font-mono text-sm font-semibold tabular-nums text-muted-foreground">{status}</span>
       </div>
-      <Heading level={1} id="access-status-title">{t(needsLogin ? "admin.loginRequiredTitle" : "admin.deniedTitle")}</Heading>
+      <Heading level={1} id="access-status-title" className="text-2xl tracking-tight sm:text-3xl">{t(needsLogin ? "admin.loginRequiredTitle" : "admin.deniedTitle")}</Heading>
       <p className="mt-2 max-w-lg text-muted-foreground">{t(needsLogin ? "admin.loginRequiredDescription" : "admin.deniedDescription")}</p>
       <div className="mt-6 flex flex-wrap items-center gap-3">
         {needsLogin && <Suspense fallback={<Throbber size="sm" label={t("auth.pending")} />}>

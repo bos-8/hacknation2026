@@ -9,9 +9,10 @@ import { selectorStyles } from "./styles";
 
 type WebStatus = "checking" | "available" | "unavailable";
 
-export function SystemStatus({ className, tooltipPlacement = "top" }: {
+export function SystemStatus({ className, tooltipPlacement = "top", showLabel = false }: {
   className?: string;
   tooltipPlacement?: TooltipPlacement;
+  showLabel?: boolean;
 }) {
   const [status, setStatus] = useState<WebStatus>("checking");
   const t = useTranslations("common.footer.status");
@@ -56,10 +57,11 @@ export function SystemStatus({ className, tooltipPlacement = "top" }: {
   }, []);
 
   const label = t(status);
-  return <Tooltip content={label} placement={tooltipPlacement}>
-    <span className={cx(selectorStyles.status, className)} role="status" data-status={status}>
+  const indicator = (
+    <span className={cx(selectorStyles.status, showLabel && "w-auto gap-1.5 px-1", className)} role="status" data-status={status}>
       <span aria-hidden="true" className={cx(selectorStyles.statusDot, selectorStyles.statusColors[status])} />
-      <span className="sr-only">{label}</span>
+      <span className={showLabel ? undefined : "sr-only"}>{label}</span>
     </span>
-  </Tooltip>;
+  );
+  return showLabel ? indicator : <Tooltip content={label} placement={tooltipPlacement}>{indicator}</Tooltip>;
 }

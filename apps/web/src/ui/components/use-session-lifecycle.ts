@@ -37,8 +37,8 @@ export function useSessionLifecycle(initial: SessionStatus, preview = false, ini
   useEffect(() => {
     if (preview) return;
     const isAdminRoute = /^\/(?:pl|en)\/admin(?:\/|$)/.test(pathname);
-    if (isAdminRoute && (unavailable || !ADMIN_ROLES.some(role => status.roles?.includes(role)))) {
-      // Drop the protected document and cached UI without ending the valid user session.
+    if (isAdminRoute && !unavailable && status.roles !== null && !ADMIN_ROLES.some(role => status.roles?.includes(role))) {
+      // Only a confirmed role loss should drop the protected document and cached UI.
       window.location.replace(`/${locale}/access-denied`);
       return;
     }
@@ -63,7 +63,7 @@ export function useSessionLifecycle(initial: SessionStatus, preview = false, ini
         });
         if (!active.current || controller.current !== abort || abort.signal.aborted) return false;
         if (response.status === 401) { setInvalid(true); return false; }
-        if (response.status === 403 && reason) { setUnavailable(false); return false; }
+        if (response.status === 403 && reason) return false;
         if (!response.ok) { setUnavailable(true); return false; }
         const data = sessionStatusSchema.parse(await response.json());
         if (!active.current || controller.current !== abort || abort.signal.aborted) return false;
@@ -103,8 +103,11 @@ export function useSessionLifecycle(initial: SessionStatus, preview = false, ini
   useEffect(() => {
     if (previousPath.current === pathname) return;
     previousPath.current = pathname;
-    if (status.autoRefresh && /^\/(?:pl|en)\/[^?#]+$/.test(pathname)) void request("navigation", pathname);
-    else void request();
+    if (status.autoRefresh && /^\/(?:pl|en)\/[^?#]+$/.test(pathname)) {
+      void request("navigation", pathname).then(renewed => {
+        if (!renewed && active.current && previousPath.current === pathname) void request();
+      });
+    } else void request();
   }, [pathname, status.autoRefresh, request]);
 
   const remaining = invalid ? 0 : Math.max(0, Math.ceil((Date.parse(status.expiresAt) - clock.now) / 1000));

@@ -36,8 +36,8 @@ export async function Navbar({ appName, locale, languageCookieName, cookieDomain
     <NavbarFrame className={className}>
       <a href="#main-content" className={layoutStyles.skipLink}>{t("skipContent")}</a>
       <div data-navbar-main className={layoutStyles.navbarContent}>
-        <Link href="/" locale={locale} aria-label={appName} className={layoutStyles.brand}>
-          <Image src="/logo.png" alt="" width={24} height={24} className={layoutStyles.brandLogo} />
+        <Link href="/" locale={locale} aria-label={appName} data-navbar-brand className={layoutStyles.brand}>
+          <Image src="/brand/formiq.webp" alt="" width={24} height={24} className={layoutStyles.brandLogo} />
           <span className="navbar-brand-name hidden @min-[1024px]/navbar:inline-block">{appName}</span>
         </Link>
         <Suspense fallback={<PrimaryNavigation />}><AuthorizedNavigation /></Suspense>

@@ -76,7 +76,7 @@ export function LlmSettingsForm({ initial, configured }: { initial: Settings | n
       <Robot aria-hidden="true" className="size-4" />
       <span>{t(configured ? "configured" : "missingConfig")}</span>
     </div>
-    <form onSubmit={submit} aria-busy={pending} className="space-y-3 rounded-lg border border-border bg-card p-4">
+    <form onSubmit={submit} aria-busy={pending} className="glass-inset space-y-3 p-4">
       <label className="grid gap-1.5 text-sm font-semibold">
         {t("prompt")}
         <textarea rows={10} maxLength={16000} value={draft} onChange={event => { setDraft(event.target.value); setResult(null); }}

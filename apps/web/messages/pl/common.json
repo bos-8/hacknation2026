@@ -185,6 +185,14 @@
       "loadingPreferences": "Ładowanie preferencji…"
     },
     "footer": {
+      "documentPending": "W przygotowaniu",
+      "navigation": "Stopka",
+      "application": "O aplikacji",
+      "policies": "Zasady i prywatność",
+      "contact": "Kontakt i zgłoszenia",
+      "terms": "Regulamin",
+      "privacy": "Polityka prywatności",
+      "browserStorage": "Pamięć przeglądarki",
       "description": "Wspólny fundament aplikacji biznesowych.",
       "license": "Licencja",
       "backToTop": "Wróć na początek strony",

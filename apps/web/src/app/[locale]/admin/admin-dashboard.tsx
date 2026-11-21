@@ -45,7 +45,7 @@ function ServiceTile({ service, data, now, locale }: { service: Service; data: D
   const links = { web: '/admin/products', backend: '/admin/files', keycloak: '/admin/users', storage: '/admin/files', queue_worker: '/admin/queue', pyworker: '/admin/queue', database: '/admin/settings' } as const;
   return <article className={styles.tile} data-dashboard-service={service}>
     <div className="flex flex-wrap items-center justify-between gap-2">
-      <Heading level={3} className="flex items-center gap-2 text-base"><Icon className="size-4 text-muted-foreground" aria-hidden="true" />{monitoring(`services.${service}`)}</Heading>
+      <Heading level={3} className="flex items-center gap-2 text-base"><span className="glass-icon grid size-9 shrink-0 place-items-center rounded-lg"><Icon className="size-4" aria-hidden="true" /></span>{monitoring(`services.${service}`)}</Heading>
       <Badge tone={tones[status]}>{monitoring(`statuses.${status}`)}</Badge>
     </div>
     <p className="mt-2 text-sm text-muted-foreground">{t(`descriptions.${service}`)}</p>

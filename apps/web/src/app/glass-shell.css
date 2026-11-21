@@ -1,0 +1,201 @@
+body:has([data-navbar-glass]) {
+  --glass-gutter: clamp(12px, 4vw, 48px);
+  --glass-width: min(76rem, calc(100% - 2 * var(--glass-gutter)));
+}
+
+:root:not([data-contrast="high"]) body:has([data-navbar-glass]) {
+  --glass-art: url("/brand/background-light.webp");
+  --glass-base: light-dark(#eff1f3, #131415);
+  --glass-surface: light-dark(rgb(250 252 253 / 78%), rgb(26 30 31 / 82%));
+  --glass-bar: light-dark(rgb(248 251 252 / 89%), rgb(20 23 24 / 88%));
+  --glass-line: light-dark(rgb(43 71 76 / 24%), rgb(217 237 239 / 23%));
+  --glass-accent-text: light-dark(#00626f, #74e4ee);
+  --glass-accent-tint: light-dark(rgb(0 127 142 / 12%), rgb(34 199 216 / 14%));
+  --glass-inset: light-dark(rgb(255 255 255 / 54%), rgb(13 17 18 / 48%));
+  --glass-shadow: inset 0 1px rgb(255 255 255 / 14%), 0 12px 36px rgb(0 0 0 / 12%);
+  --accent: 187 100% 27%;
+  --accent-foreground: 0 0% 100%;
+  --accent-hover: 187 100% 22%;
+  --accent-active: 187 100% 19%;
+  --ring: 187 100% 27%;
+  --primary: var(--accent);
+  --primary-foreground: var(--accent-foreground);
+  --primary-hover: var(--accent-hover);
+  --primary-active: var(--accent-active);
+  position: relative;
+  isolation: isolate;
+  background-color: var(--glass-base);
+}
+
+:root[data-theme="dark"]:not([data-contrast="high"]) body:has([data-navbar-glass]) {
+  --glass-art: url("/brand/background-dark.webp");
+  --accent: 186 74% 49%;
+  --accent-foreground: 190 80% 8%;
+  --accent-hover: 186 74% 58%;
+  --accent-active: 186 74% 64%;
+  --ring: 186 78% 70%;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"], [data-theme="dark"], [data-contrast="high"]) body:has([data-navbar-glass]) {
+    --glass-art: url("/brand/background-dark.webp");
+    --accent: 186 74% 49%;
+    --accent-foreground: 190 80% 8%;
+    --accent-hover: 186 74% 58%;
+    --accent-active: 186 74% 64%;
+    --ring: 186 78% 70%;
+  }
+}
+
+:root:not([data-contrast="high"]) body:has([data-navbar-glass])::before {
+  content: "";
+  position: fixed;
+  inset: -12px;
+  z-index: -1;
+  pointer-events: none;
+  background: var(--glass-art) center / cover no-repeat;
+  filter: blur(6px);
+}
+
+.glass-shell { width: var(--glass-width); }
+
+.glass-panel {
+  border: 1px solid var(--glass-line, hsl(var(--panel-border)));
+  border-radius: 18px;
+  background: var(--glass-surface, hsl(var(--panel-background)));
+  box-shadow: var(--glass-shadow, var(--panel-shadow));
+}
+
+:root:not([data-contrast="high"]) .glass-panel {
+  backdrop-filter: blur(14px);
+}
+
+.home-service { transition: border-color 150ms ease; }
+.home-service:hover { border-color: hsl(var(--ring)); }
+.glass-accent-text, .glass-icon { color: var(--glass-accent-text, hsl(var(--accent))); }
+
+.glass-icon { background: var(--glass-accent-tint, hsl(var(--muted))); }
+
+.glass-inset {
+  border-width: 1px;
+  border-color: var(--glass-line, hsl(var(--panel-border)));
+  border-radius: 14px;
+  background: var(--glass-inset, hsl(var(--card)));
+}
+
+[data-navbar-glass] {
+  top: 12px;
+  align-self: center;
+  width: var(--glass-width);
+  margin-top: 12px;
+  border: 1px solid var(--glass-line, hsl(var(--navbar-border)));
+  border-radius: 14px;
+  background: var(--glass-bar, hsl(var(--navbar-background)));
+  box-shadow: var(--glass-shadow, var(--navbar-shadow));
+}
+
+:root:not([data-contrast="high"]) [data-navbar-glass] {
+  backdrop-filter: blur(14px);
+}
+
+[data-navbar-glass] [data-navbar-main] {
+  min-height: 58px;
+  height: auto;
+  gap: 8px;
+  padding: 8px 12px;
+}
+
+[data-navbar-glass] [data-navbar-brand] {
+  justify-content: flex-start;
+  gap: 8px;
+}
+
+[data-navbar-glass] [data-navbar-brand] img { width: 32px; height: 32px; }
+[data-navbar-glass] .navbar-brand-name { display: inline; }
+
+@container navbar (width < 640px) {
+  [data-navbar-glass] [data-navbar-main] > :has(> button[popovertarget]) {
+    margin-inline-start: auto;
+  }
+}
+
+@container navbar (768px <= width < 900px) {
+  [data-navbar-glass] [data-navbar-main] > :has(> [data-navigation-group="primary"]) {
+    display: none;
+  }
+
+  [data-navbar-glass] [data-navbar-main] > :has(> button[popovertarget]) {
+    display: block;
+  }
+}
+
+@container navbar (min-width: 900px) {
+  [data-navbar-glass] [data-navbar-main] {
+    display: grid;
+    grid-template-columns: minmax(max-content, 1fr) auto minmax(max-content, 1fr);
+    gap: 12px;
+    padding-inline: 16px;
+  }
+
+  [data-navbar-glass] .navbar-primary a {
+    flex-direction: row;
+    width: auto;
+    min-height: 36px;
+    height: auto;
+    gap: 6px;
+    padding-inline: 10px;
+  }
+
+  [data-navbar-glass] .navbar-primary .navbar-link-label {
+    max-height: none;
+    opacity: 1;
+  }
+
+  [data-navbar-glass] .navbar-primary a > svg {
+    width: 14px;
+    height: 14px;
+    transform: none;
+  }
+}
+
+body:has([data-navbar-glass]) [data-shell-footer] {
+  border-color: var(--glass-line, hsl(var(--footer-border)));
+}
+
+:root:not([data-contrast="high"]) body:has([data-navbar-glass]) [data-shell-footer] {
+  backdrop-filter: blur(5px);
+}
+
+[data-navbar-glass] .navbar-subnav[data-open="true"] {
+  border-color: var(--glass-line, hsl(var(--navbar-border)));
+  border-bottom-width: 0;
+  border-radius: 0 0 13px 13px;
+  background: var(--glass-accent-tint, hsl(var(--muted)));
+}
+
+body:has([data-navbar-glass]) .shell-breadcrumb {
+  top: calc(var(--navigation-height, 48px) + 12px);
+  width: var(--glass-width);
+  margin-top: 8px;
+  padding: 6px 14px;
+  border: 1px solid var(--glass-line, hsl(var(--panel-border)));
+  border-radius: 10px;
+  background: var(--glass-bar, hsl(var(--background)));
+}
+
+:root:not([data-contrast="high"]) body:has([data-navbar-glass]) .shell-breadcrumb {
+  backdrop-filter: blur(14px);
+}
+
+body:has([data-navbar-glass]) main section[id] {
+  scroll-margin-top: calc(var(--navigation-height, 100px) + 64px);
+}
+
+[data-admin-content] [role="region"]:has(> table) {
+  border-color: var(--glass-line, hsl(var(--table-border)));
+  border-radius: 12px;
+}
+
+:root:not([data-contrast="high"]) [data-admin-content] thead {
+  background-color: color-mix(in srgb, var(--glass-accent-text) 10%, hsl(var(--table-heading)));
+}

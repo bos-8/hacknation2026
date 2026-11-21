@@ -6,6 +6,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { getPublicConfig } from "@/config/server";
+import { initialDocumentPreferences } from "@/cookies/initial-document";
 import { APP_LOCALES, isAppLocale } from "@/schemas/i18n";
 import { Navbar, Footer } from "@/ui/layout";
 import { ThemeProvider } from "@/ui/components/theme-provider";
@@ -13,6 +14,7 @@ import { ContrastProvider } from "@/ui/components/contrast-provider";
 import { NotificationProvider } from "@/ui/components/notification-provider";
 import { AsideProvider, AsideContent } from "@/ui/components/aside-layout";
 import "../globals.css";
+import "../glass-shell.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -45,6 +47,11 @@ export default async function RootLayout({ children, params }: LayoutProps<"/[lo
       suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
+      <head>
+        <script id="formiq-initial-preferences" dangerouslySetInnerHTML={{
+          __html: initialDocumentPreferences(config.THEME_COOKIE_NAME, config.CONTRAST_COOKIE_NAME),
+        }} />
+      </head>
       <body className="min-h-full flex flex-col">
         <NextIntlClientProvider>
           <ThemeProvider cookieName={config.THEME_COOKIE_NAME} cookieDomain={config.UI_PREFERENCE_COOKIE_DOMAIN}>

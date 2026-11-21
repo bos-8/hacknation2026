@@ -88,7 +88,7 @@ export function Aside({ open, onClose, variant = "overlay", title, description, 
     if (!ready || !element) return;
     const navbar = document.querySelector<HTMLElement>("[data-navbar]");
     const mainRow = navbar?.querySelector<HTMLElement>("[data-navbar-main]");
-    const shellFooter = document.querySelector<HTMLElement>("[data-shell-footer]");
+    const shellFooter = document.querySelector<HTMLElement>("[data-footer-utility]");
     const position = () => {
       if (mainRow) element.style.setProperty("--aside-header-height", `${mainRow.getBoundingClientRect().height}px`);
       if (shellFooter) element.style.setProperty("--aside-footer-height", `${shellFooter.getBoundingClientRect().height}px`);

@@ -214,10 +214,10 @@ export function ChatWorkspace({ initial }: { initial: History | null }) {
     {history?.more && <Button className="mt-3" size="sm" disabled={pending} onClick={() => refreshHistory(true)}>{t("loadMore")}</Button>}
   </>;
 
-  return <section data-chat-workspace className="flex min-h-0 w-full flex-1 overflow-hidden bg-background">
+  return <section data-chat-workspace className="glass-shell glass-panel mx-auto my-3 flex min-h-0 flex-1 overflow-hidden">
     <div className="flex min-h-0 min-w-0 flex-1 flex-col">
       <header className="flex min-w-0 shrink-0 items-center gap-2 border-b border-border px-3 py-2 sm:px-6">
-        <ChatDots aria-hidden="true" className="size-5 shrink-0 text-primary" />
+        <span className="glass-icon grid size-9 shrink-0 place-items-center rounded-xl"><ChatDots aria-hidden="true" className="size-5" /></span>
         <h1 className="min-w-0 flex-1 truncate text-lg font-semibold" title={active?.title}>{active?.title ?? t("title")}</h1>
       <span role="status" className="inline-flex shrink-0 items-center gap-1.5 text-xs text-muted-foreground"
         title={t(storageAvailable ? "backendReady" : "backendUnavailable")}>
@@ -245,12 +245,12 @@ export function ChatWorkspace({ initial }: { initial: History | null }) {
 
       <div ref={transcript} role="region" tabIndex={0} aria-label={t("messages")} className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
         <div className="mx-auto flex min-h-full w-full max-w-4xl flex-col gap-4 px-3 py-4 sm:px-6 sm:py-6">
-          {messages.length === 0 && !reply && <div className="m-auto grid max-w-sm justify-items-center gap-3 px-3 py-8 text-center">
-            <span className="rounded-2xl border border-primary/30 bg-primary/10 p-3 text-primary"><ChatDots className="size-7" aria-hidden="true" /></span>
+          {messages.length === 0 && !reply && <div className="m-auto grid max-w-sm justify-items-center gap-2 px-3 py-3 text-center sm:gap-3 sm:py-8">
+            <span className="glass-icon rounded-2xl p-3"><ChatDots className="size-7" aria-hidden="true" /></span>
             <p className="text-xl font-semibold">{t("emptyTitle")}</p>
             <p className="text-sm text-muted-foreground">{t("emptyHint")}</p>
           </div>}
-          {messages.map((message, index) => <article key={message.uuid} className={`w-fit max-w-[95%] space-y-2 rounded-xl px-4 py-3 sm:max-w-[80%] ${message.role === "user" ? "self-end bg-primary/10" : "border border-border bg-card"}`}>
+          {messages.map((message, index) => <article key={message.uuid} className={`w-fit max-w-[95%] space-y-2 px-4 py-3 sm:max-w-[80%] ${message.role === "user" ? "self-end rounded-xl border border-primary/20 bg-primary/10" : "glass-inset"}`}>
             <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
               {message.role === "user" ? <Person aria-hidden="true" className="size-4" /> : <Robot aria-hidden="true" className="size-4" />}
               <span className="font-semibold">{t(message.role)}</span>
@@ -277,7 +277,7 @@ export function ChatWorkspace({ initial }: { initial: History | null }) {
             </a>)}
             {message.generation && <ChatGenerationDetails generation={message.generation} />}
           </article>)}
-          {reply && !reply.finished && <article className="w-fit max-w-[95%] space-y-2 rounded-xl border border-border bg-card px-4 py-3 sm:max-w-[80%]">
+          {reply && !reply.finished && <article className="glass-inset w-fit max-w-[95%] space-y-2 px-4 py-3 sm:max-w-[80%]">
             <div role="status" className="flex items-center gap-2 text-xs text-muted-foreground">
               <Robot aria-hidden="true" className="size-4" />
               <span className="font-semibold">{t("assistant")}</span>
@@ -293,8 +293,8 @@ export function ChatWorkspace({ initial }: { initial: History | null }) {
         </div>
       </div>
 
-      <div data-chat-composer className="shrink-0 border-t border-border bg-background px-3 pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] sm:px-6">
-        <form onSubmit={submit} aria-busy={sending} className="mx-auto max-h-[55dvh] max-w-4xl overflow-y-auto rounded-xl border border-border bg-card p-2 shadow-sm sm:p-3"
+      <div data-chat-composer className="shrink-0 border-t border-border px-3 pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] sm:px-6">
+        <form onSubmit={submit} aria-busy={sending} className="glass-inset mx-auto max-h-[55dvh] max-w-4xl overflow-y-auto p-2 sm:p-3"
           onDragOver={event => { if (event.dataTransfer.types.includes("Files")) event.preventDefault(); }}
           onDrop={event => { if (event.dataTransfer.files.length) { event.preventDefault(); addFiles(event.dataTransfer.files); } }}>
           {files.length > 0 && <div className="flex flex-wrap gap-2 px-1 pb-2">
@@ -344,7 +344,7 @@ export function ChatWorkspace({ initial }: { initial: History | null }) {
         </div>
       </div>
     </div>
-    <PushAside data-chat-history open={historyOpen} triggerRef={historyTrigger} onClose={() => setHistoryOpen(false)} title={t("history")} icon={<ClockHistory aria-hidden="true" className="size-5 text-primary" />}>
+    <PushAside data-chat-history className="glass-panel" open={historyOpen} triggerRef={historyTrigger} onClose={() => setHistoryOpen(false)} title={t("history")} icon={<ClockHistory aria-hidden="true" className="size-5 text-primary" />}>
       {historyContent}
     </PushAside>
   </section>;

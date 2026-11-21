@@ -8,7 +8,7 @@
 .navbar-mobile-links a { min-height: 44px; justify-content: flex-start; }
 .navbar-subnav { --subnav-size: 36px; height: 0; opacity: 0; visibility: hidden; transition: height 200ms ease, opacity 200ms ease, visibility 200ms; }
 .navbar-subnav[data-open="true"] { height: var(--subnav-size); opacity: 1; visibility: visible; border-top-width: 1px; border-bottom-width: 1px; }
-.navbar-secondary-links { height: calc(var(--subnav-size) - 2px); scrollbar-width: none; }
+.navbar-secondary-links { height: calc(var(--subnav-size) - 2px); justify-content: safe center; scrollbar-width: none; }
 .navbar-secondary-links::-webkit-scrollbar { display: none; }
 .navbar-secondary-links a { border-radius: 0; }
 .navbar-secondary-links > span { border-radius: 0; }
@@ -17,11 +17,11 @@
 .navbar-brand-name { max-width: 200px; overflow: hidden; white-space: nowrap; opacity: 1; transition: max-width 200ms ease, opacity 200ms ease; }
 #main-content, main section[id] { scroll-margin-top: calc(var(--navigation-height, 100px) + 16px); }
 
-body:has([data-chat-workspace]) { height: 100dvh; min-height: 0; overflow: hidden; }
-body:has([data-chat-workspace]) [data-aside-content],
-body:has([data-chat-workspace]) #main-content { min-height: 0; }
-body:has([data-chat-workspace]) [data-aside-content] > :not(#main-content) { flex-shrink: 0; }
-body:has([data-chat-workspace]) [data-shell-footer] { display: none; }
+body:has([data-navbar-chat]) { height: 100dvh; min-height: 0; overflow: hidden; }
+body:has([data-navbar-chat]) [data-aside-content],
+body:has([data-navbar-chat]) #main-content { min-height: 0; }
+body:has([data-navbar-chat]) [data-aside-content] > :not(#main-content) { flex-shrink: 0; }
+body:has([data-navbar-chat]) [data-shell-footer] { display: none; }
 @container navbar (min-width: 640px) {
   .navbar-main { height: 48px; min-height: 44px; padding-block: 0; }
 }
@@ -193,10 +193,10 @@ body:has([data-chat-workspace]) [data-shell-footer] { display: none; }
   --primary-foreground: 0 0% 100%;
   --primary-hover: 216 82% 35%;
   --primary-active: 216 82% 32%;
-  --success: 153 66% 26%;
+  --success: 187 100% 28%;
   --success-foreground: 0 0% 100%;
-  --success-hover: 153 66% 23%;
-  --success-active: 153 66% 20%;
+  --success-hover: 187 100% 24%;
+  --success-active: 187 100% 21%;
   --warning: 37 88% 28%;
   --warning-foreground: 0 0% 100%;
   --warning-hover: 37 88% 25%;
@@ -290,10 +290,10 @@ body:has([data-chat-workspace]) [data-shell-footer] { display: none; }
   --primary-foreground: 0 0% 4%;
   --primary-hover: 216 85% 75%;
   --primary-active: 216 85% 78%;
-  --success: 153 63% 63%;
+  --success: 186 74% 49%;
   --success-foreground: 0 0% 4%;
-  --success-hover: 153 63% 66%;
-  --success-active: 153 63% 69%;
+  --success-hover: 186 74% 58%;
+  --success-active: 186 74% 64%;
   --warning: 37 92% 68%;
   --warning-foreground: 0 0% 4%;
   --warning-hover: 37 92% 71%;
@@ -330,10 +330,10 @@ body:has([data-chat-workspace]) [data-shell-footer] { display: none; }
     --primary-foreground: 0 0% 4%;
     --primary-hover: 216 85% 75%;
     --primary-active: 216 85% 78%;
-    --success: 153 63% 63%;
+    --success: 186 74% 49%;
     --success-foreground: 0 0% 4%;
-    --success-hover: 153 63% 66%;
-    --success-active: 153 63% 69%;
+    --success-hover: 186 74% 58%;
+    --success-active: 186 74% 64%;
     --warning: 37 92% 68%;
     --warning-foreground: 0 0% 4%;
     --warning-hover: 37 92% 71%;
@@ -369,10 +369,10 @@ body:has([data-chat-workspace]) [data-shell-footer] { display: none; }
   --primary-foreground: 0 0% 100%;
   --primary-hover: 216 100% 23%;
   --primary-active: 216 100% 21%;
-  --success: 153 100% 18%;
+  --success: 187 100% 20%;
   --success-foreground: 0 0% 100%;
-  --success-hover: 153 100% 16%;
-  --success-active: 153 100% 14%;
+  --success-hover: 187 100% 17%;
+  --success-active: 187 100% 15%;
   --warning: 37 100% 19%;
   --warning-foreground: 0 0% 100%;
   --warning-hover: 37 100% 17%;
@@ -412,10 +412,10 @@ body:has([data-chat-workspace]) [data-shell-footer] { display: none; }
   --primary-foreground: 0 0% 0%;
   --primary-hover: 216 100% 86%;
   --primary-active: 216 100% 88%;
-  --success: 153 100% 80%;
+  --success: 186 100% 77%;
   --success-foreground: 0 0% 0%;
-  --success-hover: 153 100% 82%;
-  --success-active: 153 100% 84%;
+  --success-hover: 186 100% 82%;
+  --success-active: 186 100% 86%;
   --warning: 37 100% 80%;
   --warning-foreground: 0 0% 0%;
   --warning-hover: 37 100% 82%;
@@ -449,10 +449,10 @@ body:has([data-chat-workspace]) [data-shell-footer] { display: none; }
     --primary-foreground: 0 0% 0%;
     --primary-hover: 216 100% 86%;
     --primary-active: 216 100% 88%;
-    --success: 153 100% 80%;
+    --success: 186 100% 77%;
     --success-foreground: 0 0% 0%;
-    --success-hover: 153 100% 82%;
-    --success-active: 153 100% 84%;
+    --success-hover: 186 100% 82%;
+    --success-active: 186 100% 86%;
     --warning: 37 100% 80%;
     --warning-foreground: 0 0% 0%;
     --warning-hover: 37 100% 82%;

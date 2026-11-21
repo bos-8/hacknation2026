@@ -6,7 +6,7 @@ import { Badge, Heading, Text } from "@/ui/basic";
 import { TeamPortrait } from "@/ui/components/team-portrait";
 
 const profiles = [{ key: "linkedin", label: "LinkedIn", icon: Linkedin }, { key: "github", label: "GitHub", icon: Github }] as const;
-const profileStyles = "inline-flex size-11 items-center justify-center rounded-md border border-button-border bg-button text-button-foreground";
+const profileStyles = "glass-icon inline-flex size-11 items-center justify-center rounded-xl border border-panel-border hover:border-accent";
 
 export async function generateMetadata() {
   const t = await getTranslations("about.team");
@@ -16,25 +16,25 @@ export async function generateMetadata() {
 export default async function TeamPage() {
   const t = await getTranslations("about.team");
   return (
-    <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
-      <header className="max-w-2xl space-y-4">
-        <Badge tone="accent">{t("eyebrow")}</Badge>
-        <Heading level={1} className="text-3xl leading-tight sm:text-4xl">{t("title")}</Heading>
-        <Text className="text-lg text-muted-foreground">{t("description")}</Text>
+    <div data-team-page className="glass-shell mx-auto pb-8 pt-6 sm:pt-8">
+      <header className="glass-panel space-y-4 p-6 sm:p-9 lg:p-11" aria-labelledby="team-title">
+        <Badge tone="accent" className="glass-accent-text">{t("eyebrow")}</Badge>
+        <Heading level={1} id="team-title" className="text-4xl leading-[1.08] tracking-tight sm:text-5xl">{t("title")}</Heading>
+        <Text className="max-w-2xl text-base text-muted-foreground sm:text-lg">{t("description")}</Text>
       </header>
 
-      <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {teamMembers.map((member, index) => (
-          <article key={member.id} className="group/team flex min-w-0 flex-col overflow-hidden rounded-lg border border-panel-border bg-panel text-panel-foreground">
-            <div className="relative flex aspect-[5/4] items-center justify-center overflow-hidden border-b border-panel-border bg-accent/10">
+          <article key={member.id} className="glass-panel group/team flex min-w-0 flex-col p-3">
+            <div className="glass-inset relative flex aspect-[5/4] items-center justify-center overflow-hidden">
               {member.image ? <TeamPortrait image={member.image} imagePosition={member.imagePosition} hoverImage={member.hoverImage} name={member.name} eager={index === 0} /> : (
                 <span role="img" aria-label={t("photoPlaceholder")} className="flex size-28 items-center justify-center rounded-full border border-accent/25 bg-panel font-mono text-4xl font-semibold text-accent">{member.initials}</span>
               )}
             </div>
-            <div className="flex flex-1 flex-col p-5 sm:p-6">
+            <div className="flex flex-1 flex-col px-3 pb-3 pt-5 sm:px-4 sm:pb-4">
               <Heading level={2} className="text-xl">{member.name}</Heading>
               {member.roles.length > 0 && <ul className="mt-3 flex flex-wrap gap-2">
-                {member.roles.map(role => <li key={role}><Badge tone="accent">{t(role)}</Badge></li>)}
+                {member.roles.map(role => <li key={role}><Badge tone="accent" className="glass-accent-text">{t(role)}</Badge></li>)}
               </ul>}
               {member.profileKey && <>
                 <Text className="mt-4 text-sm text-muted-foreground">{t(`${member.profileKey}.bio`)}</Text>
@@ -43,7 +43,7 @@ export default async function TeamPage() {
               <div className="mt-auto flex gap-2 pt-5">
                 {profiles.map(({ key, label, icon: Icon }) => member[key] ? (
                   <a key={key} href={member[key]} target="_blank" rel="noopener noreferrer" aria-label={t("profileLabel", { provider: label, name: member.name })}
-                    className={`${profileStyles} hover:bg-button-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent`}>
+                    className={`${profileStyles} focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent`}>
                     <Icon aria-hidden="true" className="size-5" />
                   </a>
                 ) : null)}
@@ -53,7 +53,7 @@ export default async function TeamPage() {
         ))}
       </div>
 
-      <Link href="/about" className="mt-8 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-accent underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent">
+      <Link href="/about" className="glass-panel glass-accent-text mt-4 inline-flex min-h-11 items-center gap-2 px-4 py-2 text-sm font-semibold underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent">
         <ArrowLeft aria-hidden="true" /> {t("aboutLink")}
       </Link>
     </div>

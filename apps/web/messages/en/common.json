@@ -185,6 +185,14 @@
       "loadingPreferences": "Loading preferences…"
     },
     "footer": {
+      "documentPending": "Coming soon",
+      "navigation": "Footer",
+      "application": "About the application",
+      "policies": "Policies and privacy",
+      "contact": "Contact and feedback",
+      "terms": "Terms of use",
+      "privacy": "Privacy policy",
+      "browserStorage": "Browser storage",
       "description": "A shared foundation for business applications.",
       "license": "License",
       "backToTop": "Back to top",

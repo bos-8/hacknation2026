@@ -11,9 +11,9 @@ async function Content() {
   await requireAdminAccess();
   const t = await getTranslations("common.admin.llm");
   const settings = await readLlmSettings().catch(() => null);
-  return <article className="mx-auto w-full max-w-4xl space-y-4 px-4 py-6 sm:px-6">
+  return <article className="glass-shell glass-panel mx-auto my-6 max-w-4xl space-y-4 p-5 sm:p-8">
     <div>
-      <Heading level={2} className="text-xl">{t("title")}</Heading>
+      <Heading level={1} className="text-2xl tracking-tight">{t("title")}</Heading>
       <p className="mt-1 text-sm text-muted-foreground">{t("description")}</p>
     </div>
     <LlmSettingsForm initial={settings} configured={openAiConfigured()} />

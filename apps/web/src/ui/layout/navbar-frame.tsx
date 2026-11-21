@@ -2,11 +2,17 @@
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { navbarAtTop } from "@/config/navigation";
+import { usePathname } from "@/i18n/navigation";
 import { cx } from "@/ui/basic/styles";
 import { layoutStyles } from "./styles";
 
 /** Reveal labels at the page top, on hover and keyboard focus; keep the shell observable by asides. */
 export function NavbarFrame({ children, className }: { children: ReactNode; className?: string }) {
+  const pathname = usePathname();
+  const chat = pathname === "/chat";
+  const glass = pathname === "/" || pathname === "/about" || pathname === "/about/team"
+    || pathname === "/access-denied" || chat || pathname === "/chat/settings"
+    || pathname === "/admin" || pathname.startsWith("/admin/");
   const [atTop, setAtTop] = useState(true);
   const frame = useRef<HTMLElement>(null);
   useEffect(() => {
@@ -33,5 +39,5 @@ export function NavbarFrame({ children, className }: { children: ReactNode; clas
       document.documentElement.style.removeProperty("--navigation-height");
     };
   }, []);
-  return <header ref={frame} data-navbar data-at-top={atTop} className={cx(layoutStyles.navbar, className)}>{children}</header>;
+  return <header ref={frame} data-navbar data-navbar-chat={chat || undefined} data-navbar-glass={glass || undefined} data-at-top={atTop} className={cx(layoutStyles.navbar, className)}>{children}</header>;
 }

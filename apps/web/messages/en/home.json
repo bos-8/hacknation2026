@@ -19,11 +19,6 @@
         "title": "Pyworker Swagger UI",
         "description": "Explore and test the worker API endpoints."
       }
-    },
-    "access": {
-      "label": "Project information",
-      "license": "License",
-      "contact": "Contact"
     }
   }
 }

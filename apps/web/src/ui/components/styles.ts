@@ -171,7 +171,7 @@ export const monitoringTiming = { refreshMs: 30000 } as const;
 
 export const dashboardStyles = {
   grid: 'mt-6 grid min-w-0 grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3',
-  tile: cx(radius.panel, 'flex min-w-0 flex-col border border-border bg-card p-4 shadow-sm'),
+  tile: 'glass-inset flex min-w-0 flex-col p-4',
   metrics: 'my-5 grid grid-cols-2 gap-x-4 gap-y-3',
   value: 'mt-1 break-words text-xl font-semibold tabular-nums text-foreground',
   tileFooter: 'mt-auto flex flex-wrap items-end justify-between gap-3 border-t border-border pt-3',

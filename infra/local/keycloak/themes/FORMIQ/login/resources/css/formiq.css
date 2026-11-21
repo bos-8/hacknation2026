@@ -1,41 +1,36 @@
 :root {
   color-scheme: light;
-  --mod-bg: #f5f7fa;
-  --mod-card: rgb(255 255 255 / 78%);
-  --mod-text: #171717;
-  --mod-ring: #404040;
-  --mod-control: #fafafa;
+  --mod-bg: #eff1f3;
+  --mod-card: rgb(250 252 253 / 78%);
+  --mod-text: #172527;
+  --mod-ring: #007786;
+  --mod-control: rgb(230 236 239 / 55%);
   --mod-accent-text: #fff;
-  --mod-muted: #525252;
-  --mod-border: #d4d4d4;
-  --mod-input: #fff;
-  --mod-accent: #2563eb;
-  --mod-success: #15803d;
+  --mod-muted: #49595d;
+  --mod-border: rgb(43 71 76 / 24%);
+  --mod-input: rgb(255 255 255 / 72%);
+  --mod-accent: #00626f;
+  --mod-primary: #007786;
+  --mod-primary-hover: #00616e;
   --mod-error: #b91c1c;
-  --mod-image: url('../img/bg_light.png');
-  --mod-logo: url('../img/FORMIQ.svg');
+  --mod-image: url('../img/bg_light.png?v=2');
 }
 :root[data-theme='dark'] {
   color-scheme: dark;
-  --mod-bg: #070b12;
-  --mod-card: rgb(0 0 0 / 76%);
-  --mod-text: #ededed; --mod-ring: #d4d4d4; --mod-control: #171717; --mod-accent-text: #0a0a0a;
-  --mod-muted: #a3a3a3;
-  --mod-border: #404040;
-  --mod-input: #0a0a0a;
-  --mod-accent: #60a5fa; --mod-success: #4ade80;
+  --mod-bg: #131415;
+  --mod-card: rgb(26 30 31 / 82%);
+  --mod-text: #f4f5f5;
+  --mod-ring: #74e4ee;
+  --mod-control: rgb(13 17 18 / 48%);
+  --mod-accent-text: #05242a;
+  --mod-muted: #bbc5c6;
+  --mod-border: rgb(217 237 239 / 23%);
+  --mod-input: rgb(13 17 18 / 59%);
+  --mod-accent: #74e4ee;
+  --mod-primary: #22c7d8;
+  --mod-primary-hover: #50d2df;
   --mod-error: #fca5a5;
-  --mod-image: url('../img/bg_dark.png');
-  --mod-logo: url('../img/FORMIQDark.svg');
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme]) {
-    color-scheme: dark;
-    --mod-bg: #070b12; --mod-card: rgb(0 0 0 / 76%); --mod-text: #ededed; --mod-ring: #d4d4d4; --mod-control: #171717; --mod-accent-text: #0a0a0a;
-    --mod-muted: #a3a3a3; --mod-border: #404040; --mod-input: #0a0a0a;
-    --mod-accent: #60a5fa; --mod-success: #4ade80; --mod-error: #fca5a5; --mod-image: url('../img/bg_dark.png');
-    --mod-logo: url('../img/FORMIQDark.svg');
-  }
+  --mod-image: url('../img/bg_dark.png?v=2');
 }
 .login-pf, .login-pf body { background: var(--mod-bg); }
 .login-pf body {
@@ -44,54 +39,77 @@
   position: relative; isolation: isolate;
 }
 .login-pf body::before {
-  content: ""; position: fixed; inset: -4px; z-index: -1; pointer-events: none;
-  background: var(--mod-image) center / cover no-repeat; filter: blur(2px);
+  content: ""; position: fixed; inset: -12px; z-index: -1; pointer-events: none;
+  background: var(--mod-image) center / cover no-repeat;
+  filter: blur(6px);
 }
 .login-pf-page {
-  min-height: 100vh; min-height: 100svh; padding: 32px 16px;
-  display: flex; flex-direction: column; justify-content: center; align-items: center;
+  min-height: 100vh;
+  min-height: 100svh;
+  padding: 16px clamp(16px, 5vw, 64px);
+  display: grid;
+  place-items: center;
 }
 #kc-header { display: none; }
 .login-pf-page .card-pf {
-  width: 100%; max-width: 480px; margin: 0; padding: 36px 40px 24px;
-  border: 1px solid transparent; border-radius: 0;
-  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-  background: var(--mod-card); color: var(--mod-text);
-  box-shadow: 0 20px 70px rgb(0 0 0 / 22%);
+  width: 100%;
+  max-width: 518px;
+  margin: 0;
+  padding: 32px 41px 25px;
+  border: 1px solid var(--mod-border);
+  border-radius: 20px;
+  backdrop-filter: blur(16px);
+  background: var(--mod-card);
+  color: var(--mod-text);
+  box-shadow: inset 0 1px rgb(255 255 255 / 14%), 0 18px 54px rgb(0 0 0 / 18%);
   transition: background-color .2s, color .2s, border-color .2s;
 }
-.login-pf-page .login-pf-header { position: relative; margin-bottom: 28px; padding-top: 0; }
-.login-pf-header::before {
-  content: ''; display: block; width: min(100%, 280px); aspect-ratio: 4 / 1; margin: 0 auto 20px;
-  background: var(--mod-logo) center / contain no-repeat;
-}
+.login-pf-page .login-pf-header { position: relative; margin-bottom: 20px; padding-top: 0; }
 #kc-page-title { margin: 0; font-size: 25px; font-weight: 650; letter-spacing: -.6px; line-height: 1.3; }
+.login-pf-page:has(#kc-form-login, #kc-register-form) #kc-page-title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  font-size: 20px;
+}
+.login-pf-page:has(#kc-form-login, #kc-register-form) #kc-page-title::before {
+  content: 'FORMIQ';
+  display: flex;
+  align-items: center;
+  min-height: 56px;
+  padding-inline-start: 66px;
+  background: url('../img/brand.png') left center / 56px auto no-repeat;
+  font-size: 32px;
+  font-weight: 750;
+  letter-spacing: -.04em;
+}
 #kc-content, #kc-content-wrapper { margin: 0; }
 #kc-locale { display: none; }
-#kc-info { margin: 24px 0 0; }
+#kc-info { margin: 18px 0 0; }
 #kc-info-wrapper { padding: 0; font-size: 14px; }
 #kc-registration a { margin: 0; font-weight: 600; }
-.login-pf-page .form-group { margin-bottom: 20px; }
+.login-pf-page .form-group { margin-bottom: 16px; }
 .pf-c-form__label, .pf-c-form__label-text { color: var(--mod-text); font-size: 14px; font-weight: 500; }
 .login-pf-page .pf-c-form-control {
-  height: 32px; padding: 4px 8px; border: 1px solid var(--mod-border); border-radius: 6px;
+  height: 51px; padding: 8px 12px; border: 1px solid var(--mod-border); border-radius: 10px;
   background: var(--mod-input); color: var(--mod-text); font-size: 14px;
 }
-.pf-c-input-group { border-radius: 6px; background: transparent; }
-.pf-c-input-group .pf-c-form-control { border-radius: 6px 0 0 6px; }
+.pf-c-input-group { border-radius: 10px; background: transparent; }
+.pf-c-input-group .pf-c-form-control { border-radius: 10px 0 0 10px; }
 .pf-c-input-group .pf-c-button {
-  border: 1px solid var(--mod-border); border-left: 0; border-radius: 0 6px 6px 0;
-  background: var(--mod-input); color: var(--mod-muted); min-width: 32px; padding: 4px 8px;
-  height: 32px; line-height: 22px;
+  border: 1px solid var(--mod-border); border-left: 0; border-radius: 0 10px 10px 0;
+  background: var(--mod-input); color: var(--mod-muted); min-width: 51px; padding: 8px 10px;
+  height: 51px; line-height: 22px;
 }
 .pf-c-button::after { border: 0; }
 .login-pf-page .pf-c-button { cursor: pointer; }
 .login-pf-page .pf-c-button.pf-m-primary {
-  min-height: 32px; padding: 4px 8px; border-radius: 6px; border: 1px solid var(--mod-success);
-  background: transparent; color: var(--mod-success); font-size: 14px; font-weight: 600;
+  min-height: 51px; padding: 8px 12px; border-radius: 10px; border: 1px solid transparent;
+  background: var(--mod-primary); color: var(--mod-accent-text); font-size: 14px; font-weight: 600;
   transition: filter 75ms, transform 75ms, box-shadow 75ms;
 }
-.login-pf-page .pf-c-button.pf-m-primary:hover { background: var(--mod-success); color: var(--mod-accent-text); }
+.login-pf-page .pf-c-button.pf-m-primary:hover { background: var(--mod-primary-hover); color: var(--mod-accent-text); }
 .login-pf-page .pf-c-button.pf-m-primary:active { filter: brightness(.9); transform: translateY(1px); }
 .login-pf-page .pf-c-button:disabled { opacity: .6; cursor: wait; }
 .login-pf-page a { color: var(--mod-accent); }
@@ -102,9 +120,11 @@
 .login-pf-page .pf-m-error, .login-pf-page .alert-error, .login-pf-page .pf-m-danger,
 .login-pf-page .pf-m-danger .pf-c-alert__title { color: var(--mod-error); }
 .login-pf-page .pf-c-alert { background: var(--mod-input); border-radius: 6px; margin-bottom: 20px; }
+.login-pf-page :is(.pf-m-success, .alert-success) { color: var(--mod-accent); border-color: var(--mod-accent); }
+.login-pf-page .pf-m-success :is(.pf-c-alert__title, .pf-c-alert__icon) { color: var(--mod-accent); }
 .login-pf-page .alert-error { border: 1px solid var(--mod-error); }
 .login-pf-page .login-pf-settings, #kc-info-wrapper { color: var(--mod-muted); background: transparent; }
-.mod-footer { border-top: 1px solid var(--mod-border); padding-top: 20px; margin-top: 24px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; font-size: 12px; }
+.mod-footer { border-top: 1px solid var(--mod-border); padding-top: 16px; margin-top: 16px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; font-size: 12px; }
 .mod-footer small { flex-basis: 100%; text-align: center; color: var(--mod-muted); }
 .mod-theme-icon { display: inline-flex; }
 .mod-submit { display: block; position: relative; }
@@ -114,16 +134,15 @@ form[data-expired] :disabled { cursor: not-allowed; }
 .mod-spinner {
   display: none; position: absolute; left: 14px; top: calc(50% - 7px);
   width: 14px; height: 14px; border: 2px solid currentColor; border-top-color: transparent;
-  color: var(--mod-success); border-radius: 50%; pointer-events: none; animation: mod-spin 1s linear infinite;
+  color: var(--mod-accent-text); border-radius: 50%; pointer-events: none; animation: mod-spin 1s linear infinite;
 }
 .mod-loading .mod-spinner { display: block; }
 .login-pf-page .mod-loading :is(input, button) { cursor: progress; opacity: .75; padding-inline: 40px; }
-.mod-loading:has(input:hover, button:hover) .mod-spinner { color: var(--mod-accent-text); }
 .mod-submit-status { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 @keyframes mod-spin { to { transform: rotate(360deg); } }
 @media (max-width: 480px) {
   .login-pf-page { padding: 16px; }
-  .login-pf-page .card-pf { padding: 24px; border-radius: 0; }
+  .login-pf-page .card-pf { padding: 24px 20px; border-radius: 16px; }
   #kc-page-title { font-size: 22px; }
 }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; } }
@@ -139,13 +158,13 @@ body[data-page-id='login-register'] .login-pf-header .col-md-10 {
 .mod-required-fields .subtitle { float: none; margin: 0; text-align: inherit; }
 .mod-footer-actions > .mod-button, #kc-form-options a {
   display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-  min-height: 32px; padding: 4px 8px; border: 1px solid var(--mod-text); border-radius: 6px;
-  background: transparent; color: var(--mod-text); font-size: 14px; font-weight: 600; line-height: 22px;
+  min-height: 36px; padding: 4px 8px; border: 1px solid var(--mod-border); border-radius: 8px;
+  background: var(--mod-control); color: var(--mod-text); font-size: 14px; font-weight: 600; line-height: 22px;
   text-decoration: none; cursor: pointer; white-space: nowrap;
   box-shadow: 0 1px 2px rgb(0 0 0 / 5%);
   transition: filter 75ms, transform 75ms, box-shadow 75ms;
 }
-.mod-footer-actions > .mod-button:hover, #kc-form-options a:hover { background: var(--mod-text); color: var(--mod-input); text-decoration: none; }
+.mod-footer-actions > .mod-button:hover, #kc-form-options a:hover { background: var(--mod-control); color: var(--mod-accent); text-decoration: none; }
 .mod-footer-actions > .mod-button { box-sizing: border-box; width: 100%; min-width: 0; padding-inline: 4px; font-size: 13px; }
 .mod-footer-actions > .mod-button > span:not(.mod-theme-icon) { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
 .mod-footer-actions > .mod-button:active, #kc-form-options a:active { filter: brightness(.9); transform: translateY(1px); box-shadow: inset 0 2px 4px rgb(0 0 0 / 6%); }
@@ -154,7 +173,7 @@ body[data-page-id='login-register'] .login-pf-header .col-md-10 {
 .mod-tooltip {
   position: fixed; z-index: 9000; width: max-content; max-width: min(192px, calc(100vw - 16px));
   padding: 4px 12px; border: 0; border-radius: 6px;
-  background: var(--mod-text); color: var(--mod-input); font-size: 12px; line-height: 16px;
+  background: var(--mod-text); color: var(--mod-bg); font-size: 12px; line-height: 16px;
   overflow-wrap: anywhere; white-space: normal; box-shadow: 0 4px 6px rgb(0 0 0 / 12%);
 }
 .mod-tooltip[hidden] { display: none; }
@@ -163,8 +182,7 @@ body[data-page-id='login-register'] .login-pf-header .col-md-10 {
   .mod-footer-actions > .mod-button { min-height: 44px; }
 }
 @media (pointer: coarse) {
-  .mod-footer-actions > .mod-button, .login-pf-page .pf-c-form-control,
-  .login-pf-page .pf-c-button { min-height: 44px; }
+  .mod-footer-actions > .mod-button { min-height: 44px; }
 }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; } }
 
@@ -190,13 +208,11 @@ body[data-page-id='login-register'] .login-pf-header .col-md-10 {
   mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cg fill='none' stroke='black' stroke-width='2'%3E%3Cpath d='M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z M3 3l18 18'/%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3C/g%3E%3C/svg%3E");
 }
 
-/* Registration and form actions use the same green outline interaction as Web. */
 #kc-registration a {
-  display: flex; width: 100%; box-sizing: border-box; align-items: center; justify-content: center; min-height: 32px;
-  padding: 4px 12px; border: 1px solid var(--mod-success); border-radius: 6px;
-  background: transparent; color: var(--mod-success); text-decoration: none;
+  display: flex; width: 100%; box-sizing: border-box; align-items: center; justify-content: center; min-height: 51px;
+  padding: 4px 12px; border: 1px solid var(--mod-border); border-radius: 10px;
+  background: var(--mod-control); color: var(--mod-accent); text-decoration: none;
   transition: background-color .15s, color .15s;
 }
-#kc-registration a:hover { background: var(--mod-success); color: var(--mod-accent-text); }
-.pf-c-input-group .pf-c-button { background: transparent; }
-.pf-c-input-group .pf-c-button:hover { background: var(--mod-text); color: var(--mod-input); }
+#kc-registration a:hover { border-color: var(--mod-accent); }
+.pf-c-input-group .pf-c-button:hover { background: var(--mod-control); color: var(--mod-accent); }

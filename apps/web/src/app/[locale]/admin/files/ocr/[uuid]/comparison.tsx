@@ -114,7 +114,7 @@ export function DocumentComparison({ file, version, name, mode, run, pending, er
     <header className="flex flex-wrap items-center gap-2">
       <Heading level={2} className="min-w-0 wrap-anywhere text-xl">{name}</Heading><Badge tone="neutral">v{version}</Badge>
     </header>
-    <div className={cx(tableStyles.toolbar, "flex-wrap rounded-lg border border-border bg-card py-2")}>
+    <div className={cx(tableStyles.toolbar, "glass-inset flex-wrap py-2")}>
       <label className="flex min-w-0 flex-wrap items-center gap-2 text-sm">{review("mode")}
         <Select className="w-auto max-w-full" aria-label={review("mode")} value={mode} disabled={!hydrated || !!draft || pending}
           onChange={e => router.replace({ pathname: `/admin/files/ocr/${file}`, query: { version, mode: e.target.value } })}>
@@ -158,7 +158,7 @@ export function DocumentComparison({ file, version, name, mode, run, pending, er
     {run?.detector && <p className="text-xs text-muted-foreground">{review("detector")} · {run.detector === "pii-tracer+pl" ? "PII-Tracer + PL" : review("rules")}</p>}
     <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,18rem),1fr))] gap-3">
       {displayed.map(pane => <section key={pane} data-compare-pane={pane}
-        aria-label={t(pane)} className="min-w-0 self-start overflow-hidden rounded-md border border-border">
+        aria-label={t(pane)} className="glass-inset min-w-0 self-start overflow-hidden">
         <header className="flex min-h-11 flex-wrap items-center justify-between gap-2 border-b border-border bg-muted/30 px-3 py-1">
           <h3 className="text-sm font-semibold">{t(pane)}</h3>
           {pane === "source" && <a className="inline-flex items-center gap-1 text-xs text-primary underline" href={original} target="_blank" rel="noopener noreferrer">{t("fullSize")}<BoxArrowUpRight aria-hidden="true" /></a>}
