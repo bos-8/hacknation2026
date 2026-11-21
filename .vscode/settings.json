@@ -19,5 +19,6 @@
   "[shellscript]": {
     "files.eol": "\n",
     "files.encoding": "utf8"
-  }
+  },
+  "python.terminal.useEnvFile": true
 }

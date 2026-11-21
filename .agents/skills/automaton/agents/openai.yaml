@@ -1,0 +1,6 @@
+interface:
+  display_name: "Automaton"
+  short_description: "Route tasks through the right skills."
+  default_prompt: "Use $automaton to select the right skills and execute this task."
+policy:
+  allow_implicit_invocation: false

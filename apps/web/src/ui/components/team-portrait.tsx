@@ -7,15 +7,15 @@ const motionStyles = "object-cover motion-safe:transition-[opacity,transform,rot
 const imageSizes = "(min-width: 1024px) 360px, (min-width: 640px) 50vw, 100vw";
 
 /** Keep the portrait visible until its optional animated hover layer has loaded. */
-export function TeamPortrait({ image, hoverImage, name, eager = false }: {
-  image: string; hoverImage?: string; name: string; eager?: boolean;
+export function TeamPortrait({ image, imagePosition, hoverImage, name, eager = false }: {
+  image: string; imagePosition?: string; hoverImage?: string; name: string; eager?: boolean;
 }) {
   const [loadedHover, setLoadedHover] = useState<string | null>(null);
   const ready = Boolean(hoverImage && loadedHover === hoverImage);
   return (
     <>
       <Image src={image} alt={name} fill loading={eager ? "eager" : "lazy"} sizes={imageSizes}
-        data-team-portrait="avatar"
+        data-team-portrait="avatar" style={{ objectPosition: imagePosition }}
         className={`${motionStyles} object-top ${ready ? "motion-safe:group-hover/team:opacity-0 motion-safe:group-focus-within/team:opacity-0" : ""}`} />
       {hoverImage && <Image src={hoverImage} alt="" aria-hidden="true" fill unoptimized
         loading={eager ? "eager" : "lazy"} sizes={imageSizes} data-team-portrait="hover"

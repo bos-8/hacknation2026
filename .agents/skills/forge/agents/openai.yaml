@@ -1,0 +1,6 @@
+interface:
+  display_name: "Forge"
+  short_description: "Choose the project delivery level."
+  default_prompt: "Use $forge to select this session mode."
+policy:
+  allow_implicit_invocation: false

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Repo Memory"
+  short_description: "Save and read repo-local AI memory."
+  default_prompt: "Use $repo-memory to save or read repository-local AI memory."

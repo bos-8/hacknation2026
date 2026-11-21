@@ -5,6 +5,7 @@ export type TeamMember = {
   roles: readonly ("owner" | "architect" | "projectLead")[];
   profileKey?: string;
   image?: string;
+  imagePosition?: string;
   hoverImage?: string;
   linkedin?: string;
   github?: string;
@@ -23,6 +24,41 @@ export const teamMembers: readonly TeamMember[] = [
     linkedin: "https://www.linkedin.com/in/kacper-boss",
     github: "https://github.com/bos-8",
   },
+  {
+    id: "jakub-mielcarek",
+    name: "Jakub Mielcarek",
+    initials: "JM",
+    roles: [],
+    image: "/team/jakub-mielcarek.png",
+    linkedin: "https://www.linkedin.com/in/mielcarekjakub/",
+    github: "https://github.com/vGiacomov",
+  },
+  {
+    id: "natalia-balicka",
+    name: "Balicka Natalia",
+    initials: "NB",
+    roles: [],
+    image: "/team/natalia-balicka-portrait.webp",
+    imagePosition: "center 10%",
+    linkedin: "https://www.linkedin.com/in/natalia-balicka",
+    github: "https://github.com/balickanatalka",
+  },
+  {
+    id: "yurii-holovko",
+    name: "Yurii Holovko",
+    initials: "YH",
+    roles: [],
+    image: "/team/yurii-holovko.webp",
+    linkedin: "https://www.linkedin.com/in/yurii-holovko/",
+    github: "https://github.com/Yurich3112",
+  },
+  {
+    id: "stanislaw-walga",
+    name: "Stanisław Wałga",
+    initials: "SW",
+    roles: [],
+    image: "/team/stanislaw-walga-portrait.webp",
+    linkedin: "https://www.linkedin.com/in/stanislaw-walga/",
+    github: "https://github.com/Aglawxd",
+  },
 ];
-
-export const teamPlaceholderCount = 2;

@@ -1,0 +1,6 @@
+interface:
+  display_name: "Caveman"
+  short_description: "Toggle concise replies ON or OFF."
+  default_prompt: "Use $caveman on or $caveman off to toggle concise replies."
+policy:
+  allow_implicit_invocation: false

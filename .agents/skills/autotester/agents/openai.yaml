@@ -1,0 +1,6 @@
+interface:
+  display_name: "Autotester"
+  short_description: "Toggle automatic affected checks."
+  default_prompt: "Use $autotester to select this session mode."
+policy:
+  allow_implicit_invocation: false

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Authkeeper"
+  short_description: "Auth, security reviews, and realistic data redaction."
+  default_prompt: "Use $authkeeper for security review or $authkeeper censor for a realistic sanitized example."

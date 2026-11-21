@@ -1,0 +1,4 @@
+interface:
+  display_name: "Infra Builder"
+  short_description: "Route infrastructure design and changes."
+  default_prompt: "Use $infra-builder to route infrastructure topology, Docker, cloud, IaC, networking, observability, or secrets/runtime work."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Databaser"
+  short_description: "Route SQL, PostgreSQL, and Prisma data work."
+  default_prompt: "Use $databaser to route this SQL, PostgreSQL, Prisma, schema, migration, or query task."

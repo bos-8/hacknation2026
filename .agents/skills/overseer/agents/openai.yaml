@@ -1,0 +1,6 @@
+interface:
+  display_name: "Overseer"
+  short_description: "Toggle independent task review."
+  default_prompt: "Use $overseer to select this session mode."
+policy:
+  allow_implicit_invocation: false

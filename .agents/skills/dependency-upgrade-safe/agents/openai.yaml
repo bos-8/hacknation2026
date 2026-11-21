@@ -1,0 +1,4 @@
+interface:
+  display_name: "Dependency Upgrade Safe"
+  short_description: "Upgrade dependencies with focused validation."
+  default_prompt: "Use $dependency-upgrade-safe to plan and validate this dependency upgrade."

@@ -1,0 +1,6 @@
+interface:
+  display_name: "Blast Radar"
+  short_description: "Track blast radius for code changes."
+  default_prompt: "Use $blast-radar to map the blast radius of this change."
+policy:
+  allow_implicit_invocation: false

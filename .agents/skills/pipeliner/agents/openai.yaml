@@ -1,0 +1,4 @@
+interface:
+  display_name: "Pipeliner"
+  short_description: "Design CI/CD pipelines and automation."
+  default_prompt: "Use $pipeliner or $ci to create, improve, or triage this CI/CD pipeline."

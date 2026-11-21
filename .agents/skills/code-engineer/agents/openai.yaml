@@ -1,0 +1,4 @@
+interface:
+  display_name: "Code Engineer"
+  short_description: "Route implementation, refactor, quality, and optimization."
+  default_prompt: "Use $code-engineer or $code to route this implementation, refactor, language, or optimization task."

@@ -1,6 +1,6 @@
 import { getTranslations } from "next-intl/server";
-import { ArrowLeft, Github, Linkedin, Person } from "react-bootstrap-icons";
-import { teamMembers, teamPlaceholderCount } from "@/config/team";
+import { ArrowLeft, Github, Linkedin } from "react-bootstrap-icons";
+import { teamMembers } from "@/config/team";
 import { Link } from "@/i18n/navigation";
 import { Badge, Heading, Text } from "@/ui/basic";
 import { TeamPortrait } from "@/ui/components/team-portrait";
@@ -27,15 +27,15 @@ export default async function TeamPage() {
         {teamMembers.map((member, index) => (
           <article key={member.id} className="group/team flex min-w-0 flex-col overflow-hidden rounded-lg border border-panel-border bg-panel text-panel-foreground">
             <div className="relative flex aspect-[5/4] items-center justify-center overflow-hidden border-b border-panel-border bg-accent/10">
-              {member.image ? <TeamPortrait image={member.image} hoverImage={member.hoverImage} name={member.name} eager={index === 0} /> : (
+              {member.image ? <TeamPortrait image={member.image} imagePosition={member.imagePosition} hoverImage={member.hoverImage} name={member.name} eager={index === 0} /> : (
                 <span role="img" aria-label={t("photoPlaceholder")} className="flex size-28 items-center justify-center rounded-full border border-accent/25 bg-panel font-mono text-4xl font-semibold text-accent">{member.initials}</span>
               )}
             </div>
             <div className="flex flex-1 flex-col p-5 sm:p-6">
               <Heading level={2} className="text-xl">{member.name}</Heading>
-              <ul className="mt-3 flex flex-wrap gap-2">
+              {member.roles.length > 0 && <ul className="mt-3 flex flex-wrap gap-2">
                 {member.roles.map(role => <li key={role}><Badge tone="accent">{t(role)}</Badge></li>)}
-              </ul>
+              </ul>}
               {member.profileKey && <>
                 <Text className="mt-4 text-sm text-muted-foreground">{t(`${member.profileKey}.bio`)}</Text>
                 <blockquote className="mt-4 border-l-2 border-accent/40 pl-3 text-sm font-medium italic">{t(`${member.profileKey}.motto`)}</blockquote>
@@ -47,22 +47,6 @@ export default async function TeamPage() {
                     <Icon aria-hidden="true" className="size-5" />
                   </a>
                 ) : null)}
-              </div>
-            </div>
-          </article>
-        ))}
-        {Array.from({ length: teamPlaceholderCount }, (_, index) => (
-          <article key={`placeholder-${index}`} aria-label={`${t("slotLabel")} ${index + 1}`} className="flex min-w-0 flex-col overflow-hidden rounded-lg border border-dashed border-panel-border bg-panel text-panel-foreground">
-            <div className="flex aspect-[5/4] items-center justify-center border-b border-dashed border-panel-border">
-              <div aria-hidden="true" className="flex size-28 items-center justify-center rounded-full border border-dashed border-panel-border text-muted-foreground"><Person className="size-12" /></div>
-            </div>
-            <div className="flex flex-1 flex-col p-5 sm:p-6">
-              <Heading level={2} className="text-xl text-muted-foreground">{t("namePlaceholder")}</Heading>
-              <Text className="mt-1 text-sm text-muted-foreground">{t("rolePlaceholder")}</Text>
-              <div className="mt-auto flex gap-2 pt-5">
-                {profiles.map(({ key, label, icon: Icon }) => (
-                  <span key={key} role="img" aria-label={t("profilePlaceholder", { provider: label })} className={`${profileStyles} opacity-40`}><Icon aria-hidden="true" className="size-5" /></span>
-                ))}
               </div>
             </div>
           </article>

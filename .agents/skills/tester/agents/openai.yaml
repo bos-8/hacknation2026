@@ -1,0 +1,4 @@
+interface:
+  display_name: "Tester"
+  short_description: "Route test authoring and runtime checks."
+  default_prompt: "Use $tester or $tests to route impact selection, runtime validation, or test authoring for this task."

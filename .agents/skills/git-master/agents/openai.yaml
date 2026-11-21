@@ -1,0 +1,4 @@
+interface:
+  display_name: "Git Master"
+  short_description: "Handle Git, GitHub and GitLab repository workflows."
+  default_prompt: "Use $git-master to review the repository changes and prepare the requested Git or hosting operation."

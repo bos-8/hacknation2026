@@ -1,0 +1,4 @@
+interface:
+  display_name: "Frameworker"
+  short_description: "Route Next.js and NestJS framework work."
+  default_prompt: "Use $frameworker to route this Next.js or NestJS framework task."

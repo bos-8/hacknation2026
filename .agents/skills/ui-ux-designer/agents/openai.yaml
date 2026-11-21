@@ -1,0 +1,4 @@
+interface:
+  display_name: "UI UX Designer"
+  short_description: "Route UI, visual, responsive, and mobile work."
+  default_prompt: "Use $ui-ux-designer or $ui-ux to route frontend UX, visual polish, accessibility/responsive, or mobile work."

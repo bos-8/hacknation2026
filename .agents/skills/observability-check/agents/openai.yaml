@@ -1,0 +1,4 @@
+interface:
+  display_name: "Observability Check"
+  short_description: "Check logs, metrics, traces, and errors."
+  default_prompt: "Use $observability-check to review runtime visibility for this change."

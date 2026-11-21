@@ -1,0 +1,4 @@
+interface:
+  display_name: "Service Integrator"
+  short_description: "Integrate services through APIs and networks."
+  default_prompt: "Use $service-integrator to design or implement this service integration."

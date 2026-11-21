@@ -1,0 +1,4 @@
+interface:
+  display_name: "Briefer"
+  short_description: "Create concise briefs and handoffs."
+  default_prompt: "Use $briefer to turn this context into a concise handoff brief."

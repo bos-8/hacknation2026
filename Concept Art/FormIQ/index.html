@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="pl" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>FormIQ</title>
+<link rel="stylesheet" href="styles.css">
+<script src="app.js" defer></script>
+</head>
+<body>
+<header class="top">
+  <div class="shell bar">
+    <a class="brand" href="#main"><img src="../source_graphics%20/Untitled.png" alt="" width="38" height="38">FormIQ</a>
+    <nav aria-label="FormIQ"><a href="#main" aria-current="page" data-text="workspace">Konwersja</a></nav>
+    <div class="controls">
+      <button class="icon" id="theme" type="button" aria-label="Zmień motyw" title="Zmień motyw">☀</button>
+      <select id="language" aria-label="Język"><option value="pl">PL</option><option value="en">EN</option></select>
+      <details class="profile">
+        <summary><span class="avatar" aria-hidden="true">G</span><span data-text="guest">Gość</span></summary>
+        <div class="popover"><strong data-text="profile">Profil użytkownika</strong><p data-text="profileInfo">Tryb gościa · podgląd interfejsu</p></div>
+      </details>
+    </div>
+  </div>
+</header>
+<main class="shell" id="main">
+  <h1 data-text="heading">Konwerter blankietów</h1>
+  <p class="muted intro" data-text="intro">Przygotuj formularz w formacie JSON dla importera COI.</p>
+  <div class="grid">
+    <section class="panel" aria-labelledby="upload-title">
+      <h2 id="upload-title" data-text="new">Nowa konwersja</h2>
+      <div id="drop" class="drop">
+        <span class="document" aria-hidden="true"></span>
+        <strong data-text="drag">Przeciągnij blankiet</strong>
+        <span class="muted" data-text="or">lub wybierz plik z urządzenia</span>
+        <button type="button" id="choose" data-text="choose">Wybierz plik</button>
+        <input type="file" id="file" hidden>
+      </div>
+      <div id="selected" class="file-row" hidden><span id="filename"></span><button id="remove" type="button">×</button></div>
+      <button type="button" class="primary" id="convert" data-text="convert" disabled>Pokaż przykładowy wynik</button>
+    </section>
+    <section class="panel" aria-labelledby="result-title">
+      <h2 id="result-title" data-text="result">Wynik konwersji</h2>
+      <p class="status" id="status" role="status" data-text="waiting">Oczekiwanie na plik</p>
+      <h3 data-text="preview">Podgląd JSON</h3>
+      <pre><code id="output">—</code></pre>
+      <button type="button" id="download" data-text="download" disabled>Pobierz przykładowy JSON</button>
+    </section>
+  </div>
+</main>
+</body>
+</html>

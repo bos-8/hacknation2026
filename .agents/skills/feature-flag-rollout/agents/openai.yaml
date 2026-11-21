@@ -1,0 +1,4 @@
+interface:
+  display_name: "Feature Flag Rollout"
+  short_description: "Plan flags, rollouts, and rollback paths."
+  default_prompt: "Use $feature-flag-rollout to put this change behind a safe rollout plan."

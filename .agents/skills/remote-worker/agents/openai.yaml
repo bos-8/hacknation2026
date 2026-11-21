@@ -1,0 +1,4 @@
+interface:
+  display_name: "Remote Worker"
+  short_description: "Execute scoped remote tasks with verification and safe journals."
+  default_prompt: "Use $remote-worker for a scoped remote task, verifying targets and asking whether to keep a sanitized activity journal."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Architect"
+  short_description: "Design systems and clarify architecture decisions."
+  default_prompt: "Use $architect planner for focused architecture questions, or $architect for system design and public contract compatibility."

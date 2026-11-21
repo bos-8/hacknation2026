@@ -1,0 +1,7 @@
+interface:
+  display_name: "Scribe"
+  short_description: "Route RepoRoute read/write work"
+  default_prompt: "Use $scribe or $document-writer to route RepoRoute documentation work to read or write mode."
+
+policy:
+  allow_implicit_invocation: true
