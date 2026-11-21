@@ -22,14 +22,17 @@ async function Content({ params, searchParams }: Props) {
   const db = getDatabase();
   const source = await db.fileVersion.findUnique({
     where: { fileUuid_version: { fileUuid: uuid, version }, file: { deletingAt: null } },
-    select: { fileName: true, createdAt: true, file: { select: { name: true } }, size: true,
+    select: { fileName: true, createdAt: true, imageOcrText: true, imageOcrModel: true, imageOcrCompletedAt: true,
+      file: { select: { name: true } }, size: true,
       analyses: { where: { actorUuid }, select: { mode: true, stage: true }, orderBy: { mode: "desc" } } },
   });
   if (!source || source.size > BigInt(MAX_FILE_UPLOAD_BYTES)) notFound();
   const name = source.fileName ?? source.file.name;
   if (!documentExtensions.some(ext => name.toLowerCase().endsWith(ext))) notFound();
   if (/\.(jpe?g|png)$/i.test(name)) return <ImageReview key={uuid + version} file={uuid}
-    version={version} name={name} uploadedAt={source.createdAt.toISOString()} />;
+    version={version} name={name} uploadedAt={source.createdAt.toISOString()}
+    initialResult={source.imageOcrCompletedAt && source.imageOcrModel && source.imageOcrText !== null
+      ? { status: "ok", text: source.imageOcrText, model: source.imageOcrModel, uploadedAt: source.createdAt.toISOString() } : null} />;
   const requested = modeSchema.safeParse(query.mode);
   const preferred = source.analyses.find(a => a.stage === "approved") ?? source.analyses.find(a => a.stage === "review") ?? source.analyses[0];
   const mode = requested.success ? requested.data : modeSchema.parse(preferred?.mode ?? "manual");

@@ -28,7 +28,7 @@ Katalog plików przechowuje dokumenty w SeaweedFS. Worker Python udostępnia dia
 
 ### OCR zdjęć przez Gemma
 
-W panelu **Administracja → Pliki → OCR** otwórz zdjęcie PNG lub JPEG i wybierz **Rozpoznaj tekst przez Gemma**. Widok pokazuje oryginał, rozpoznany tekst i datę przesłania wybranej wersji pliku, pobraną z katalogu. Data nie jest zgadywana przez model. Wynik OCR pozostaje w widoku do odświeżenia strony.
+W panelu **Administracja → Pliki → OCR** otwórz zdjęcie PNG lub JPEG i wybierz **Rozpoznaj tekst przez Gemma**. Widok pokazuje oryginał, rozpoznany tekst i datę przesłania wybranej wersji pliku, pobraną z katalogu. Data nie jest zgadywana przez model. Wynik OCR jest zapisywany dla tej wersji pliku i pozostaje dostępny po odświeżeniu. Po udanym odczycie katalog pokazuje status wykonania OCR.
 
 W prywatnym `apps/web/.env` ustaw `OCR_API_URL` na pełny adres endpointu `/v1/chat/completions` usługi obsługującej obrazy, opcjonalny `OCR_API_KEY` i `OCR_MODEL=gemma-4-31b-it` (lub identyfikator tego modelu wymagany przez dostawcę). Następnie uruchom ponownie Web. Sam wpis w konfiguracji nie pobiera ani nie uruchamia modelu. Zdjęcie trafia do wskazanej usługi dopiero po uruchomieniu OCR; limit wynosi 8 MiB i 24 megapiksele. Klucze i adres API pozostają na serwerze.
 

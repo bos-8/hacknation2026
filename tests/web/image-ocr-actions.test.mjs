@@ -10,7 +10,7 @@ const root = new URL('../../apps/web/src/', import.meta.url);
 const state = globalThis.__imageOcrTest = {};
 const mocks = {
   '@/server/auth/admin-action': 'export const withAdminSession = async action => globalThis.__imageOcrTest.allowed ? action("fixture-actor") : {status:"denied"};',
-  '@/server/database': 'export const getDatabase = () => ({ fileVersion: { findFirst: input => globalThis.__imageOcrTest.find(input) } });',
+  '@/server/database': 'export const getDatabase = () => ({ fileVersion: { findFirst: input => globalThis.__imageOcrTest.find(input), updateMany: input => globalThis.__imageOcrTest.save(input) } });',
   '@/server/files': 'export const getFileStore = () => ({ get: () => globalThis.__imageOcrTest.bytes });',
   '@/server/image-ocr': 'export {ImageOcrProviderError} from "' + new URL('server/image-ocr.ts', root).href + '"; export const getImageOcrConfig = () => ({}); export const recognizeImageText = (...args) => globalThis.__imageOcrTest.recognize(...args);',
 };
@@ -35,6 +35,8 @@ async function fixture() {
     return state.source;
   };
   state.calls = 0;
+  state.saved = null;
+  state.save = async input => { state.saved = input; return { count: 1 }; };
   state.recognize = async (bytes, type) => {
     state.calls++;
     assert.equal(type, 'image/png');
@@ -60,6 +62,18 @@ test('upload timestamp comes from the selected catalog revision, independently o
   const result = await recognizePhoto(uuid, 2);
   assert.deepEqual(result, { status: 'ok', text: 'Data na zdjęciu: 1999-01-01', model: 'gemma-4-31b-it', uploadedAt: uploadedAt.toISOString() });
   assert.equal(state.calls, 1);
+  assert.deepEqual(state.saved.where, { fileUuid: uuid, version: 2, seaweedUuid: uuid, file: { deletingAt: null } });
+  assert.equal(state.saved.data.imageOcrText, result.text);
+  assert.equal(state.saved.data.imageOcrModel, result.model);
+  assert.ok(state.saved.data.imageOcrCompletedAt instanceof Date);
+});
+
+test('OCR is not reported as complete when saving fails or the source was deleted', async () => {
+  await fixture();
+  state.save = async () => ({ count: 0 });
+  assert.deepEqual(await recognizePhoto(uuid, 2), { status: 'invalid' });
+  state.save = async () => { throw Error('database unavailable'); };
+  assert.deepEqual(await recognizePhoto(uuid, 2), { status: 'unavailable' });
 });
 
 test('missing, oversized, mismatched and corrupt files never reach the provider', async () => {

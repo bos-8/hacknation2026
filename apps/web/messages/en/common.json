@@ -9,7 +9,7 @@
       "model": "Model",
       "empty": "No text was found in the photo.",
       "waiting": "Start OCR to read text from the photo.",
-      "providerNotice": "Starting OCR sends the photo to the configured model service. The upload time comes from the system. The result remains in this view until the page is refreshed.",
+      "providerNotice": "Starting OCR sends the photo to the configured model service. The upload time comes from the system. The result is saved for this file revision.",
       "errors": {
         "notConfigured": "The OCR service is not configured. Set the Gemma model API URL on the server.",
         "unavailable": "The photo could not be read. Check the model service and try again.",

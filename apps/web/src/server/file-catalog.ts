@@ -260,7 +260,7 @@ export async function loadOcrFileList(query: FileListQuery, actorUuid: string): 
     db.fileVersion.findMany({
       where, orderBy: [{ createdAt: "desc" }, { uuid: "desc" }],
       skip: ((query.page ?? 1) - 1) * limit, take: limit,
-      select: { fileName: true, seaweedUuid: true, size: true, createdAt: true, version: true,
+      select: { fileName: true, seaweedUuid: true, size: true, createdAt: true, version: true, imageOcrCompletedAt: true,
         analyses: { where: { actorUuid }, orderBy: { queuedAt: "desc" }, select: { stage: true, ocrProgress: true, queuedAt: true, startedAt: true, sampledAt: true, estimateMs: true } },
         file: { select: { ...fileDetailsSelect, versions: { orderBy: { version: "desc" }, take: 1, select: { version: true } } } } },
     }),
@@ -270,7 +270,7 @@ export async function loadOcrFileList(query: FileListQuery, actorUuid: string): 
     rows: versions.map(row => ({
       key: row.seaweedUuid, name: row.fileName ?? row.file.name, version: row.version, size: row.size,
       modifiedAt: row.createdAt, details: fileDetails(row.file), latestVersion: row.file.versions[0].version,
-      processing: ocrProcessing(row.analyses),
+      processing: row.imageOcrCompletedAt ? { state: "ocrDone" } : ocrProcessing(row.analyses),
     })),
   };
 }

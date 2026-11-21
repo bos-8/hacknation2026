@@ -9,7 +9,7 @@
       "model": "Model",
       "empty": "Nie znaleziono tekstu na zdjęciu.",
       "waiting": "Uruchom OCR, aby odczytać tekst ze zdjęcia.",
-      "providerNotice": "Uruchomienie OCR przekazuje zdjęcie do skonfigurowanej usługi modelu. Data przesłania pochodzi z systemu. Wynik jest dostępny w tym widoku do odświeżenia strony.",
+      "providerNotice": "Uruchomienie OCR przekazuje zdjęcie do skonfigurowanej usługi modelu. Data przesłania pochodzi z systemu. Wynik zostaje zapisany dla tej wersji pliku.",
       "errors": {
         "notConfigured": "Usługa OCR nie jest skonfigurowana. Ustaw adres API modelu Gemma na serwerze.",
         "unavailable": "Nie udało się odczytać zdjęcia. Sprawdź dostępność usługi modelu i spróbuj ponownie.",

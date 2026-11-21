@@ -314,6 +314,9 @@ model File {
 /// Content revision. Each revision refers to a separate UUID object key in the document bucket.
 model FileVersion {
   analyses      DocumentAnalysis[]
+  imageOcrText String? @map("image_ocr_text") @db.Text
+  imageOcrModel String? @map("image_ocr_model")
+  imageOcrCompletedAt DateTime? @map("image_ocr_completed_at") @db.Timestamptz(3)
   fileName      String?  @map("file_name")
   uuid          String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
   fileUuid      String   @map("file_uuid") @db.Uuid

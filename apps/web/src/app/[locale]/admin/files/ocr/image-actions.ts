@@ -37,6 +37,11 @@ export async function recognizePhoto(fileUuid: string, version: number): Promise
         if (normalized.byteLength > MAX_FILE_UPLOAD_BYTES) return { status: "invalid" };
       } catch { return { status: "invalid" }; }
       const result = await recognizeImageText(normalized, "image/png", config);
+      const saved = await getDatabase().fileVersion.updateMany({
+        where: { fileUuid, version, seaweedUuid: source.seaweedUuid, file: { deletingAt: null } },
+        data: { imageOcrText: result.text, imageOcrModel: result.model, imageOcrCompletedAt: new Date() },
+      });
+      if (saved.count !== 1) return { status: "invalid" };
       return { status: "ok", ...result, uploadedAt: source.createdAt.toISOString() };
     } catch (error) {
       return { status: error instanceof ImageOcrProviderError ? error.status : "unavailable" };

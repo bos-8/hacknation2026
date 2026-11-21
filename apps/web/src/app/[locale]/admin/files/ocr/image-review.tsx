@@ -8,12 +8,12 @@ import { Button, Heading, Throbber } from "@/ui/basic";
 import { OriginalDocument } from "./original-document";
 import { recognizePhoto } from "./image-actions";
 
-export function ImageReview({ file, version, name, uploadedAt }: {
-  file: string; version: number; name: string; uploadedAt: string;
+export function ImageReview({ file, version, name, uploadedAt, initialResult }: {
+  file: string; version: number; name: string; uploadedAt: string; initialResult: ImageOcrResult | null;
 }) {
   const t = useTranslations("common.imageOcr");
   const format = useFormatter();
-  const [result, setResult] = useState<ImageOcrResult | null>(null);
+  const [result, setResult] = useState<ImageOcrResult | null>(initialResult);
   const [pending, start] = useTransition();
   const src = `${API_ROUTES.fileDownload.replace("{uuid}", file)}?version=${version}&preview=1`;
   function recognize() {

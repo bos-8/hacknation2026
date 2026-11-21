@@ -47,6 +47,7 @@ registerHooks({
 
 const { permanentlyDeleteFile, readFilePreview } = await import('../../apps/web/src/app/[locale]/admin/files/actions.ts');
 const { FilesTableBody } = await import('../../apps/web/src/app/[locale]/admin/files/files-table-body.tsx');
+const { loadOcrFileList } = await import('../../apps/web/src/server/file-catalog.ts');
 const uuid = '019a75c0-0000-7000-8000-000000000001';
 const actor = '019a75c0-0000-7000-8000-000000000002';
 const keys = ['019a75c0-0000-7000-8000-000000000003', '019a75c0-0000-7000-8000-000000000004'];
@@ -201,4 +202,22 @@ test('OCR rows show measured page progress, terminal states and restore on histo
     assert.ok(html.includes(label));
     assert.ok(!html.includes('role="progressbar"'));
   }
+});
+
+test('saved photo OCR is complete in the catalog even without a legacy document analysis', async () => {
+  const date = new Date('2026-11-21T12:00:00Z');
+  const file = { uuid, name: 'photo.png', status: 'active', deletingAt: null, createdAt: date, updatedAt: date,
+    createdByUuid: actor, updatedByUuid: actor, tags: [], versions: [{ version: 2 }] };
+  let complete = date;
+  state.database = {
+    fileVersion: { count: async () => 1, findMany: async () => [{ fileName: 'photo.png', seaweedUuid: keys[0],
+      size: BigInt(50), createdAt: date, version: 2, imageOcrCompletedAt: complete, analyses: [], file }] },
+    $transaction: async queries => Promise.all(queries),
+    system: { findUnique: async () => null },
+  };
+  const completed = await loadOcrFileList({ search: '' }, actor);
+  assert.deepEqual(completed.rows[0].processing, { state: 'ocrDone' });
+  complete = null;
+  const untouched = await loadOcrFileList({ search: '' }, actor);
+  assert.deepEqual(untouched.rows[0].processing, { state: 'ocrNone' });
 });
