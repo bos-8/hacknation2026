@@ -56,7 +56,6 @@ export default async function Home() {
       )}
 
       <nav aria-label={t("access.label")} className="mt-8 flex flex-wrap gap-x-5 gap-y-2 border-t border-border pt-5 text-sm">
-        <Anchor href="/LICENSE.md">{t("access.license")}</Anchor>
         <Anchor href="mailto:kacper.bos.it@gmail.com">{t("access.contact")}</Anchor>
       </nav>
     </div>

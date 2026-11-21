@@ -1,0 +1,48 @@
+services:
+  pyworker:
+    image: formiq-pyworker:pipeline
+    build:
+      context: ../..
+      dockerfile: apps/pyworker/Dockerfile
+      target: pipeline
+      args:
+        PYTHON_IMAGE: python:3.13.11-slim-bookworm
+    environment:
+      PYWORKER_API_TOKEN: ${PYWORKER_API_TOKEN:?Set the same token as Next.js}
+      PYWORKER_LOCAL_LLM_URL: http://qwen:8000/v1/chat/completions
+      PYWORKER_LOCAL_LLM_MODEL: ${PIPELINE_QWEN_NAME:-Qwen/Qwen3.5-27B}
+      PYWORKER_PIPELINE_TIMEOUT_SECONDS: ${PYWORKER_PIPELINE_TIMEOUT_SECONDS:-300}
+      PYWORKER_PIPELINE_PROMPT_FILE: ${PYWORKER_PIPELINE_PROMPT_FILE:-}
+    volumes:
+      - type: bind
+        source: ${PIPELINE_MODEL_DIR:-../../apps/pyworker/.models}
+        target: /models
+        bind: {create_host_path: false}
+    tmpfs: [/tmp]
+    ports: ["127.0.0.1:${PYWORKER_PORT:-8010}:8010"]
+    security_opt: [no-new-privileges:true]
+    networks: [edge, inference]
+
+  qwen:
+    image: vllm/vllm-openai:v0.32.0
+    user: "10001:10001"
+    gpus: all
+    shm_size: 1g
+    environment:
+      HF_HUB_OFFLINE: "1"
+      HOME: /tmp
+    command: ["--model", "/models/qwen", "--served-model-name", "${PIPELINE_QWEN_NAME:-Qwen/Qwen3.5-27B}", "--language-model-only", "--max-model-len", "65536"]
+    volumes:
+      - type: bind
+        source: ${PIPELINE_MODEL_DIR:-../../apps/pyworker/.models}/qwen
+        target: /models/qwen
+        read_only: true
+        bind: {create_host_path: false}
+    security_opt: [no-new-privileges:true]
+    tmpfs: [/tmp]
+    networks: [inference]
+
+networks:
+  edge:
+  inference:
+    internal: true

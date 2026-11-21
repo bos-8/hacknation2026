@@ -46,6 +46,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         redoc_url=None,
     )
     app.include_router(forms_router)
+    app.state.eden = settings.eden
+    app.state.pipeline = settings.pipeline
+    app.state.form_timings = {}
     app.state.ready = False
     app.add_middleware(TaskBoundary, settings=settings)
 

@@ -1,13 +1,17 @@
 import type { ReactNode } from "react";
 
 export type NotificationMode = "success" | "warning" | "error" | "info";
+export type NotificationProgress = {
+  percent?: number; startedAt: number; estimatedEndAt?: number; deadlineAt?: number;
+};
 export type NotificationInput = {
   id?: string; mode: NotificationMode; title?: string; message: ReactNode;
   persistent?: boolean; dismissible?: boolean; autoCloseMs?: number; brief?: boolean; pending?: boolean;
   onDismiss?: () => void | Promise<void>;
+  progress?: NotificationProgress;
 };
 export type NotificationItem = NotificationInput & { id: string; createdAt: number; remainingMs: number | null };
-export type NotificationAnnouncement = Pick<NotificationItem, "id" | "mode" | "title" | "message" | "pending"> & {
+export type NotificationAnnouncement = Pick<NotificationItem, "id" | "mode" | "title" | "message" | "pending" | "progress"> & {
   key: number;
   until: number;
   retained: boolean;
@@ -44,11 +48,13 @@ export class NotificationStore {
     if (!this.snapshot.owner) return;
     const id = input.id ?? `notification-${++this.sequence}`;
     const previous = this.snapshot.items.find(item => item.id === id);
+    const createdAt = previous?.createdAt ?? now;
     const duration = Math.min(86400000, Math.max(0, Number.isFinite(input.autoCloseMs) ? input.autoCloseMs! : 5000));
     const persistent = input.persistent ?? (input.mode === "warning" || input.mode === "error");
     const remainingMs = persistent || input.dismissible === false ? null : duration;
     const announce = (retained: boolean, durationMs: number): NotificationAnnouncement => ({
       id, mode: input.mode, title: input.title, message: input.message, pending: input.pending,
+      ...(input.progress && { progress: input.progress }),
       key: ++this.sequence, retained, until: now + durationMs,
     });
     if (input.brief && (input.pending || remainingMs !== null)) {
@@ -56,10 +62,14 @@ export class NotificationStore {
       const current = this.snapshot.announcement;
       const announcement = input.pending || (visible && duration > 0)
         ? announce(false, Math.min(duration, 5000)) : current?.id === id ? null : current;
-      this.publish({ ...this.snapshot, items: this.snapshot.items.filter(item => item.id !== id), announcement });
+      const others = this.snapshot.items.filter(item => item.id !== id);
+      const items = input.pending && input.progress
+        ? [{ ...input, id, dismissible: false, createdAt, remainingMs: null }, ...others]
+        : others;
+      this.publish({ ...this.snapshot, items, announcement });
       return id;
     }
-    const item = { ...input, id, createdAt: now, remainingMs };
+    const item = { ...input, id, createdAt, remainingMs };
     this.clocks.delete(id);
     if (remainingMs !== null) this.clocks.set(id, { deadline: now + remainingMs, pausedAt: null, pauses: new Set() });
     let pulse = this.snapshot.pulse;

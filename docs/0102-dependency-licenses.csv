@@ -1,0 +1,808 @@
+﻿Ekosystem;Składnik;Wersja;Zakres;Deklaracja;Apache-2.0 only;Źródło
+JavaScript;@alloc/quick-lru;5.3.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@aws-sdk/checksums;3.1002.5;pośrednia lub narzędzie;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;@aws-sdk/client-s3;3.1169.0;apps/web:dependencies, packages/monitoring:dependencies;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;@aws-sdk/core;3.981.0;pośrednia lub narzędzie;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;@aws-sdk/credential-provider-env;3.972.84;pośrednia lub narzędzie;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;@aws-sdk/credential-provider-http;3.972.86;pośrednia lub narzędzie;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;@aws-sdk/credential-provider-ini;3.973.30;pośrednia lub narzędzie;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;@aws-sdk/credential-provider-login;3.972.92;pośrednia lub narzędzie;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;@aws-sdk/credential-provider-node;3.972.97;pośrednia lub narzędzie;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;@aws-sdk/credential-provider-process;3.972.84;pośrednia lub narzędzie;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;@aws-sdk/credential-provider-sso;3.973.28;pośrednia lub narzędzie;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;@aws-sdk/credential-provider-web-identity;3.972.90;pośrednia lub narzędzie;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;@aws-sdk/middleware-sdk-s3;3.972.89;pośrednia lub narzędzie;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;@aws-sdk/nested-clients;3.998.3;pośrednia lub narzędzie;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;@aws-sdk/signature-v4-multi-region;3.996.52;pośrednia lub narzędzie;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;@aws-sdk/token-providers;3.1166.0;pośrednia lub narzędzie;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;@aws-sdk/types;3.975.1;pośrednia lub narzędzie;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;@aws-sdk/xml-builder;3.972.43;pośrednia lub narzędzie;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;@aws/lambda-invoke-store;0.3.0;pośrednia lub narzędzie;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;@babel/code-frame;7.29.7;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@babel/compat-data;7.29.7;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@babel/core;7.29.13;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@babel/generator;7.29.14;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@babel/helper-compilation-targets;7.29.13;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@babel/helper-globals;7.29.7;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@babel/helper-module-imports;7.29.7;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@babel/helper-module-transforms;7.29.14;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@babel/helper-string-parser;7.29.14;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@babel/helper-validator-identifier;7.29.7;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@babel/helper-validator-option;7.29.7;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@babel/helpers;7.29.14;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@babel/parser;7.29.14;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@babel/template;7.29.7;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@babel/traverse;7.29.14;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@babel/types;7.29.14;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@better-auth/core;1.7.25;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@better-auth/drizzle-adapter;1.7.25;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@better-auth/kysely-adapter;1.7.25;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@better-auth/memory-adapter;1.7.25;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@better-auth/mongo-adapter;1.7.25;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@better-auth/prisma-adapter;1.7.25;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@better-auth/telemetry;1.7.25;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@better-auth/utils;0.5.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@better-fetch/fetch;1.3.3;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@electric-sql/pglite;0.4.3;pośrednia lub narzędzie;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;@electric-sql/pglite-socket;0.1.3;pośrednia lub narzędzie;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;@electric-sql/pglite-tools;0.3.3;pośrednia lub narzędzie;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;@eloqnt/config;0.1.2;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@eloqnt/format-json;0.1.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@eloqnt/format-po;0.1.2;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@emnapi/runtime;1.11.3;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@eslint-community/eslint-utils;4.10.1;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@eslint-community/eslint-utils;4.9.1;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@eslint-community/regexpp;4.12.3;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@eslint/config-array;0.21.2;pośrednia lub narzędzie;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;@eslint/config-helpers;0.4.2;pośrednia lub narzędzie;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;@eslint/core;0.17.0;pośrednia lub narzędzie;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;@eslint/eslintrc;3.3.7;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@eslint/js;9.39.5;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@eslint/object-schema;2.1.7;pośrednia lub narzędzie;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;@eslint/plugin-kit;0.4.1;pośrednia lub narzędzie;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;@formatjs/fast-memoize;3.1.7;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@formatjs/icu-messageformat-parser;3.5.23;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@formatjs/icu-skeleton-parser;2.1.13;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@formatjs/intl-localematcher;0.8.14;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@humanfs/core;0.19.2;pośrednia lub narzędzie;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;@humanfs/node;0.16.8;pośrednia lub narzędzie;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;@humanfs/types;0.15.0;pośrednia lub narzędzie;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;@humanwhocodes/module-importer;1.0.1;pośrednia lub narzędzie;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;@humanwhocodes/retry;0.4.3;pośrednia lub narzędzie;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;@img/colour;1.1.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@img/sharp-darwin-arm64;0.35.5;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@img/sharp-darwin-x64;0.35.5;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@img/sharp-freebsd-wasm32;0.35.5;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@img/sharp-libvips-darwin-arm64;1.3.4;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@img/sharp-libvips-darwin-x64;1.3.4;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@img/sharp-libvips-linux-arm;1.3.4;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@img/sharp-libvips-linux-arm64;1.3.4;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@img/sharp-libvips-linux-ppc64;1.3.4;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@img/sharp-libvips-linux-riscv64;1.3.4;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@img/sharp-libvips-linux-s390x;1.3.4;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@img/sharp-libvips-linux-x64;1.3.4;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@img/sharp-libvips-linuxmusl-arm64;1.3.4;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@img/sharp-libvips-linuxmusl-x64;1.3.4;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@img/sharp-linux-arm;0.35.5;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@img/sharp-linux-arm64;0.35.5;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@img/sharp-linux-ppc64;0.35.5;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@img/sharp-linux-riscv64;0.35.5;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@img/sharp-linux-s390x;0.35.5;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@img/sharp-linux-x64;0.35.5;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@img/sharp-linuxmusl-arm64;0.35.5;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@img/sharp-linuxmusl-x64;0.35.5;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@img/sharp-wasm32;0.35.5;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@img/sharp-webcontainers-wasm32;0.35.5;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@img/sharp-win32-arm64;0.35.5;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@img/sharp-win32-ia32;0.35.5;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@img/sharp-win32-x64;0.35.5;pośrednia lub narzędzie;Apache-2.0 AND LGPL-3.0-or-later;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@isaacs/nonrecursive-glob-match;1.1.0;pośrednia lub narzędzie;BlueOak-1.0.0;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@jridgewell/gen-mapping;0.3.13;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@jridgewell/remapping;2.3.5;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@jridgewell/resolve-uri;3.1.3;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@jridgewell/sourcemap-codec;1.6.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@jridgewell/trace-mapping;0.3.31;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@next/env;16.4.6;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@next/eslint-plugin-next;16.4.6;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@next/swc-darwin-arm64;16.4.6;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@next/swc-darwin-x64;16.4.6;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@next/swc-linux-arm64-gnu;16.4.6;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@next/swc-linux-arm64-musl;16.4.6;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@next/swc-linux-x64-gnu;16.4.6;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@next/swc-linux-x64-musl;16.4.6;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@next/swc-win32-arm64-msvc;16.4.6;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@next/swc-win32-x64-msvc;16.4.6;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@noble/ciphers;2.4.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@noble/hashes;2.4.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@nodelib/fs.scandir;2.1.5;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@nodelib/fs.stat;2.0.5;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@nodelib/fs.walk;1.2.8;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@nolyfill/is-core-module;1.0.39;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@opentelemetry/api;1.10.0;pośrednia lub narzędzie;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;@parcel/watcher;2.6.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@parcel/watcher-android-arm64;2.6.0;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@parcel/watcher-darwin-arm64;2.6.0;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@parcel/watcher-darwin-x64;2.6.0;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@parcel/watcher-freebsd-x64;2.6.0;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@parcel/watcher-linux-arm-glibc;2.6.0;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@parcel/watcher-linux-arm-musl;2.6.0;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@parcel/watcher-linux-arm64-glibc;2.6.0;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@parcel/watcher-linux-arm64-musl;2.6.0;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@parcel/watcher-linux-x64-glibc;2.6.0;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@parcel/watcher-linux-x64-musl;2.6.0;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@parcel/watcher-win32-arm64;2.6.0;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@parcel/watcher-win32-x64;2.6.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@pnpm/exe.android-arm64;12.15.0;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@pnpm/exe.android-x64;12.15.0;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@pnpm/exe.darwin-arm64;12.15.0;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@pnpm/exe.darwin-x64;12.15.0;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@pnpm/exe.freebsd-x64;12.15.0;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@pnpm/exe.linux-arm64;12.15.0;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@pnpm/exe.linux-arm64-musl;12.15.0;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@pnpm/exe.linux-ppc64;12.15.0;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@pnpm/exe.linux-riscv64;12.15.0;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@pnpm/exe.linux-s390x;12.15.0;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@pnpm/exe.linux-x64;12.15.0;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@pnpm/exe.linux-x64-musl;12.15.0;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@pnpm/exe.win32-arm64;12.15.0;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@pnpm/exe.win32-x64;12.15.0;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@prisma/adapter-pg;7.10.1;packages/database:dependencies;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;@prisma/client;7.10.1;packages/database:dependencies;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;@prisma/client-runtime-utils;7.10.1;pośrednia lub narzędzie;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;@prisma/config;7.10.1;pośrednia lub narzędzie;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;@prisma/debug;7.10.1;pośrednia lub narzędzie;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;@prisma/debug;7.2.0;pośrednia lub narzędzie;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;@prisma/dev;0.24.17;pośrednia lub narzędzie;ISC;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@prisma/driver-adapter-utils;7.10.1;pośrednia lub narzędzie;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;@prisma/engines;7.10.1;pośrednia lub narzędzie;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;@prisma/engines-version;8.1.0-1.d1b3f377ca835d73fd50954a5e22128b9ebdd6b8;pośrednia lub narzędzie;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;@prisma/fetch-engine;7.10.1;pośrednia lub narzędzie;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;@prisma/get-platform;7.10.1;pośrednia lub narzędzie;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;@prisma/get-platform;7.2.0;pośrednia lub narzędzie;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;@prisma/query-plan-executor;7.2.0;pośrednia lub narzędzie;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;@prisma/streams-local;0.1.11;pośrednia lub narzędzie;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;@prisma/studio-core;0.33.0;pośrednia lub narzędzie;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;@radix-ui/primitive;1.1.3;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@radix-ui/react-compose-refs;1.1.2;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@radix-ui/react-primitive;2.1.3;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@radix-ui/react-slot;1.2.3;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@radix-ui/react-toggle;1.1.10;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@radix-ui/react-use-controllable-state;1.2.2;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@radix-ui/react-use-effect-event;0.0.2;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@radix-ui/react-use-layout-effect;1.1.1;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@rtsao/scc;1.1.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@schummar/icu-type-parser;1.21.5;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@smithy/core;3.40.0;pośrednia lub narzędzie;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;@smithy/credential-provider-imds;4.5.2;pośrednia lub narzędzie;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;@smithy/fetch-http-handler;5.8.1;pośrednia lub narzędzie;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;@smithy/node-http-handler;4.14.2;pośrednia lub narzędzie;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;@smithy/signature-v4;5.7.5;pośrednia lub narzędzie;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;@smithy/types;4.20.0;pośrednia lub narzędzie;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;@standard-schema/spec;1.1.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@swc/core;1.16.22;pośrednia lub narzędzie;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;@swc/core-darwin-arm64;1.16.22;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@swc/core-darwin-x64;1.16.22;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@swc/core-linux-arm-gnueabihf;1.16.22;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@swc/core-linux-arm64-gnu;1.16.22;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@swc/core-linux-arm64-musl;1.16.22;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@swc/core-linux-ppc64-gnu;1.16.22;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@swc/core-linux-s390x-gnu;1.16.22;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@swc/core-linux-x64-gnu;1.16.22;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@swc/core-linux-x64-musl;1.16.22;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@swc/core-win32-arm64-msvc;1.16.22;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@swc/core-win32-ia32-msvc;1.16.22;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@swc/core-win32-x64-msvc;1.16.22;pośrednia lub narzędzie;Apache-2.0 AND MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@swc/counter;0.1.3;pośrednia lub narzędzie;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;@swc/helpers;0.5.23;pośrednia lub narzędzie;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;@swc/types;0.1.28;pośrednia lub narzędzie;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;@tailwindcss/node;4.3.5;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@tailwindcss/oxide;4.3.5;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@tailwindcss/oxide-android-arm64;4.3.5;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@tailwindcss/oxide-darwin-arm64;4.3.5;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@tailwindcss/oxide-darwin-x64;4.3.5;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@tailwindcss/oxide-freebsd-x64;4.3.5;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@tailwindcss/oxide-linux-arm-gnueabihf;4.3.5;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@tailwindcss/oxide-linux-arm64-gnu;4.3.5;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@tailwindcss/oxide-linux-arm64-musl;4.3.5;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@tailwindcss/oxide-linux-x64-gnu;4.3.5;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@tailwindcss/oxide-linux-x64-musl;4.3.5;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@tailwindcss/oxide-wasm32-wasi;4.3.5;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@tailwindcss/oxide-win32-arm64-msvc;4.3.5;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@tailwindcss/oxide-win32-x64-msvc;4.3.5;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@tailwindcss/turbopack;4.3.5;apps/web:devDependencies;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@types/d3-array;3.0.3;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@types/d3-color;3.1.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@types/d3-delaunay;6.0.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@types/d3-format;3.0.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@types/d3-geo;3.1.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@types/d3-interpolate;3.0.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@types/d3-path;3.1.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@types/d3-scale;4.0.2;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@types/d3-shape;3.1.7;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@types/d3-time;3.0.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@types/d3-time-format;2.1.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@types/debug;4.1.13;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@types/estree;1.0.10;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@types/estree-jsx;1.0.5;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@types/geojson;7946.0.16;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@types/hast;3.0.5;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@types/json-schema;7.0.15;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@types/json5;0.0.29;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@types/lodash;4.17.27;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@types/mdast;4.0.4;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@types/ms;2.1.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@types/node;20.19.43;apps/web:devDependencies, packages/database:devDependencies, packages/monitoring:devDependencies, packages/queue:devDependencies;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@types/pg;8.23.1;packages/queue:devDependencies;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@types/react;19.3.0;apps/web:devDependencies;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@types/react-dom;19.3.0;apps/web:devDependencies;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@types/unist;2.0.11;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@types/unist;3.0.3;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@typescript-eslint/eslint-plugin;8.73.0;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@typescript-eslint/parser;8.73.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@typescript-eslint/project-service;8.73.0;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@typescript-eslint/scope-manager;8.73.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@typescript-eslint/tsconfig-utils;8.73.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@typescript-eslint/type-utils;8.73.0;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@typescript-eslint/types;8.73.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@typescript-eslint/typescript-estree;8.73.0;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@typescript-eslint/utils;8.73.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@typescript-eslint/visitor-keys;8.73.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@ungap/structured-clone;1.4.0;pośrednia lub narzędzie;ISC;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@unrs/resolver-binding-android-arm-eabi;1.13.0;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@unrs/resolver-binding-android-arm64;1.13.0;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@unrs/resolver-binding-darwin-arm64;1.13.0;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@unrs/resolver-binding-darwin-x64;1.13.0;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@unrs/resolver-binding-freebsd-x64;1.13.0;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@unrs/resolver-binding-linux-arm-gnueabihf;1.13.0;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@unrs/resolver-binding-linux-arm-musleabihf;1.13.0;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@unrs/resolver-binding-linux-arm64-gnu;1.13.0;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@unrs/resolver-binding-linux-arm64-musl;1.13.0;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@unrs/resolver-binding-linux-loong64-gnu;1.13.0;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@unrs/resolver-binding-linux-loong64-musl;1.13.0;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@unrs/resolver-binding-linux-ppc64-gnu;1.13.0;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@unrs/resolver-binding-linux-riscv64-gnu;1.13.0;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@unrs/resolver-binding-linux-riscv64-musl;1.13.0;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@unrs/resolver-binding-linux-s390x-gnu;1.13.0;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@unrs/resolver-binding-linux-x64-gnu;1.13.0;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@unrs/resolver-binding-linux-x64-musl;1.13.0;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@unrs/resolver-binding-openharmony-arm64;1.13.0;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@unrs/resolver-binding-win32-arm64-msvc;1.13.0;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@unrs/resolver-binding-win32-ia32-msvc;1.13.0;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;@unrs/resolver-binding-win32-x64-msvc;1.13.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@visx/curve;4.0.1-alpha.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@visx/event;4.0.1-alpha.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@visx/grid;4.0.1-alpha.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@visx/group;4.0.1-alpha.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@visx/point;4.0.1-alpha.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@visx/responsive;4.0.1-alpha.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@visx/scale;4.0.1-alpha.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@visx/shape;4.0.1-alpha.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;@visx/vendor;4.0.0-alpha.0;pośrednia lub narzędzie;MIT and ISC;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;acorn;8.19.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;acorn-jsx;5.3.2;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;ajv;6.15.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;ajv;8.20.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;ansi-styles;4.3.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;argparse;2.0.1;pośrednia lub narzędzie;Python-2.0;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;aria-query;5.3.2;pośrednia lub narzędzie;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;array-buffer-byte-length;1.0.2;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;array-includes;3.2.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;array.prototype.findlast;1.2.5;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;array.prototype.findlastindex;1.2.6;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;array.prototype.flat;1.3.3;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;array.prototype.flatmap;1.3.3;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;array.prototype.tosorted;1.1.4;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;arraybuffer.prototype.slice;1.0.4;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;ast-types-flow;0.0.8;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;async-function;1.0.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;available-typed-arrays;1.0.7;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;aws-ssl-profiles;1.1.2;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;axe-core;4.14.1;pośrednia lub narzędzie;MPL-2.0;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;axobject-query;4.1.0;pośrednia lub narzędzie;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;babel-plugin-react-compiler;1.0.0;apps/web:devDependencies;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;bail;2.0.2;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;balanced-match;1.0.2;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;balanced-match;4.0.4;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;baseline-browser-mapping;2.11.37;pośrednia lub narzędzie;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;better-auth;1.7.25;apps/web:dependencies;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;better-call;1.4.5;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;better-result;2.10.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;bowser;2.15.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;brace-expansion;1.1.22;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;brace-expansion;5.0.13;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;braces;3.0.3;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;browserslist;4.29.6;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;c12;3.3.4;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;call-bind;1.0.9;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;call-bind-apply-helpers;1.0.2;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;call-bound;1.0.4;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;callsites;3.1.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;caniuse-lite;1.0.30001826;pośrednia lub narzędzie;CC-BY-4.0;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;ccount;2.0.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;chalk;4.1.2;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;character-entities;2.0.2;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;character-entities-html4;2.1.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;character-entities-legacy;3.0.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;character-reference-invalid;2.0.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;chokidar;5.0.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;classnames;2.5.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;client-only;0.0.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;color-convert;2.0.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;color-name;1.1.4;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;comma-separated-tokens;2.0.3;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;concat-map;0.0.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;confbox;0.2.4;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;confbox;0.3.2;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;content-type;2.1.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;convert-source-map;2.0.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;cron-parser;5.10.6;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;cross-spawn;7.0.6;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;csstype;3.2.3;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;d3-array;3.2.1;pośrednia lub narzędzie;ISC;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;d3-array;3.2.4;pośrednia lub narzędzie;ISC;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;d3-color;3.1.0;pośrednia lub narzędzie;ISC;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;d3-delaunay;6.0.2;pośrednia lub narzędzie;ISC;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;d3-format;3.1.0;pośrednia lub narzędzie;ISC;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;d3-geo;3.1.0;pośrednia lub narzędzie;ISC;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;d3-interpolate;3.0.1;pośrednia lub narzędzie;ISC;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;d3-path;3.1.0;pośrednia lub narzędzie;ISC;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;d3-path;3.1.1;pośrednia lub narzędzie;ISC;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;d3-scale;4.0.2;pośrednia lub narzędzie;ISC;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;d3-shape;3.2.0;pośrednia lub narzędzie;ISC;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;d3-time;3.1.0;pośrednia lub narzędzie;ISC;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;d3-time-format;4.1.0;pośrednia lub narzędzie;ISC;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;damerau-levenshtein;1.0.8;pośrednia lub narzędzie;BSD-2-Clause;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;data-view-buffer;1.0.2;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;data-view-byte-length;1.0.2;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;data-view-byte-offset;1.0.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;debug;3.2.7;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;debug;4.4.3;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;decode-named-character-reference;1.3.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;deep-is;0.1.4;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;deepmerge-ts;8.0.2;pośrednia lub narzędzie;BSD-3-Clause;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;define-data-property;1.1.4;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;define-properties;1.2.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;defu;6.1.7;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;delaunator;5.1.0;pośrednia lub narzędzie;ISC;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;dequal;2.0.3;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;destr;2.0.5;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;detect-libc;2.1.2;pośrednia lub narzędzie;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;devlop;1.1.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;doctrine;2.1.0;pośrednia lub narzędzie;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;dotenv;17.4.2;pośrednia lub narzędzie;BSD-2-Clause;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;dunder-proto;1.0.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;effect;3.20.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;electron-to-chromium;1.5.486;pośrednia lub narzędzie;ISC;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;elkjs;0.11.1;pośrednia lub narzędzie;EPL-2.0;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;emoji-regex;9.2.2;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;empathic;2.0.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;enhanced-resolve;5.27.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;env-paths;3.0.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;es-abstract;1.24.2;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;es-abstract-get;1.0.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;es-define-property;1.0.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;es-errors;1.3.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;es-iterator-helpers;1.4.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;es-object-atoms;1.1.2;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;es-set-tostringtag;2.1.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;es-shim-unscopables;1.1.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;es-to-primitive;1.3.4;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;escalade;3.2.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;escape-string-regexp;4.0.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;escape-string-regexp;5.0.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;eslint;9.39.5;apps/web:devDependencies;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;eslint-config-next;16.4.6;apps/web:devDependencies;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;eslint-import-resolver-node;0.3.10;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;eslint-import-resolver-typescript;3.10.1;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;eslint-module-utils;2.14.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;eslint-plugin-import;2.32.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;eslint-plugin-jsx-a11y;6.10.2;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;eslint-plugin-react;7.37.5;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;eslint-plugin-react-hooks;7.1.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;eslint-scope;8.4.0;pośrednia lub narzędzie;BSD-2-Clause;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;eslint-visitor-keys;3.4.3;pośrednia lub narzędzie;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;eslint-visitor-keys;4.2.1;pośrednia lub narzędzie;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;eslint-visitor-keys;5.0.1;pośrednia lub narzędzie;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;espree;10.4.0;pośrednia lub narzędzie;BSD-2-Clause;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;esquery;1.7.0;pośrednia lub narzędzie;BSD-3-Clause;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;esrecurse;4.3.0;pośrednia lub narzędzie;BSD-2-Clause;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;estraverse;5.3.0;pośrednia lub narzędzie;BSD-2-Clause;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;estree-util-is-identifier-name;3.0.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;esutils;2.0.3;pośrednia lub narzędzie;BSD-2-Clause;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;exsolve;1.2.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;extend;3.0.2;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;fast-check;3.23.2;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;fast-decode-uri-component;1.0.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;fast-deep-equal;3.1.3;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;fast-glob;3.3.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;fast-json-stable-stringify;2.1.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;fast-levenshtein;2.0.6;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;fast-querystring;1.1.2;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;fast-uri;3.1.9;pośrednia lub narzędzie;BSD-3-Clause;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;fastq;1.20.3;pośrednia lub narzędzie;ISC;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;fdir;6.5.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;file-entry-cache;8.0.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;fill-range;7.1.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;find-my-way;9.7.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;find-up;5.0.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;flat-cache;4.0.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;flatted;3.4.4;pośrednia lub narzędzie;ISC;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;for-each;0.3.5;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;foreground-child;3.3.1;pośrednia lub narzędzie;ISC;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;function-bind;1.1.2;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;function.prototype.name;1.2.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;functions-have-names;1.2.3;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;generate-function;2.3.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;generator-function;2.0.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;gensync;1.0.0-beta.2;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;get-intrinsic;1.3.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;get-port-please;3.2.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;get-proto;1.0.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;get-symbol-description;1.1.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;get-tsconfig;4.14.3;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;giget;3.3.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;glob-parent;5.1.2;pośrednia lub narzędzie;ISC;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;glob-parent;6.0.2;pośrednia lub narzędzie;ISC;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;globals;14.0.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;globals;16.4.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;globalthis;1.0.4;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;gopd;1.2.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;graceful-fs;4.2.12;pośrednia lub narzędzie;BlueOak-1.0.0;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;grammex;3.1.13;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;graphmatch;1.1.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;has-bigints;1.1.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;has-flag;4.0.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;has-property-descriptors;1.0.2;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;has-proto;1.2.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;has-symbols;1.1.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;has-tostringtag;1.0.2;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;hasown;2.0.4;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;hast-util-to-jsx-runtime;2.3.7;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;hast-util-whitespace;3.0.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;hermes-estree;0.25.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;hermes-parser;0.25.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;html-url-attributes;3.0.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;iconv-lite;0.7.3;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;icu-minify;4.15.2;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;ignore;5.3.2;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;ignore;7.0.14;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;import-fresh;3.3.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;imurmurhash;0.1.4;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;inline-style-parser;0.2.9;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;internal-slot;1.1.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;internmap;2.0.3;pośrednia lub narzędzie;ISC;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;intl-messageformat;12.1.5;pośrednia lub narzędzie;BSD-3-Clause;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;is-alphabetical;2.0.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;is-alphanumerical;2.0.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;is-array-buffer;3.0.5;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;is-async-function;2.1.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;is-bigint;1.1.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;is-boolean-object;1.2.2;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;is-bun-module;2.0.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;is-callable;1.2.7;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;is-core-module;2.18.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;is-data-view;1.0.2;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;is-date-object;1.1.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;is-decimal;2.0.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;is-document.all;1.0.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;is-extglob;2.1.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;is-finalizationregistry;1.1.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;is-generator-function;1.1.2;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;is-glob;4.0.3;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;is-hexadecimal;2.0.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;is-map;2.0.3;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;is-negative-zero;2.0.3;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;is-number;7.0.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;is-number-object;1.1.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;is-plain-obj;4.1.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;is-property;1.0.2;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;is-regex;1.2.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;is-set;2.0.3;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;is-shared-array-buffer;1.0.4;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;is-string;1.1.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;is-symbol;1.1.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;is-typed-array;1.1.15;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;is-weakmap;2.0.2;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;is-weakref;1.1.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;is-weakset;2.0.4;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;isarray;2.0.5;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;isexe;2.0.0;pośrednia lub narzędzie;ISC;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;iterator.prototype;1.1.5;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;jiti;2.7.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;jose;6.2.17;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;js-tokens;4.0.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;js-yaml;4.3.2;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;jsesc;3.1.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;json-buffer;3.0.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;json-schema-traverse;0.4.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;json-schema-traverse;1.0.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;json-stable-stringify-without-jsonify;1.0.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;json5;1.0.2;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;json5;2.2.3;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;jsx-ast-utils;3.3.5;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;keyv;4.5.4;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;kysely;0.29.9;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;language-subtag-registry;0.3.23;pośrednia lub narzędzie;CC0-1.0;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;language-tags;1.0.9;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;levn;0.4.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;lightningcss;1.33.0;pośrednia lub narzędzie;MPL-2.0;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;lightningcss-android-arm64;1.33.0;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;lightningcss-darwin-arm64;1.33.0;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;lightningcss-darwin-x64;1.33.0;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;lightningcss-freebsd-x64;1.33.0;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;lightningcss-linux-arm-gnueabihf;1.33.0;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;lightningcss-linux-arm64-gnu;1.33.0;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;lightningcss-linux-arm64-musl;1.33.0;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;lightningcss-linux-x64-gnu;1.33.0;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;lightningcss-linux-x64-musl;1.33.0;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;lightningcss-win32-arm64-msvc;1.33.0;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;lightningcss-win32-x64-msvc;1.33.0;pośrednia lub narzędzie;MPL-2.0;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;locate-path;6.0.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;lodash;4.18.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;lodash.merge;4.6.2;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;long;5.3.2;pośrednia lub narzędzie;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;longest-streak;3.1.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;loose-envify;1.4.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;lru-cache;5.1.1;pośrednia lub narzędzie;ISC;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;lru.min;1.1.5;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;luxon;3.7.2;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;magic-string;1.4.5;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;markdown-table;3.1.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;math-intrinsics;1.1.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;mdast-util-find-and-replace;3.0.4;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;mdast-util-from-markdown;2.1.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;mdast-util-gfm;3.1.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;mdast-util-gfm-autolink-literal;2.1.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;mdast-util-gfm-footnote;2.1.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;mdast-util-gfm-strikethrough;2.0.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;mdast-util-gfm-table;2.0.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;mdast-util-gfm-task-list-item;2.0.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;mdast-util-mdx-expression;2.0.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;mdast-util-mdx-jsx;3.2.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;mdast-util-mdxjs-esm;2.0.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;mdast-util-phrasing;4.1.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;mdast-util-to-hast;13.2.2;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;mdast-util-to-markdown;2.2.3;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;mdast-util-to-string;4.0.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;merge2;1.4.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;micromark;4.0.3;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;micromark-core-commonmark;2.0.4;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;micromark-extension-gfm;3.0.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;micromark-extension-gfm-autolink-literal;2.1.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;micromark-extension-gfm-footnote;2.1.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;micromark-extension-gfm-strikethrough;2.1.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;micromark-extension-gfm-table;2.1.2;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;micromark-extension-gfm-tagfilter;2.0.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;micromark-extension-gfm-task-list-item;2.1.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;micromark-factory-destination;2.0.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;micromark-factory-label;2.0.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;micromark-factory-space;2.1.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;micromark-factory-title;2.0.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;micromark-factory-whitespace;2.0.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;micromark-util-character;2.1.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;micromark-util-chunked;2.0.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;micromark-util-classify-character;2.0.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;micromark-util-combine-extensions;2.0.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;micromark-util-decode-numeric-character-reference;2.0.2;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;micromark-util-decode-string;2.0.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;micromark-util-edit-map;1.0.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;micromark-util-encode;2.0.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;micromark-util-html-tag-name;2.0.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;micromark-util-normalize-identifier;2.0.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;micromark-util-resolve-all;2.0.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;micromark-util-sanitize-uri;2.0.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;micromark-util-subtokenize;2.1.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;micromark-util-symbol;2.0.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;micromark-util-types;2.0.3;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;micromatch;4.0.8;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;minimatch;11.0.8;pośrednia lub narzędzie;BlueOak-1.0.0;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;minimatch;3.1.5;pośrednia lub narzędzie;ISC;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;minimist;1.2.8;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;ms;2.1.3;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;mysql2;3.24.4;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;named-placeholders;1.1.6;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;nanoid;3.3.20;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;nanostores;1.5.5;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;napi-postinstall;0.3.8;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;natural-compare;1.4.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;negotiator;1.1.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;next;16.4.6;apps/web:dependencies;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;next-intl;4.15.1;apps/web:dependencies;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;next-intl-swc-plugin-extractor;4.15.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;node-addon-api;7.1.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;node-exports-info;1.6.2;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;node-releases;2.0.64;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;non-error;0.1.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;object-assign;4.1.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;object-inspect;1.13.4;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;object-keys;1.1.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;object.assign;4.1.7;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;object.entries;1.1.9;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;object.fromentries;2.0.8;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;object.groupby;1.0.3;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;object.values;1.2.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;ohash;2.0.12;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;optionator;0.9.4;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;own-keys;1.0.2;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;p-limit;3.1.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;p-locate;5.0.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;parent-module;1.0.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;parse-entities;4.0.2;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;path-exists;4.0.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;path-key;3.1.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;path-parse;1.0.7;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;pathe;2.0.3;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;perfect-debounce;2.1.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;pg;8.23.1;packages/queue:dependencies;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;pg-boss;12.38.2;packages/queue:dependencies;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;pg-cloudflare;1.4.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;pg-connection-string;2.14.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;pg-int8;1.0.1;pośrednia lub narzędzie;ISC;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;pg-pool;3.14.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;pg-protocol;1.16.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;pg-types;2.2.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;pgpass;1.0.5;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;picocolors;1.1.1;pośrednia lub narzędzie;ISC;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;picomatch;2.3.2;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;picomatch;4.0.7;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;pkg-types;2.4.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;pnpm;12.15.0;pośrednia lub narzędzie;Brak zweryfikowanej deklaracji;sprawdzić;pnpm-lock.yaml + brak pakietu dla lokalnej platformy
+JavaScript;po-parser;2.2.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;possible-typed-array-names;1.1.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;postcss;8.5.23;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;postgres;3.4.7;pośrednia lub narzędzie;Unlicense;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;postgres-array;2.0.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;postgres-array;3.0.4;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;postgres-bytea;1.0.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;postgres-date;1.0.7;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;postgres-interval;1.2.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;prelude-ls;1.2.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;prisma;7.10.1;packages/database:devDependencies;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;prop-types;15.8.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;proper-lockfile;4.1.2;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;property-information;7.2.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;punycode;2.3.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;pure-rand;6.1.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;queue-microtask;1.2.3;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;rc9;3.1.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;react;19.3.1;apps/web:dependencies;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;react-bootstrap-icons;1.11.6;apps/web:dependencies;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;react-dom;19.3.1;apps/web:dependencies;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;react-is;16.13.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;react-markdown;10.1.0;apps/web:dependencies;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;readdirp;5.1.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;reflect.getprototypeof;1.0.10;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;regexp.prototype.flags;1.5.4;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;remark-gfm;4.0.1;apps/web:dependencies;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;remark-parse;11.0.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;remark-rehype;11.1.2;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;remark-stringify;11.0.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;remeda;2.33.4;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;require-from-string;2.0.2;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;resolve;2.0.0-next.7;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;resolve-from;4.0.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;resolve-pkg-maps;1.0.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;ret;0.5.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;retry;0.12.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;reusify;1.1.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;robust-predicates;3.0.3;pośrednia lub narzędzie;Unlicense;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;rou3;0.9.2;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;rrule-temporal;2.2.9;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;run-parallel;1.2.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;safe-array-concat;1.1.4;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;safe-push-apply;1.0.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;safe-regex-test;1.1.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;safe-regex2;5.1.2;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;safer-buffer;2.1.2;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;scheduler;0.28.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;semver;6.3.2;pośrednia lub narzędzie;ISC;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;semver;7.8.6;pośrednia lub narzędzie;ISC;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;serialize-error;13.1.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;server-only;0.0.1;apps/web:dependencies;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;set-cookie-parser;3.2.3;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;set-function-length;1.2.2;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;set-function-name;2.0.2;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;set-proto;1.0.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;sharp;0.35.5;apps/web:dependencies;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;shebang-command;2.0.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;shebang-regex;3.0.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;side-channel;1.1.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;side-channel-list;1.0.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;side-channel-map;1.0.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;side-channel-weakmap;1.0.2;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;signal-exit;3.0.7;pośrednia lub narzędzie;ISC;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;signal-exit;4.1.0;pośrednia lub narzędzie;ISC;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;source-map-js;1.2.2;pośrednia lub narzędzie;BSD-3-Clause;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;space-separated-tokens;2.0.2;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;split2;4.2.0;pośrednia lub narzędzie;ISC;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;sql-escaper;1.7.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;stable-hash;0.0.5;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;std-env;3.10.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;stop-iteration-iterator;1.1.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;string.prototype.includes;2.0.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;string.prototype.matchall;4.1.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;string.prototype.repeat;1.0.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;string.prototype.trim;1.2.11;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;string.prototype.trimend;1.0.10;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;string.prototype.trimstart;1.0.8;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;stringify-entities;4.0.4;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;strip-bom;3.0.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;strip-json-comments;3.1.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;style-to-object;2.0.2;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;styled-jsx;5.1.6;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;supports-color;7.2.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;supports-preserve-symlinks-flag;1.0.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;tagged-tag;1.0.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;tailwind-merge;3.7.0;apps/web:dependencies;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;tailwindcss;4.3.5;apps/web:devDependencies;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;tapable;2.3.4;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;temporal-spec;1.0.1;pośrednia lub narzędzie;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;tinyglobby;0.2.17;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;to-regex-range;5.0.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;trim-lines;3.0.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;trough;2.2.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;ts-api-utils;2.5.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;tsconfig-paths;3.15.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;tslib;2.9.1;pośrednia lub narzędzie;0BSD;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;type-check;0.4.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;type-fest;5.10.0;pośrednia lub narzędzie;(MIT OR CC0-1.0);inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;typed-array-buffer;1.0.3;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;typed-array-byte-length;1.0.3;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;typed-array-byte-offset;1.0.5;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;typed-array-length;1.0.8;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;typescript;5.9.3;apps/web:devDependencies, packages/database:devDependencies, packages/monitoring:devDependencies, packages/queue:devDependencies;Apache-2.0;Apache-2.0;pnpm-lock.yaml + lokalny package.json
+JavaScript;typescript-eslint;8.73.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;unbox-primitive;1.1.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;undici;8.12.4;.:dependencies;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;undici-types;6.21.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;unified;11.0.5;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;unist-util-is;6.0.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;unist-util-position;5.0.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;unist-util-stringify-position;4.0.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;unist-util-visit;5.2.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;unist-util-visit-parents;6.1.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;unrs-resolver;1.13.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;update-browserslist-db;1.4.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;uri-js;4.4.1;pośrednia lub narzędzie;BSD-2-Clause;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;use-intl;4.15.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;valibot;1.4.2;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;vfile;6.0.3;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;vfile-message;4.0.4;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;which;2.0.2;pośrednia lub narzędzie;ISC;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;which-boxed-primitive;1.1.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;which-builtin-type;1.2.1;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;which-collection;1.0.2;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;which-typed-array;1.1.24;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;word-wrap;1.2.5;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;xtend;4.0.2;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;yallist;3.1.1;pośrednia lub narzędzie;ISC;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;yocto-queue;0.1.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;zeptomatch;2.1.0;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;zod;4.6.7;apps/web:dependencies;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;zod-validation-error;4.0.2;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+JavaScript;zwitch;2.0.4;pośrednia lub narzędzie;MIT;inna deklaracja;pnpm-lock.yaml + lokalny package.json
+Python;annotated-doc;0.0.6;pośrednia;MIT;inna deklaracja;lokalne METADATA
+Python;annotated-types;0.8.0;pośrednia;MIT;inna deklaracja;lokalne METADATA
+Python;anyio;4.16.0;pośrednia;MIT;inna deklaracja;lokalne METADATA
+Python;click;8.5.1;pośrednia;BSD-3-Clause;inna deklaracja;lokalne METADATA
+Python;fastapi;0.163.1;bezpośrednia;MIT;inna deklaracja;lokalne METADATA
+Python;h11;0.16.0;pośrednia;MIT;inna deklaracja;lokalne METADATA
+Python;httpcore2;2.16.2;pośrednia;BSD-3-Clause;inna deklaracja;lokalne METADATA
+Python;httpx2;2.16.2;bezpośrednia;BSD-3-Clause;inna deklaracja;lokalne METADATA
+Python;idna;3.20;pośrednia;BSD-3-Clause;inna deklaracja;lokalne METADATA
+Python;opentelemetry-api;1.45.2;pośrednia;Apache-2.0;Apache-2.0;lokalne METADATA
+Python;psycopg;3.3.9;bezpośrednia;LGPL-3.0-only;inna deklaracja;lokalne METADATA
+Python;psycopg-binary;3.3.9;bezpośrednia;LGPL-3.0-only;inna deklaracja;lokalne METADATA
+Python;psycopg-pool;3.3.3;bezpośrednia;LGPL-3.0-only;inna deklaracja;lokalne METADATA
+Python;pydantic;2.14.3;pośrednia;MIT;inna deklaracja;lokalne METADATA
+Python;pydantic-core;2.50.4;pośrednia;MIT;inna deklaracja;lokalne METADATA
+Python;python-multipart;0.0.34;bezpośrednia;Apache-2.0;Apache-2.0;lokalne METADATA
+Python;ruff;0.17.5;bezpośrednia;MIT;inna deklaracja;lokalne METADATA
+Python;starlette;1.10.0;pośrednia;BSD-3-Clause;inna deklaracja;lokalne METADATA
+Python;torch;2.15.0;opcjonalna PII;Brak zweryfikowanej deklaracji;sprawdzić;"manifest lub lock; brak lokalnego METADATA dla tej wersji"
+Python;transformers;5.23.0;opcjonalna PII;Brak zweryfikowanej deklaracji;sprawdzić;"manifest lub lock; brak lokalnego METADATA dla tej wersji"
+Python;truststore;0.10.5;pośrednia;MIT;inna deklaracja;lokalne METADATA
+Python;typing-extensions;4.16.0;pośrednia;PSF-2.0;inna deklaracja;lokalne METADATA
+Python;typing-inspection;0.4.5;pośrednia;MIT;inna deklaracja;lokalne METADATA
+Python;tzdata;2026.6;pośrednia;Apache-2.0;Apache-2.0;lokalne METADATA
+Python;uvicorn;0.54.0;bezpośrednia;BSD-3-Clause;inna deklaracja;lokalne METADATA

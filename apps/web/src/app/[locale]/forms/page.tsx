@@ -3,10 +3,11 @@
 import { useRef, useState, useTransition, type FormEvent } from "react";
 import { useFormatter, useLocale, useTranslations } from "next-intl";
 import { Link, useRouter } from "@/i18n/navigation";
-import { Button, Heading, Table, TableCell, TableHead, TableHeader, TableRow, Throbber } from "@/ui/basic";
+import { Button, Heading, Table, TableCell, TableHead, TableHeader, TableRow, Throbber, Tooltip } from "@/ui/basic";
 import { useSearchParams } from "next/navigation";
 import { ArrowClockwise, CheckCircleFill, DashCircle, Grid, Plus } from "react-bootstrap-icons";
 import { formFormats, formExtensions } from "@/schemas/form-formats";
+import { MAX_FORM_BYTES, hasFormResult, isProcessedForm } from "@/schemas/form-upload";
 import { FILE_PAGE_SIZE, FILE_PAGE_SIZES } from "@/schemas/file-list";
 import type { AppLocale } from "@/schemas/i18n";
 import { TableFilters, TableToolbarPanel } from "@/ui/components/table-filters";
@@ -16,6 +17,7 @@ import { TablePaginator } from "@/ui/components/table-paginator";
 import { TableQuery } from "@/ui/components/table-query";
 import { FormActions, FormInfo, ConfirmRemove, ProcessedStatus } from "./form-actions";
 import { InlineUploadPanel, UploadFields } from "@/ui/components/file-upload-panel";
+import { useNotifications } from "@/ui/components/notification-provider";
 import { TableLoadingBody } from "@/ui/components/table-loading-body";
 import { useForms } from "./workspace";
 
@@ -25,7 +27,8 @@ export default function FormsPage() {
   const [refreshing, startRefresh] = useTransition();
   const format = useFormatter();
   const router = useRouter();
-  const { entries, add, remove } = useForms();
+  const { pushNotification } = useNotifications();
+  const { entries } = useForms();
   const [file, setFile] = useState<File | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -45,7 +48,7 @@ export default function FormsPage() {
   const status = statusOptions.find(option => option.value === params.get("processed"))?.value ?? "all";
   const statusQuery: Record<string, string> = status === "all" ? {} : { processed: status };
   const filtered = entries.filter(entry => (!mime || entry.result.media_type === mime)
-    && (status === "all" || (entry.coiJson != null) === (status === "yes"))
+    && (status === "all" || isProcessedForm(entry.processingJson) === (status === "yes"))
     && entry.file.name.toLocaleLowerCase(locale).includes(search.toLocaleLowerCase(locale)));
   const requested = Number(params.get("page"));
   const page = Math.max(1, Math.min(Number.isSafeInteger(requested) ? requested : 1, Math.ceil(filtered.length / limit)));
@@ -67,26 +70,39 @@ export default function FormsPage() {
     event.preventDefault();
     const form = event.currentTarget;
     if (!file || busy) return;
-    if (file.size > 20 * 1024 * 1024) { setError(t("large")); return; }
+    if (file.size > MAX_FORM_BYTES) {
+      setError(t("large"));
+      pushNotification({ mode: "error", message: t("large"), brief: true });
+      return;
+    }
     setBusy(true);
     setError("");
+    const id = pushNotification({ mode: "info", message: t("working"), brief: true, pending: true });
     try {
-      const body = new FormData();
-      body.set("file", file);
-      const response = await fetch("/api/v1/forms/validate", { method: "POST", body });
+      const response = await fetch("/api/v1/forms", { method: "POST", body: file, headers: {
+        "Content-Type": "application/octet-stream", "X-File-Name": encodeURIComponent(file.name),
+        "X-File-Modified": String(file.lastModified),
+      } });
       if (!response.ok) {
         const errors: Record<number, string> = { 401: "denied", 403: "denied", 413: "large", 415: "invalid", 422: "invalid", 429: "busy" };
-        setError(t(errors[response.status] || "failed"));
+        const failure = response.status === 415 ? await response.json().catch(() => null) : null;
+        const message = t(failure?.error === "format_mismatch" ? "formatMismatch" : errors[response.status] || "failed");
+        setError(message);
+        pushNotification({ id, mode: "error", message, brief: true });
         return;
       }
-      const result = await response.json();
-      const id = crypto.randomUUID();
-      add({ id, file, result });
+      pushNotification({ id, mode: "success", message: t("uploadSucceeded"), brief: true });
       form.reset();
       setFile(null);
       setUploadOpen(false);
-      router.push(`/forms/${id}`);
-    } catch { setError(t("failed")); }
+      window.history.replaceState(null, "", action);
+      startRefresh(() => router.refresh());
+      uploadButton.current?.focus();
+    } catch {
+      const message = t("failed");
+      setError(message);
+      pushNotification({ id, mode: "error", message, brief: true });
+    }
     finally { setBusy(false); }
   }
 
@@ -101,7 +117,7 @@ export default function FormsPage() {
           <fieldset aria-label={t("processedFilter")} className="relative grid grid-cols-3 rounded-md border border-panel-border bg-muted p-0.5">
             <span aria-hidden="true" className="pointer-events-none absolute inset-y-0.5 start-0.5 w-[calc((100%-0.25rem)/3)] rounded bg-accent shadow-sm motion-safe:transition-transform"
               style={{ transform: `translateX(${statusOptions.findIndex(option => option.value === status) * 100}%)` }} />
-            {statusOptions.map(({ value, icon: Icon }) => <label key={value} title={t(`filter_${value}`)}
+            {statusOptions.map(({ value, icon: Icon }) => <Tooltip key={value} content={t(`filter_${value}`)} placement="bottom"><label
               className="relative flex h-6 w-7 cursor-pointer items-center justify-center rounded has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring">
               <input type="radio" name="forms-processed" className="sr-only" aria-label={t(`filter_${value}`)}
                 checked={value === status} onChange={() => {
@@ -111,7 +127,7 @@ export default function FormsPage() {
                   window.history.pushState(null, "", url);
                 }} />
               <Icon aria-hidden="true" className={value === status ? "size-3.5 text-accent-foreground" : "size-3.5 text-muted-foreground"} />
-            </label>)}
+            </label></Tooltip>)}
           </fieldset>
           <Button ref={uploadButton} size="sm" tone={uploadOpen ? "primary" : "main-outline"}
           style={uploadOpen ? { backgroundColor: "hsl(var(--primary))", color: "hsl(var(--primary-foreground))" } : undefined}
@@ -134,7 +150,7 @@ export default function FormsPage() {
                 const selected = files[0];
                 const problem = files.length !== 1 ? filesText("oneFileOnly")
                   : !selected.size || !formExtensions.some(ext => selected.name.toLowerCase().endsWith(ext)) ? t("invalid")
-                  : selected.size > 20 * 1024 * 1024 ? t("large") : "";
+                  : selected.size > MAX_FORM_BYTES ? t("large") : "";
                 setError(problem);
                 setFile(problem ? null : selected);
               }} />
@@ -142,20 +158,27 @@ export default function FormsPage() {
         </TableToolbarPanel>} />
     <TableDataRegion label={t("title")}>
       <Table aria-label={t("title")} className="[&_th]:py-1 [&_td:not([colspan])]:py-1"><TableHead><TableRow>
-        <TableHeader>{t("name")}</TableHeader><TableHeader>{t("size")}</TableHeader><TableHeader>{t("processed")}</TableHeader><TableHeader actionColumn>{t("actions")}</TableHeader>
-      </TableRow></TableHead>{refreshing ? <TableLoadingBody colSpan={4} label={filesText("loadingData")} /> : <tbody>{rows.length ? rows.map(entry => <TableRow key={entry.id}>
-        <TableCell><Link className="text-accent underline" href={`/forms/${entry.id}`}>{entry.file.name}</Link></TableCell>
+        <TableHeader>{t("name")}</TableHeader><TableHeader>{t("size")}</TableHeader><TableHeader>{t("processed")}</TableHeader><TableHeader>{t("paid")}</TableHeader><TableHeader actionColumn>{t("actions")}</TableHeader>
+      </TableRow></TableHead>{refreshing ? <TableLoadingBody colSpan={5} label={filesText("loadingData")} /> : <tbody>{rows.length ? rows.map(entry => <TableRow key={entry.id}>
+        <TableCell>{hasFormResult(entry.processingJson) ? <Link className="text-accent underline" href={`/forms/${entry.id}`}>{entry.file.name}</Link> : entry.file.name}</TableCell>
         <TableCell>{format.number(entry.result.size_bytes, {style:"unit", unit:"byte"})}</TableCell>
         <TableCell><ProcessedStatus entry={entry} /></TableCell>
-        <TableCell actionColumn><FormActions entry={entry} info={() => setPanel({ id: entry.id, kind: "info" })}
+        <TableCell><span className={entry.paid ? "text-success" : "text-muted-foreground"}>{t(entry.paid ? "yes" : "no")}</span></TableCell>
+        <TableCell actionColumn><FormActions entry={entry} active={panel?.kind === "info" && panel.id === entry.id}
+          info={() => setPanel(current => current?.kind === "info" && current.id === entry.id ? null : { id: entry.id, kind: "info" })}
           discard={() => setPanel({ id: entry.id, kind: "delete" })} /></TableCell>
-      </TableRow>) : <TableRow><TableCell colSpan={4}>{t(entries.length ? "noMatches" : "empty")}</TableCell></TableRow>}</tbody>}</Table>
+      </TableRow>) : <TableRow><TableCell colSpan={5}>{t(entries.length ? "noMatches" : "empty")}</TableCell></TableRow>}</tbody>}</Table>
     </TableDataRegion>
     <TablePaginator locale={locale} namespace={namespace} pathname="/forms"
       params={{ ...preserved, ...filters }} page={page} limit={limit} total={filtered.length} rowCount={rows.length} sizes={FILE_PAGE_SIZES} />
     </TableQuery>
     {selected && panel?.kind === "info" && <FormInfo entry={selected} close={() => setPanel(null)} />}
     {selected && panel?.kind === "delete" && <ConfirmRemove entry={selected} close={() => setPanel(null)}
-      confirm={() => { remove(selected); setPanel(null); }} />}
+      confirm={async () => {
+        const response = await fetch(selected.previewUrl, { method: "DELETE" });
+        if (!response.ok) throw new Error("delete failed");
+        setPanel(null);
+        router.refresh();
+      }} />}
   </main>;
 }

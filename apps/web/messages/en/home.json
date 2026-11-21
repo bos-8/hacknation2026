@@ -22,7 +22,6 @@
     },
     "access": {
       "label": "Project information",
-      "license": "License",
       "contact": "Contact"
     }
   }

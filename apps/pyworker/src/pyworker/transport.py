@@ -7,7 +7,7 @@ from starlette.responses import JSONResponse
 from starlette.types import ASGIApp, Receive, Scope, Send
 
 from pyworker.config import Settings
-from pyworker.forms import UPLOAD_PATH
+from pyworker.forms import PROCESS_PATH, UPLOAD_PATH
 
 MAX_BODY_BYTES = 8192
 
@@ -18,11 +18,16 @@ class TaskBoundary:
         self.settings = settings
 
     async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
-        if (
-            scope["type"] != "http"
-            or scope["method"] != "POST"
-            or scope["path"] not in ("/v1/tasks/check", UPLOAD_PATH)
-        ):
+        if scope["type"] != "http":
+            await self.app(scope, receive, send)
+            return
+        progress = scope["method"] == "GET" and scope["path"] == PROCESS_PATH
+        task = scope["method"] == "POST" and scope["path"] in (
+            "/v1/tasks/check",
+            UPLOAD_PATH,
+            PROCESS_PATH,
+        )
+        if not (progress or task):
             await self.app(scope, receive, send)
             return
         headers = dict(scope["headers"])
@@ -30,7 +35,10 @@ class TaskBoundary:
         if not hmac.compare_digest(headers.get(b"authorization", b""), expected):
             await JSONResponse({"error": "unauthorized"}, status_code=401)(scope, receive, send)
             return
-        upload = scope["path"] == UPLOAD_PATH
+        if progress:
+            await self.app(scope, receive, send)
+            return
+        upload = scope["path"] in (UPLOAD_PATH, PROCESS_PATH)
         media_type = b"multipart/form-data" if upload else b"application/json"
         if headers.get(b"content-type", b"").split(b";")[0].strip().lower() != media_type:
             await JSONResponse({"error": "unsupported_content_type"}, status_code=415)(

@@ -105,6 +105,11 @@
       "resize": "Resize side panel"
     },
     "notifications": {
+      "progressLabel": "Analysis progress",
+      "progressElapsed": "Elapsed {time}",
+      "progressEta": "About {time} left",
+      "progressDeadline": "Time limit in {time}",
+      "progressEstimating": "Estimating time remaining…",
       "label": "Notifications",
       "labelWithCount": "Notifications: {count}",
       "title": "Notifications",
@@ -114,6 +119,7 @@
       "clear": "Clear notifications",
       "close": "Close notifications panel",
       "persistent": "Until dismissed",
+      "receivedAt": "Received <time></time>",
       "expiresIn": "Closes in {seconds}s",
       "protected": "Until the operation finishes",
       "collapse": "Collapse notifications panel",
@@ -163,7 +169,6 @@
     },
     "footer": {
       "description": "A shared foundation for business applications.",
-      "license": "License",
       "backToTop": "Back to top",
       "version": "Version {version}",
       "status": {

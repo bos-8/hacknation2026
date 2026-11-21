@@ -5,6 +5,8 @@ tags: [architektura, nextjs, prisma, keycloak, ocr]
 
 # Architektura FORMIQ
 
+[Wymagania aplikacji i kryteria COI](0203-application-requirements.pl.md) · [Dokumenty i API panelu administracyjnego](0208-document-redaction.pl.md)
+
 ## Działający stos
 
 FORMIQ działa bez Nginx. Przeglądarka łączy się przez HTTPS bezpośrednio z Next.js, a podczas logowania z Keycloak. Web przechowuje sesje Better Auth i dane aplikacji w PostgreSQL przez Prisma. Keycloak odpowiada za poświadczenia i własną bazę. W DEV Web i oba workery działają na hoście, w QA w kontenerach. [Porty, środowiska i certyfikaty](0302-local-docker.pl.md)
@@ -23,6 +25,16 @@ Pyworker udostępnia sprawdzanie gotowości, żywotności i uwierzytelnione zada
 Działający prywatny endpoint `POST /v1/forms/validate` przyjmuje jeden plik PDF, PNG, JPG/JPEG, DOC, DOCX, ODS, XLSX, TXT lub JSON jako pole `file` w `multipart/form-data`. W [Swagger UI](http://localhost:8010/docs) wybierz **Authorize**, podaj `PYWORKER_API_TOKEN`, a następnie otwórz operację w grupie **Forms**.
 
 Worker sprawdza nazwę, rozszerzenie, typ MIME i początkową sygnaturę pliku. Limit wynosi 20 MiB na plik i dodatkowe 64 KiB na obudowę multipart. Jeden proces przyjmuje jeden upload naraz, z limitem 30 sekund. Plik pozostaje w RAM do końca żądania. Odpowiedź HTTP 200 zawiera `status: validated`, `media_type` i `size_bytes`. Ten etap nie dekoduje stron ani nie wywołuje OCR lub LLM.
+
+W panelu Formularze przycisk **Wgraj formularz** wysyła oryginał do Next.js (`POST /api/v1/forms`). Next.js zapisuje bajty w S3, a w PostgreSQL metadane i klucz obiektu. Właściciel może wrócić do pliku po odświeżeniu strony. Formularz po wgraniu ma stan nieprzetworzony. W trakcie konwersji panel pobiera aktualny etap z Next.js, który odczytuje go z Pyworkera dla zalogowanego właściciela formularza. Po błędzie panel pokazuje etap i bezpieczną przyczynę, np. limit czasu konwersji lub kod HTTP dostawcy.
+
+Przycisk **Wyślij do przetworzenia** uruchamia bezpośrednie żądanie Next.js do Pyworkera. Next.js pobiera oryginalne bajty z S3 i wysyła multipart z plikiem oraz metadanymi JSON pochodzącymi z sesji i bazy. Pyworker sprawdza kolejno płatność, metadane nadawcy i zgodność typu dokumentu z rozszerzeniem. Brak płatności zwraca HTTP 402 `payment_required`.
+
+W lokalnym DEV do prób integracyjnych `apps/pyworker/.env` wybiera `PYWORKER_FORM_MODE=eden`. Prywatny `EDENAI_API_KEY` uwierzytelnia upload, OCR i Chat Completions. Domyślny model LLM dla DEV to `EDENAI_LLM_MODEL=qwen3.8-27b`. Pyworker wywołuje go przez Eden AI Chat Completions. Trzy adresy oraz modele są w `apps/pyworker/.env.example`. `EDENAI_TIMEOUT_SECONDS` ustala wspólny limit uploadu, OCR i LLM. Wartość domyślna to 300 sekund, a dopuszczalny zakres to 1–300 sekund. Po zmianie prywatnego `.env` uruchom ponownie proces DEV. Przekroczenie limitu kończy żądanie kodem HTTP 504 i komunikatem w panelu. JPG i PNG przechodzą przez upload oraz synchroniczny OCR. PDF korzysta z wielostronicowego OCR Eden AI (domyślnie `EDENAI_PDF_OCR_MODEL=ocr/ocr_async/mistral`). Pyworker odpytuje status zadania w ramach wspólnego limitu konwersji. TXT i JSON trafiają do modelu jako tekst. Z DOCX Pyworker odczytuje lokalnie akapity i wiersze tabel, a do modelu przekazuje uzyskany tekst. Pozostałe pliki są przekazywane do modelu jako załączniki, których obsługa zależy od wybranego modelu. Eden AI otrzymuje dokument lub odczytany tekst i może przechowywać wgrane pliki zgodnie ze swoją polityką retencji. [Upload Eden AI](https://www.edenai.co/docs/v3/llms/file-upload) · [OCR Eden AI](https://www.edenai.co/docs/v3/expert-models/features/ocr/ocr)
+
+Tryb `pipeline` używa Docling, Apache POI, PaddleOCR‑VL‑1.6 i pomocniczego PP‑StructureV3. Klasyfikuje strony PDF indywidualnie, a wyniki odczytu wiąże z numerami stron i współrzędnymi, gdy źródło ma stały układ. Qwen zwraca pola i identyfikatory fragmentów w odpowiedzi zgodnej ze schematem ekstrakcji. Pyworker sprawdza odwołania, tworzy JSON COI i dołącza `field_locations`. Instrukcja uruchomienia jest w [README](../README.md#lokalny-pipeline-formularzy).
+
+Next.js zapisuje wynik przy formularzu w PostgreSQL. Za przetworzony uznaje formularz z konfiguracją COI. Szczegóły kolorują składnię JSON i przy podświetleniu pola zaznaczają odpowiadający obszar PDF lub zdjęcia. Pobierany JSON zawiera konfigurację formularza. Tryby `eden` i `bypass` służą do prób oraz zwracają odpowiednio szkic i wynik walidacji.
 
 ## Projekt konwertera COI
 

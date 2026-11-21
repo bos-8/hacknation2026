@@ -42,6 +42,7 @@ class WorkerTests(unittest.TestCase):
                     "/health/ready",
                     "/v1/tasks/check",
                     "/v1/forms/validate",
+                    "/v1/forms/process",
                 },
             )
             self.assertEqual(

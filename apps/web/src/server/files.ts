@@ -52,7 +52,7 @@ export function fileStore(config: ReturnType<typeof getFilesConfig>) {
       return { objects, bytes: bytes.toString(), lastModified: lastModified?.toISOString() ?? null };
     },
     async get(key: string, maxBytes = 8 * 1024 * 1024) {
-      z.number().int().min(1).max(8 * 1024 * 1024).parse(maxBytes);
+      z.number().int().min(1).max(20 * 1024 * 1024).parse(maxBytes);
       const result = await client.send(new GetObjectCommand({ Bucket: config.S3_BUCKET, Key: z.uuid().parse(key) }),
         { abortSignal: AbortSignal.timeout(15000) });
       if (!result.Body) throw new Error("File storage returned no data");

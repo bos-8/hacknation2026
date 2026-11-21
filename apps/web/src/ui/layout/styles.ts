@@ -21,7 +21,6 @@ export const layoutStyles = {
   footerDescription: "hidden text-muted-foreground md:block",
   footerIdentity: "flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1",
   footerSeparator: "text-muted-foreground",
-  footerLink: "rounded-sm underline-offset-4 hover:text-foreground hover:underline",
   footerButton: "w-[130px] min-w-[130px] max-w-[130px] shrink-0 justify-center whitespace-nowrap",
   footerActions: "flex max-w-full flex-wrap items-center justify-end gap-1.5",
 } as const;

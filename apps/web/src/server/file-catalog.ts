@@ -160,17 +160,18 @@ export async function addDocumentRevision(uuid: string, expectedVersion: number,
   }
 }
 
-export async function createDocument(name: string, body: Uint8Array, actorUuid: string) {
+export async function createDocument(name: string, body: Uint8Array, actorUuid: string, formModifiedAt?: Date) {
   const database = getDatabase();
   const storage = getFileStore();
   let attemptedKey: string | undefined;
 
   try {
-    await database.$transaction(async transaction => {
+    return await database.$transaction(async transaction => {
       const [object] = await transaction.$queryRaw<{ uuid: string }[]>`SELECT uuidv7()::text AS uuid`;
-      await transaction.file.create({
+      const file = await transaction.file.create({
         data: {
           name,
+          ...(formModifiedAt && { formUpload: { create: { modifiedAt: formModifiedAt } } }),
           createdByUuid: actorUuid,
           updatedByUuid: actorUuid,
           versions: { create: { version: 1, size: BigInt(body.byteLength), seaweedUuid: object.uuid, createdByUuid: actorUuid } },
@@ -179,13 +180,14 @@ export async function createDocument(name: string, body: Uint8Array, actorUuid: 
       });
       attemptedKey = object.uuid;
       await storage.put(object.uuid, body);
+      return file.uuid;
     }, { timeout: 25000 });
   } catch {
     if (attemptedKey) {
       try {
         // A lost commit response is ambiguous. Keep the object if the catalog already points to it.
-        const saved = await database.fileVersion.findUnique({ where: { seaweedUuid: attemptedKey }, select: { uuid: true } });
-        if (saved) return;
+        const saved = await database.fileVersion.findUnique({ where: { seaweedUuid: attemptedKey }, select: { fileUuid: true } });
+        if (saved) return saved.fileUuid;
         await storage.remove(attemptedKey);
       } catch {
         console.error("Document upload recovery could not confirm object cleanup");

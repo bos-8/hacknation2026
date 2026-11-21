@@ -54,7 +54,7 @@ export default async function RootLayout({ children, params }: LayoutProps<"/[lo
               <AsideContent header={<Navbar languageCookieName={config.LANGUAGE_COOKIE_NAME} appName={config.APP_NAME} locale={locale} cookieDomain={config.UI_PREFERENCE_COOKIE_DOMAIN} />}>
               <Suspense fallback={null}><PageBreadcrumb /></Suspense>
               <main id="main-content" tabIndex={-1} className="flex flex-1 flex-col">{children}</main>
-              <Footer languageCookieName={config.LANGUAGE_COOKIE_NAME} appName={config.APP_NAME} companyName={config.APP_COMPANY_NAME} locale={locale} />
+              <Footer languageCookieName={config.LANGUAGE_COOKIE_NAME} appName={config.APP_NAME} locale={locale} />
               </AsideContent>
               </AsideProvider>
               </NotificationProvider>

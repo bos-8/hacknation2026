@@ -2,23 +2,40 @@
 
 import asyncio
 import json
+import logging
+from collections import deque
+from dataclasses import dataclass
+from datetime import datetime
 from pathlib import PurePath
+from statistics import median
+from time import monotonic
 from typing import Literal
-from zipfile import BadZipFile, ZipFile
+from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.security import HTTPBearer
-from pydantic import BaseModel
+from pydantic import AwareDatetime, BaseModel, ConfigDict, Field, StrictBool, ValidationError
 from starlette.datastructures import UploadFile
 from starlette.formparsers import MultiPartException, MultiPartParser
 
+from pyworker.coi import CoiForm, CoiResult, FieldConfidence, FieldLocation
+from pyworker.eden import EdenFailure, GeneratedDraft, convert_document
+from pyworker.file_structure import (
+    ODS,
+    PACKAGES,
+    matches_jpeg,
+    matches_package,
+    matches_pdf,
+    matches_png,
+)
+from pyworker.pipeline import run_pipeline
+
 UPLOAD_PATH = "/v1/forms/validate"
+PROCESS_PATH = "/v1/forms/process"
 MAX_FILE = 20 * 1024 * 1024
 MAX_BODY = MAX_FILE + 64 * 1024
 DOCX = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
 XLSX = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-ODS = "application/vnd.oasis.opendocument.spreadsheet"
-PACKAGES = {".docx": "word/document.xml", ".xlsx": "xl/workbook.xml", ".ods": "content.xml"}
 FORMATS = {
     ".doc": ("application/msword", bytes.fromhex("d0cf11e0a1b11ae1")),
     ".docx": (DOCX, b"PK\x03\x04"),
@@ -31,19 +48,12 @@ FORMATS = {
     ".jpg": ("image/jpeg", b"\xff\xd8\xff"),
     ".jpeg": ("image/jpeg", b"\xff\xd8\xff"),
 }
-
-
-def matches_package(file, extension):
-    try:
-        with ZipFile(file) as package:
-            package.getinfo(PACKAGES[extension])
-            if extension == ".ods":
-                with package.open("mimetype") as marker:
-                    return marker.read(128) == ODS.encode()
-            package.getinfo("[Content_Types].xml")
-            return True
-    except (BadZipFile, KeyError, OSError, RuntimeError, ValueError, EOFError):
-        return False
+STRUCTURE_CHECKS = {
+    ".pdf": matches_pdf,
+    ".png": matches_png,
+    ".jpg": matches_jpeg,
+    ".jpeg": matches_jpeg,
+}
 
 
 async def detect_format(file: UploadFile, extension: str) -> str:
@@ -52,14 +62,11 @@ async def detect_format(file: UploadFile, extension: str) -> str:
         raise HTTPException(415, "unsupported_format")
     mime, signature = fmt
     header = await file.read(8)
-    # One supplied .DOC blank is a Word Open XML package.
-    package_type = ".docx" if extension == ".doc" and header.startswith(b"PK") else extension
-    detected = FORMATS[package_type][0]
     declared = (file.content_type or "").partition(";")[0].strip().lower()
-    if declared not in {"", "application/octet-stream", mime, detected}:
+    if declared not in {"", "application/octet-stream", mime}:
         raise HTTPException(415, "format_mismatch")
-    if package_type in PACKAGES:
-        if not header.startswith(b"PK\x03\x04") or not matches_package(file.file, package_type):
+    if extension in PACKAGES:
+        if not header.startswith(b"PK\x03\x04") or not matches_package(file.file, extension):
             raise HTTPException(415, "format_mismatch")
     elif extension in {".txt", ".json"}:
         await file.seek(0)
@@ -69,11 +76,30 @@ async def detect_format(file: UploadFile, extension: str) -> str:
                 raise ValueError
             if extension == ".json":
                 json.loads(text)
+            elif any(
+                signature and header.startswith(signature) for _, signature in FORMATS.values()
+            ):
+                raise ValueError
         except (ValueError, RecursionError) as error:
             raise HTTPException(415, "format_mismatch") from error
     elif not header.startswith(signature):
         raise HTTPException(415, "format_mismatch")
-    return detected
+    if extension in STRUCTURE_CHECKS:
+        await file.seek(0)
+        if not STRUCTURE_CHECKS[extension](await file.read()):
+            raise HTTPException(415, "format_mismatch")
+    if extension == ".doc":
+        await file.seek(0)
+        contents = await file.read()
+        stream_name = "WordDocument".encode("utf-16-le") + b"\x00\x00"
+        if not any(
+            contents.startswith(stream_name, offset)
+            and contents[offset + 64 : offset + 67] == bytes((len(stream_name), 0, 2))
+            for offset in range(512, len(contents) - 127, 128)
+        ):
+            raise HTTPException(415, "format_mismatch")
+    await file.seek(0)
+    return mime
 
 
 class MemoryFormParser(MultiPartParser):
@@ -97,6 +123,51 @@ async def limited_stream(request):
 
 
 router = APIRouter(tags=["Forms"])
+logger = logging.getLogger("pyworker")
+
+
+@dataclass(slots=True)
+class ActiveForm:
+    operation_id: UUID
+    form_id: UUID
+    sender_id: UUID
+    stage: str = "accepted"
+    started: float | None = None
+    estimate_seconds: float | None = None
+    timeout_seconds: int | None = None
+
+    def update(self, stage: str) -> None:
+        self.stage = stage
+
+
+@router.get(
+    PROCESS_PATH,
+    dependencies=[Depends(HTTPBearer())],
+    summary="Read progress for an active form conversion",
+)
+async def form_progress(request: Request, operation_id: UUID, form_id: UUID, sender_id: UUID):
+    active = getattr(request.app.state, "active_form", None)
+    if not active or (active.operation_id, active.form_id, active.sender_id) != (
+        operation_id,
+        form_id,
+        sender_id,
+    ):
+        raise HTTPException(404, "progress_not_found")
+    elapsed = monotonic() - active.started if active.started is not None else 0
+    estimated = active.estimate_seconds
+    return {
+        "stage": active.stage,
+        "remaining_ms": (
+            int((estimated - elapsed) * 1000)
+            if estimated is not None and estimated > elapsed
+            else None
+        ),
+        "timeout_remaining_ms": (
+            max(0, int((active.timeout_seconds - elapsed) * 1000))
+            if active.timeout_seconds is not None
+            else None
+        ),
+    }
 
 
 @router.post(
@@ -131,6 +202,129 @@ router = APIRouter(tags=["Forms"])
     },
 )
 async def validate_form(request: Request):
+    return await handle_form(request, process=False)
+
+
+class Sender(BaseModel):
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
+
+    uuid: UUID
+    name: str = Field(min_length=1, max_length=255)
+    email: str = Field(max_length=254, pattern=r"^[^\s@]+@[^\s@]+\.[^\s@]+$")
+
+
+class FormMetadata(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    paid: StrictBool
+    form_id: UUID
+    sender: Sender
+    uploaded_at: AwareDatetime
+    submitted_at: AwareDatetime
+
+
+class BypassFlow(BaseModel):
+    links: list[object] = Field(default_factory=list)
+
+
+class BypassDraft(BaseModel):
+    title: None = None
+    tabs: list[object] = Field(default_factory=list)
+    flow: BypassFlow = Field(default_factory=BypassFlow)
+
+
+class ProcessingResult(BaseModel):
+    schema_version: Literal[1] = 1
+    status: Literal["processed"] = "processed"
+    mode: Literal["bypass"] = "bypass"
+    form_id: UUID
+    processed_at: AwareDatetime
+    file: ValidatedFile
+    ocr: Literal["bypassed", "not_required", "deferred"]
+    llm: Literal["bypassed"] = "bypassed"
+    draft: BypassDraft = Field(default_factory=BypassDraft)
+
+
+class EdenProcessingResult(BaseModel):
+    schema_version: Literal[2] = 2
+    status: Literal["processed"] = "processed"
+    mode: Literal["eden"] = "eden"
+    form_id: UUID
+    processed_at: AwareDatetime
+    file: ValidatedFile
+    ocr: Literal["completed", "not_required"]
+    llm: Literal["completed"] = "completed"
+    draft: GeneratedDraft
+
+
+class PipelineProcessingResult(BaseModel):
+    schema_version: Literal[3] = 3
+    status: Literal["processed"] = "processed"
+    mode: Literal["pipeline"] = "pipeline"
+    form_id: UUID
+    processed_at: AwareDatetime
+    file: ValidatedFile
+    ocr: Literal["completed", "not_required"]
+    llm: Literal["completed", "bypassed"] = "completed"
+    draft: CoiForm
+    field_locations: list[FieldLocation]
+    field_confidences: list[FieldConfidence]
+
+
+def validate_metadata(raw: object) -> FormMetadata:
+    try:
+        payload = json.loads(raw) if isinstance(raw, str) else None
+    except (ValueError, RecursionError) as error:
+        raise HTTPException(422, "invalid_metadata") from error
+    if not isinstance(payload, dict) or type(payload.get("paid")) is not bool:
+        raise HTTPException(422, "invalid_metadata")
+    if not payload["paid"]:
+        raise HTTPException(402, "payment_required")
+    try:
+        return FormMetadata.model_validate(payload)
+    except ValidationError as error:
+        invalid_sender = any(item["loc"][:1] == ("sender",) for item in error.errors())
+        field = "invalid_sender" if invalid_sender else "invalid_metadata"
+        raise HTTPException(422, field) from error
+
+
+@router.post(
+    PROCESS_PATH,
+    dependencies=[Depends(HTTPBearer())],
+    response_model=ProcessingResult | EdenProcessingResult | PipelineProcessingResult,
+    summary="Validate and convert a paid form",
+    description="Checks the file signature and structure against its extension before conversion.",
+    openapi_extra={
+        "requestBody": {
+            "required": True,
+            "content": {
+                "multipart/form-data": {
+                    "schema": {
+                        "type": "object",
+                        "required": ["file", "metadata"],
+                        "properties": {
+                            "file": {"type": "string", "format": "binary"},
+                            "metadata": {
+                                "type": "string",
+                                "description": "JSON metadata for payment, sender and dates",
+                            },
+                        },
+                    },
+                }
+            },
+        }
+    },
+    responses={
+        402: {"description": "Payment required"},
+        415: {"description": "Unsupported or mismatched file"},
+        422: {"description": "Invalid metadata, sender or file"},
+    },
+)
+async def process_form(request: Request, operation_id: UUID | None = None):
+    return await handle_form(request, process=True, operation_id=operation_id)
+
+
+async def handle_form(request: Request, *, process: bool, operation_id: UUID | None = None):
     if not request.app.state.ready:
         raise HTTPException(503, "not_ready")
     slot = request.app.state.upload_slot
@@ -138,7 +332,11 @@ async def validate_form(request: Request):
         raise HTTPException(429, "busy")
     async with slot:
         parser = MemoryFormParser(
-            request.headers, limited_stream(request), max_files=1, max_fields=0
+            request.headers,
+            limited_stream(request),
+            max_files=1,
+            max_fields=int(process),
+            max_part_size=8192,
         )
         try:
             async with asyncio.timeout(30):
@@ -147,7 +345,9 @@ async def validate_form(request: Request):
             raise HTTPException(408, "request_timeout") from error
         except MultiPartException as error:
             raise HTTPException(422, "invalid_multipart") from error
+        active = None
         try:
+            metadata = validate_metadata(form.get("metadata")) if process else None
             file = form.get("file")
             if not isinstance(file, UploadFile) or not file.size:
                 raise HTTPException(422, "expected_nonempty_file")
@@ -161,7 +361,97 @@ async def validate_form(request: Request):
                 or any(char in name for char in ("/", "\\", ":"))
             ):
                 raise HTTPException(422, "invalid_filename")
+            if operation_id and metadata:
+                active = ActiveForm(operation_id, metadata.form_id, metadata.sender.uuid)
+                request.app.state.active_form = active
             mime = await detect_format(file, PurePath(name).suffix.lower())
-            return ValidatedFile(media_type=mime, size_bytes=file.size)
+            validated = ValidatedFile(media_type=mime, size_bytes=file.size)
+            if metadata is None:
+                return validated
+            if active:
+                active.update("validated")
+            pipeline = request.app.state.pipeline
+            settings = pipeline or request.app.state.eden
+            if settings is not None:
+                durations = request.app.state.form_timings.setdefault(mime, deque(maxlen=12))
+                started = monotonic()
+                if active:
+                    active.started = started
+                    active.timeout_seconds = settings.timeout_seconds
+                    if durations:
+                        active.estimate_seconds = min(median(durations), settings.timeout_seconds)
+                report = active.update if active else None
+                coi = None
+                try:
+                    if pipeline is not None:
+                        coi, used_ocr = await run_pipeline(
+                            pipeline, file, metadata.form_id, report=report
+                        )
+                        draft = coi.draft
+                    else:
+                        extracted, used_ocr = await convert_document(
+                            settings,
+                            file,
+                            mime,
+                            report=report,
+                            **(
+                                {"ocr_form_id": metadata.form_id}
+                                if settings.ocr_only
+                                else {"coi_form_id": metadata.form_id}
+                            ),
+                        )
+                        if isinstance(extracted, CoiResult):
+                            coi = extracted
+                            draft = coi.draft
+                        else:
+                            draft = extracted
+                except EdenFailure as error:
+                    headers = {}
+                    if error.reason:
+                        headers["X-Form-Failure-Reason"] = error.reason
+                    if error.phase:
+                        headers["X-Form-Failure-Phase"] = error.phase
+                    if error.reason == "deadline":
+                        headers["X-Form-Timeout-Seconds"] = str(settings.timeout_seconds)
+                    logger.warning(
+                        "event=form_conversion_failed request_id=%s code=%s phase=%s "
+                        "reason=%s elapsed_ms=%d",
+                        request.state.request_id,
+                        error.stage,
+                        error.phase,
+                        error.reason,
+                        (monotonic() - started) * 1000,
+                    )
+                    raise HTTPException(error.status, error.stage, headers=headers) from error
+                durations.append(monotonic() - started)
+                result = dict(
+                    form_id=metadata.form_id,
+                    processed_at=datetime.now().astimezone(),
+                    file=validated,
+                    ocr="completed" if used_ocr else "not_required",
+                    draft=draft,
+                )
+                if coi is not None:
+                    return PipelineProcessingResult(
+                        **result,
+                        llm="bypassed" if pipeline is None and settings.ocr_only else "completed",
+                        field_locations=coi.field_locations,
+                        field_confidences=coi.field_confidences,
+                    )
+                return EdenProcessingResult(**result)
+            if mime.startswith("image/"):
+                ocr = "bypassed"
+            elif mime == "application/pdf":
+                ocr = "deferred"
+            else:
+                ocr = "not_required"
+            return ProcessingResult(
+                form_id=metadata.form_id,
+                processed_at=datetime.now().astimezone(),
+                file=validated,
+                ocr=ocr,
+            )
         finally:
+            if active:
+                request.app.state.active_form = None
             await form.close()

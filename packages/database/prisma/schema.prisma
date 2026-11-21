@@ -304,6 +304,7 @@ model File {
   updatedBy     User          @relation("FileUpdatedBy", fields: [updatedByUuid], references: [uuid], onDelete: Restrict)
   versions      FileVersion[]
   tags          FileTag[]
+  formUpload    FormUpload?
   products      Product[]     @relation("ProductImage")
 
   @@index([createdByUuid])
@@ -533,4 +534,15 @@ model ChangeHistory {
   @@index([entity, entityUuid, occurredAt])
   @@index([parentUuid, uuid])
   @@map("change_history")
+}
+
+/// Marks a catalog document as a user-uploaded form. Original bytes live in S3.
+model FormUpload {
+  processingJson Json? @map("processing_json") @db.JsonB
+  paid       Boolean  @default(false)
+  fileUuid   String   @id @map("file_uuid") @db.Uuid
+  modifiedAt DateTime @map("modified_at") @db.Timestamptz(3)
+  file       File     @relation(fields: [fileUuid], references: [uuid], onDelete: Cascade)
+
+  @@map("form_upload")
 }

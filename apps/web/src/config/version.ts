@@ -6,4 +6,3 @@ export const APP_VERSION = version[1];
 const releaseDate = /\+(\d{8})(?:\d{6})?$/.exec(manifest.version)?.[1];
 const buildDate = releaseDate ?? process.env.APP_BUILD_DATE;
 export const APP_DISPLAY_VERSION = buildDate ? `${APP_VERSION}+${buildDate}` : APP_VERSION;
-export const APP_BUILD_YEAR = (process.env.APP_BUILD_DATE ?? releaseDate)?.slice(0, 4);

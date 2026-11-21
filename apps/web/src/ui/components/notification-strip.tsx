@@ -62,6 +62,7 @@ function Announcement({ item, clear }: {
       className="notification-strip flex min-h-8 min-w-0 origin-right items-center justify-end gap-2 rounded-r-md border-r-2 px-3 py-1 text-right text-sm text-foreground"
       style={{ "--strip-color": color } as CSSProperties}>
       <div className="min-w-0 wrap-anywhere">{item.title && <strong className="mr-1">{item.title}</strong>}{item.message}</div>
+      {item.progress?.percent !== undefined && <span className="shrink-0 font-semibold tabular-nums">{item.progress.percent}%</span>}
       {item.pending ? <Throbber size="sm" className="shrink-0 text-[hsl(var(--strip-color))]" />
         : <Icon aria-hidden="true" className="size-4 shrink-0 text-[hsl(var(--strip-color))]" />}
     </div>
