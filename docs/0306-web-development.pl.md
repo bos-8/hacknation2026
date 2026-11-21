@@ -13,6 +13,10 @@ Next.js obsługuje interfejs i backend Web. Strony aplikacji mają prefiks języ
 | Dodajesz akcję lub endpoint | [Schematy wejścia](../apps/web/src/schemas/), [kod serwerowy](../apps/web/src/server/), [ścieżki API](../apps/web/src/config/api-routes.ts). Sprawdź sesję i uprawnienia przy każdej chronionej operacji, również wywołanej wprost. |
 | Budujesz tabelę lub formularz | [Komponenty interfejsu](../apps/web/src/ui/). Wzorce obejmują filtrowanie, paginację, boczny panel edycji, okna dialogowe, motyw, kontrast i powiadomienia. Galeria komponentów jest dostępna pod `/pl/test`. |
 
+## Markdown w czacie
+
+Na stronie `/pl/chat` wtyczka `remark-gfm` dodaje klasę `task-list-item` do elementów listy z polem wyboru. Moduł CSS czatu rozpoznaje ją selektorem atrybutu `li[class~="task-list-item"]`. Dzięki temu zadania mają samo pole wyboru, a zwykłe listy zachowują punktory lub numerację.
+
 ## Katalogi
 
 - **Pliki i OCR.** W `/pl/admin/files` administrator zarządza plikiem logicznym i jego wersjami. Do analizy wybiera konkretną wersję PDF, PNG lub JPEG. Trwałe usunięcie dotyczy pliku i jego wersji; zmiana statusu na oczekujący na usunięcie to osobna operacja. [Przegląd dokumentu i eksport](0208-document-redaction.pl.md)

@@ -19,7 +19,7 @@
 .content :is(ul, ol) { padding-inline-start: 1.5em; }
 .content ul { list-style: disc; }
 .content ol { list-style: decimal; }
-.content :global(.task-list-item) { list-style: none; }
+.content li[class~="task-list-item"] { list-style: none; }
 .content li + li { margin-block-start: 0.2em; }
 
 .content a {

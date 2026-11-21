@@ -9,3 +9,4 @@ tags: [pamiec, formularze]
 - [Aktualna architektura](../docs/0200-architecture.pl.md) · [Spis dokumentacji](../docs/0000-overview.md)
 - [Historia — pierwsze podejście](memories/2026-11-21/20261121-121611-pierwsze-podejscie.md) · [Pierwotny projekt architektury](../docs/0201-initial-design.pl.md)
 - [Backlog i kryteria odbioru](../docs/9999-backlog.pl.md)
+- [Listy zadań Markdown w czacie](memories/2026-11-21/20261121-170340-chat-markdown.md)
