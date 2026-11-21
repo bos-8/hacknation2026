@@ -1,6 +1,11 @@
 {
   "common": {
     "imageOcr": {
+      "original": "Source photo",
+      "openOriginal": "Open original",
+      "loadingImage": "Loading photo…",
+      "imageFailed": "The photo could not be loaded. Try again or open the original.",
+      "retryImage": "Reload photo",
       "title": "Photo OCR",
       "uploadedAt": "Uploaded to the system",
       "start": "Recognize text with Gemma",
