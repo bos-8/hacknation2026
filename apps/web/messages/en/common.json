@@ -1,5 +1,23 @@
 {
   "common": {
+    "imageOcr": {
+      "title": "Photo OCR",
+      "uploadedAt": "Uploaded to the system",
+      "start": "Recognize text with Gemma",
+      "working": "Recognizing text…",
+      "text": "Recognized text",
+      "model": "Model",
+      "empty": "No text was found in the photo.",
+      "waiting": "Start OCR to read text from the photo.",
+      "providerNotice": "Starting OCR sends the photo to the configured model service. The upload time comes from the system. The result remains in this view until the page is refreshed.",
+      "errors": {
+        "notConfigured": "The OCR service is not configured. Set the Gemma model API URL on the server.",
+        "unavailable": "The photo could not be read. Check the model service and try again.",
+        "invalid": "The photo is unavailable, damaged or exceeds the OCR limit (8 MiB and 24 megapixels).",
+        "busy": "A photo is already being recognized. Wait for it to finish.",
+        "denied": "You do not have permission to recognize text."
+      }
+    },
     "documentCompare": {
       "recheck": "Saving corrected OCR reopens text review. Detect and approve masks again to export the corrected revision.",
       "inlineEdit": "Double-click a word to edit it. With a keyboard, choose a word with the arrow keys and press Enter.",

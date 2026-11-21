@@ -1,5 +1,23 @@
 {
   "common": {
+    "imageOcr": {
+      "title": "OCR zdjęcia",
+      "uploadedAt": "Przesłano do systemu",
+      "start": "Rozpoznaj tekst przez Gemma",
+      "working": "Rozpoznawanie tekstu…",
+      "text": "Rozpoznany tekst",
+      "model": "Model",
+      "empty": "Nie znaleziono tekstu na zdjęciu.",
+      "waiting": "Uruchom OCR, aby odczytać tekst ze zdjęcia.",
+      "providerNotice": "Uruchomienie OCR przekazuje zdjęcie do skonfigurowanej usługi modelu. Data przesłania pochodzi z systemu. Wynik jest dostępny w tym widoku do odświeżenia strony.",
+      "errors": {
+        "notConfigured": "Usługa OCR nie jest skonfigurowana. Ustaw adres API modelu Gemma na serwerze.",
+        "unavailable": "Nie udało się odczytać zdjęcia. Sprawdź dostępność usługi modelu i spróbuj ponownie.",
+        "invalid": "Zdjęcie jest niedostępne, uszkodzone lub przekracza limit OCR (8 MiB i 24 megapiksele).",
+        "busy": "Trwa już rozpoznawanie zdjęcia. Poczekaj na zakończenie.",
+        "denied": "Brak uprawnień do rozpoznawania tekstu."
+      }
+    },
     "documentCompare": {
       "recheck": "Zapisanie poprawionego tekstu wznowi ocenę OCR. Aby wyeksportować poprawioną wersję po redakcji, ponownie wykryj i zatwierdź maski.",
       "inlineEdit": "Kliknij słowo dwukrotnie, aby je poprawić. Z klawiatury wybierz słowo strzałkami i naciśnij Enter.",

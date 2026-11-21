@@ -26,6 +26,14 @@ Katalog plików przechowuje dokumenty w SeaweedFS. Worker Python udostępnia dia
 
 ## Pierwsze uruchomienie DEV
 
+### OCR zdjęć przez Gemma
+
+W panelu **Administracja → Pliki → OCR** otwórz zdjęcie PNG lub JPEG i wybierz **Rozpoznaj tekst przez Gemma**. Widok pokazuje oryginał, rozpoznany tekst i datę przesłania wybranej wersji pliku, pobraną z katalogu. Data nie jest zgadywana przez model. Wynik OCR pozostaje w widoku do odświeżenia strony.
+
+W prywatnym `apps/web/.env` ustaw `OCR_API_URL` na pełny adres endpointu `/v1/chat/completions` usługi obsługującej obrazy, opcjonalny `OCR_API_KEY` i `OCR_MODEL=gemma-4-31b-it` (lub identyfikator tego modelu wymagany przez dostawcę). Następnie uruchom ponownie Web. Sam wpis w konfiguracji nie pobiera ani nie uruchamia modelu. Zdjęcie trafia do wskazanej usługi dopiero po uruchomieniu OCR; limit wynosi 8 MiB i 24 megapiksele. Klucze i adres API pozostają na serwerze.
+
+### Przygotowanie środowiska
+
 Wymagane są Docker Engine z Compose, Node.js (zalecana wersja 26, minimum 22.18), pnpm w wersji z `package.json` oraz Python 3.12–3.14. Interpreter workera można wskazać zmienną `PYWORKER_PYTHON`.
 
 1. W katalogu repozytorium uruchom `pnpm stack:init`. Polecenie przygotowuje prywatny plik `infra/local/.env.dev`.
