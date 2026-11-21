@@ -12,6 +12,7 @@ export function devSeedUsers(env) {
   }
   const users = ['admin', 'user'].map(username => {
     const key = `DEV_SEED_${username.toUpperCase()}_PASSWORD`;
+    if (['CHANGE_ME', 'SECRET_CHANGE_ME'].includes(env[key])) throw new Error(`Set ${key} in infra/local/.env.dev before running this seed.`);
     return {
       username, email: `${username}@formiq.test`, enabled: true, emailVerified: true,
       firstName: username, lastName: 'DEV',

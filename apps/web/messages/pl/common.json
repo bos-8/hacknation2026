@@ -125,6 +125,8 @@
       }
     },
     "navigation": {
+      "forms": "Formularze",
+      "formDetails": "Szczegóły formularza",
       "file": "Plik",
       "ocr": "OCR",
       "llm": "Prompt systemowy",

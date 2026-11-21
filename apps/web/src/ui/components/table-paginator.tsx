@@ -12,7 +12,7 @@ import { tablePaginatorOptions, tableStyles } from "./styles";
 export type TablePaginatorProps = {
   locale: AppLocale;
   namespace: string;
-  pathname: "/admin/users" | "/admin/files" | "/admin/files/ocr" | "/admin/products" | "/admin/tags" | "/admin/queue" | "/admin/settings";
+  pathname: "/forms" | "/admin/users" | "/admin/files" | "/admin/files/ocr" | "/admin/products" | "/admin/tags" | "/admin/queue" | "/admin/settings";
   params: Record<string, string>;
   page: number;
   limit: number;

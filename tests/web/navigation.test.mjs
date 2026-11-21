@@ -5,8 +5,8 @@ import { navbarAtTop, navigationActive, pageBreadcrumbs, primaryNavigation, seco
 
 test('navigation visibility keeps administration behind the server role decision', () => {
   assert.deepEqual(primaryNavigation(false, false).map(item => item.href), ['/', '/about']);
-  assert.deepEqual(primaryNavigation(false, true).map(item => item.href), ['/', '/about', '/chat']);
-  assert.deepEqual(primaryNavigation(true, true).map(item => item.href), ['/', '/about', '/chat', '/admin/files/ocr', '/admin']);
+  assert.deepEqual(primaryNavigation(false, true).map(item => item.href), ['/', '/about', '/forms', '/chat']);
+  assert.deepEqual(primaryNavigation(true, true).map(item => item.href), ['/', '/about', '/forms', '/chat', '/admin/files/ocr', '/admin']);
   assert.deepEqual(primaryNavigation(true, true).filter(item => navigationActive('/admin/files/ocr?file=id&version=1', item)).map(item => item.label), ['ocr']);
   const viewer = '/admin/files/ocr/63abb463-c390-48a5-bb2d-a6ba330810ff?version=2';
   assert.deepEqual(primaryNavigation(true, true).filter(item => navigationActive(viewer, item)).map(item => item.label), ['ocr']);

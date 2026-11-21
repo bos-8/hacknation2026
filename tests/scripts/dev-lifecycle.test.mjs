@@ -75,6 +75,7 @@ test('automatic workflow loads and reaches install from a fresh checkout with no
   assert.equal(calls.at(-1), 'run dev:services');
   const scripts = JSON.parse(await readFile('package.json', 'utf8')).scripts;
   assert.equal(scripts.dev, 'node scripts/dev.mjs');
+  assert.ok(scripts['dev:prepare:application'].split(' && ').includes('pnpm dev:seed:users'));
   assert.equal(scripts['dev:start:cold'], 'pnpm dev');
   assert.equal(scripts['dev:start:warm'], 'pnpm dev');
 });

@@ -20,7 +20,7 @@ Pyworker udostępnia sprawdzanie gotowości, żywotności i uwierzytelnione zada
 
 ## Przyjęcie blankietu w FastAPI
 
-Działający prywatny endpoint `POST /v1/forms/validate` przyjmuje jeden plik PDF, PNG lub JPEG jako pole `file` w `multipart/form-data`. W [Swagger UI](http://localhost:8010/docs) wybierz **Authorize**, podaj `PYWORKER_API_TOKEN`, a następnie otwórz operację w grupie **Forms**.
+Działający prywatny endpoint `POST /v1/forms/validate` przyjmuje jeden plik PDF, PNG, JPG/JPEG, DOC, DOCX, ODS, XLSX, TXT lub JSON jako pole `file` w `multipart/form-data`. W [Swagger UI](http://localhost:8010/docs) wybierz **Authorize**, podaj `PYWORKER_API_TOKEN`, a następnie otwórz operację w grupie **Forms**.
 
 Worker sprawdza nazwę, rozszerzenie, typ MIME i początkową sygnaturę pliku. Limit wynosi 20 MiB na plik i dodatkowe 64 KiB na obudowę multipart. Jeden proces przyjmuje jeden upload naraz, z limitem 30 sekund. Plik pozostaje w RAM do końca żądania. Odpowiedź HTTP 200 zawiera `status: validated`, `media_type` i `size_bytes`. Ten etap nie dekoduje stron ani nie wywołuje OCR lub LLM.
 

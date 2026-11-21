@@ -1,17 +1,18 @@
 export type NavigationIcon = "ocr" | "home" | "about" | "team" | "chat" | "admin" | "colors" | "asides" | "components" | "user" | "files" | "products" | "tags" | "queue" | "settings" | "monitoring";
-export type NavigationHref = "/admin/files/ocr" | "/" | "/about" | "/about/team" | "/chat" | "/chat/settings" | "/admin" | "/admin/users" | "/admin/files" | "/admin/products" | "/admin/tags" | "/admin/queue" | "/admin/settings" | "/admin/monitoring" | "/test" | `/test#${string}`;
-export type NavigationLabel = "ocr" | "home" | "about" | "team" | "chat" | "llm" | "admin" | "overview" | "users" | "files" | "products" | "tags" | "queue" | "settings" | "monitoring" | "gallery" | "colors" | "asides" | "buttons" | "userPanel";
+export type NavigationHref = "/forms" | "/admin/files/ocr" | "/" | "/about" | "/about/team" | "/chat" | "/chat/settings" | "/admin" | "/admin/users" | "/admin/files" | "/admin/products" | "/admin/tags" | "/admin/queue" | "/admin/settings" | "/admin/monitoring" | "/test" | `/test#${string}`;
+export type NavigationLabel = "forms" | "ocr" | "home" | "about" | "team" | "chat" | "llm" | "admin" | "overview" | "users" | "files" | "products" | "tags" | "queue" | "settings" | "monitoring" | "gallery" | "colors" | "asides" | "buttons" | "userPanel";
 export type NavigationItem = { href: NavigationHref; label: NavigationLabel; icon: NavigationIcon; exact?: boolean };
 
 const home: NavigationItem = { href: "/", label: "home", icon: "home", exact: true };
 const admin: NavigationItem = { href: "/admin", label: "admin", icon: "admin" };
 const ocr: NavigationItem = { href: "/admin/files/ocr", label: "ocr", icon: "ocr" };
 const about: NavigationItem = { href: "/about", label: "about", icon: "about" };
+const forms: NavigationItem = { href: "/forms", label: "forms", icon: "files" };
 const chat: NavigationItem = { href: "/chat", label: "chat", icon: "chat" };
 
 /** Visibility is supplied by the server's role decision; destinations still enforce authorization. */
 export function primaryNavigation(allowAdmin: boolean, signedIn: boolean): NavigationItem[] {
-  return [home, about, ...(signedIn ? [chat] : []), ...(allowAdmin ? [ocr, admin] : [])];
+  return [home, about, ...(signedIn ? [forms, chat] : []), ...(allowAdmin ? [ocr, admin] : [])];
 }
 
 export function normalizeNavigationPath(pathname: string): string {
@@ -60,7 +61,7 @@ export function secondaryNavigation(pathname: string, allowAdmin: boolean): { la
   return null;
 }
 
-export type BreadcrumbRoute = { label: "home" | "about" | "team" | "chat" | "admin" | "users" | "files" | "ocr" | "products" | "tags" | "queue" | "settings" | "monitoring" | "createProduct" | "file" | "gallery" | "accessDenied" | "llm"; href?: "/" | "/about" | "/chat" | "/admin" | "/test" | "/admin/products" | "/admin/files" | "/admin/files/ocr" };
+export type BreadcrumbRoute = { label: "forms" | "formDetails" | "home" | "about" | "team" | "chat" | "admin" | "users" | "files" | "ocr" | "products" | "tags" | "queue" | "settings" | "monitoring" | "createProduct" | "file" | "gallery" | "accessDenied" | "llm"; href?: "/forms" | "/" | "/about" | "/chat" | "/admin" | "/test" | "/admin/products" | "/admin/files" | "/admin/files/ocr" };
 export function pageBreadcrumbs(pathname: string): BreadcrumbRoute[] {
   const path = normalizeNavigationPath(pathname);
   if (/^\/admin\/files\/ocr\/[^/]+$/.test(path)) return [
@@ -69,6 +70,8 @@ export function pageBreadcrumbs(pathname: string): BreadcrumbRoute[] {
   if (path === "/admin/files/ocr") return [
     { label: "home", href: "/" }, { label: "admin", href: "/admin" }, { label: "files", href: "/admin/files" }, { label: "ocr" },
   ];
+  if (path === "/forms") return [{ label: "home", href: "/" }, { label: "forms" }];
+  if (/^\/forms\/[^/]+$/.test(path)) return [{ label: "home", href: "/" }, { label: "forms", href: "/forms" }, { label: "formDetails" }];
   if (path === "/chat") return [{ label: "home", href: "/" }, { label: "chat" }];
   if (path === "/chat/settings") return [{ label: "home", href: "/" }, { label: "chat", href: "/chat" }, { label: "llm" }];
   if (path === "/about") return [{ label: "home", href: "/" }, { label: "about" }];

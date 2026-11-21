@@ -52,6 +52,9 @@ services:
         CONTRAST_COOKIE_NAME: ${WEB_CONTRAST_COOKIE_NAME:-formiq_qa_contrast}
     environment:
       <<: [*qa-databases, *qa-public, *qa-storage]
+      PYWORKER_URL: http://pyworker:8010
+      PYWORKER_ALLOW_PRIVATE_NETWORK: "true"
+      PYWORKER_API_TOKEN: "${PYWORKER_API_TOKEN}"
       HOSTNAME: 0.0.0.0
       PORT: "${WEB_HTTPS_PORT}"
       APP_NAME: "${WEB_APP_NAME}"
@@ -83,7 +86,7 @@ services:
       - *qa-ca
       - ${CERTS_DIR:-./certs}/${TLS_CERT_PEM:-localhost.pem}:/run/tls/localhost.pem:ro
       - ${CERTS_DIR:-./certs}/${TLS_CERT_KEY:-localhost-key.pem}:/run/tls/localhost-key.pem:ro
-    networks: [edge, database]
+    networks: [edge, database, workers]
     depends_on:
       db: {condition: service_healthy}
       auth: {condition: service_healthy}

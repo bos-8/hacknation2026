@@ -71,8 +71,7 @@ export function TableFilters({ action, namespace, definitions, values, preserved
           <Icon aria-hidden="true" className="size-3.5" />
           {applied.length > 0 && <CornerBadge aria-hidden="true" value={applied.length} color="blue" className="-right-px -top-px" />}
         </Button>
-        <VerticalDivider />
-        {refreshButton}
+        {refreshButton && <><VerticalDivider />{refreshButton}</>}
       </div>
     </div>
     {extraPanel}

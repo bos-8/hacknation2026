@@ -22,7 +22,7 @@ export function useTableQuery<Q>(initial: Q, parse: (params: Record<string, stri
 
 /** Keep table queries in browser history without navigating the surrounding page. */
 export function TableQuery({ locale, pathname, children, pending }: {
-  locale: AppLocale; pathname: "/admin/users" | "/admin/files" | "/admin/files/ocr" | "/admin/products" | "/admin/tags" | "/admin/queue" | "/admin/settings"; children: ReactNode; pending: boolean;
+  locale: AppLocale; pathname: "/forms" | "/admin/users" | "/admin/files" | "/admin/files/ocr" | "/admin/products" | "/admin/tags" | "/admin/queue" | "/admin/settings"; children: ReactNode; pending: boolean;
 }) {
   const path = getPathname({ locale, href: pathname });
   function click(event: MouseEvent<HTMLDivElement>) {

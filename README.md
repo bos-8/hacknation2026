@@ -36,7 +36,7 @@ Wymagane są Docker Engine z Compose, Node.js (zalecana wersja 26, minimum 22.18
 
 ### Konta testowe Keycloak w DEV
 
-Podczas `pnpm dev` konta testowe powstają automatycznie w realmie aplikacji `FORMIQ` na `localhost:8443`: `admin / admin` oraz `user / user`. Możesz też utworzyć je osobno przez `pnpm dev:seed:users`. To konta wyłącznie lokalnego DEV; seeder odrzuca inne środowiska. Opcjonalne wartości `DEV_SEED_ADMIN_PASSWORD` i `DEV_SEED_USER_PASSWORD` w prywatnym `infra/local/.env.dev` zmieniają hasła nowo tworzonych kont. Ponowne uruchomienie sprawdza role i zachowuje dotychczasowe hasła.
+`pnpm dev` po uruchomieniu Keycloak automatycznie tworzy w realmie `FORMIQ` konta `admin` (rola `ROOT`) i `user` (rola `USER`). Przy pierwszej inicjalizacji `pnpm stack:init` generuje hasła w prywatnym `infra/local/.env.dev`. W starszej konfiguracji bez tych zmiennych nowe konta lokalnego DEV otrzymują jako hasło swoją nazwę użytkownika. Kolejne starty zachowują hasła istniejących kont i sprawdzają role. Sam seed można powtórzyć przez `pnpm dev:seed:users`.
 
 | Login | E-mail | Rola w FORMIQ |
 | --- | --- | --- |

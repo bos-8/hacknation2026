@@ -125,6 +125,8 @@
       }
     },
     "navigation": {
+      "forms": "Forms",
+      "formDetails": "Form details",
       "file": "File",
       "ocr": "OCR",
       "llm": "System prompt",

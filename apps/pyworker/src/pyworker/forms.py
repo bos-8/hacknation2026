@@ -1,8 +1,10 @@
 """Synchronous-in-request form intake. Uploaded data stays in bounded memory."""
 
 import asyncio
+import json
 from pathlib import PurePath
 from typing import Literal
+from zipfile import BadZipFile, ZipFile
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.security import HTTPBearer
@@ -13,12 +15,65 @@ from starlette.formparsers import MultiPartException, MultiPartParser
 UPLOAD_PATH = "/v1/forms/validate"
 MAX_FILE = 20 * 1024 * 1024
 MAX_BODY = MAX_FILE + 64 * 1024
+DOCX = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+XLSX = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+ODS = "application/vnd.oasis.opendocument.spreadsheet"
+PACKAGES = {".docx": "word/document.xml", ".xlsx": "xl/workbook.xml", ".ods": "content.xml"}
 FORMATS = {
+    ".doc": ("application/msword", bytes.fromhex("d0cf11e0a1b11ae1")),
+    ".docx": (DOCX, b"PK\x03\x04"),
+    ".xlsx": (XLSX, b"PK\x03\x04"),
+    ".ods": (ODS, b"PK\x03\x04"),
+    ".txt": ("text/plain", b""),
+    ".json": ("application/json", b""),
     ".pdf": ("application/pdf", b"%PDF-"),
     ".png": ("image/png", b"\x89PNG\r\n\x1a\n"),
     ".jpg": ("image/jpeg", b"\xff\xd8\xff"),
     ".jpeg": ("image/jpeg", b"\xff\xd8\xff"),
 }
+
+
+def matches_package(file, extension):
+    try:
+        with ZipFile(file) as package:
+            package.getinfo(PACKAGES[extension])
+            if extension == ".ods":
+                with package.open("mimetype") as marker:
+                    return marker.read(128) == ODS.encode()
+            package.getinfo("[Content_Types].xml")
+            return True
+    except (BadZipFile, KeyError, OSError, RuntimeError, ValueError, EOFError):
+        return False
+
+
+async def detect_format(file: UploadFile, extension: str) -> str:
+    fmt = FORMATS.get(extension)
+    if not fmt:
+        raise HTTPException(415, "unsupported_format")
+    mime, signature = fmt
+    header = await file.read(8)
+    # One supplied .DOC blank is a Word Open XML package.
+    package_type = ".docx" if extension == ".doc" and header.startswith(b"PK") else extension
+    detected = FORMATS[package_type][0]
+    declared = (file.content_type or "").partition(";")[0].strip().lower()
+    if declared not in {"", "application/octet-stream", mime, detected}:
+        raise HTTPException(415, "format_mismatch")
+    if package_type in PACKAGES:
+        if not header.startswith(b"PK\x03\x04") or not matches_package(file.file, package_type):
+            raise HTTPException(415, "format_mismatch")
+    elif extension in {".txt", ".json"}:
+        await file.seek(0)
+        try:
+            text = (await file.read()).decode("utf-8-sig")
+            if "\x00" in text:
+                raise ValueError
+            if extension == ".json":
+                json.loads(text)
+        except (ValueError, RecursionError) as error:
+            raise HTTPException(415, "format_mismatch") from error
+    elif not header.startswith(signature):
+        raise HTTPException(415, "format_mismatch")
+    return detected
 
 
 class MemoryFormParser(MultiPartParser):
@@ -106,14 +161,7 @@ async def validate_form(request: Request):
                 or any(char in name for char in ("/", "\\", ":"))
             ):
                 raise HTTPException(422, "invalid_filename")
-            fmt = FORMATS.get(PurePath(name).suffix.lower())
-            if not fmt:
-                raise HTTPException(415, "unsupported_format")
-            mime, signature = fmt
-            if file.content_type not in (mime, "application/octet-stream", None) or (
-                await file.read(len(signature)) != signature
-            ):
-                raise HTTPException(415, "format_mismatch")
+            mime = await detect_format(file, PurePath(name).suffix.lower())
             return ValidatedFile(media_type=mime, size_bytes=file.size)
         finally:
             await form.close()
