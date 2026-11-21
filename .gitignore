@@ -38,7 +38,9 @@ __pycache__/
 /.local/
 /infra/local/data/
 /infra/local/backups/
-/infra/local/certs/
+/infra/local/certs/*
+!/infra/local/certs/localhost.pem
+!/infra/local/certs/rootCA.pem
 /infra/local/secrets/
 /infra/aws/data/
 /infra/aws/backups/
