@@ -13,7 +13,7 @@
     "dev:infra:logs": "node scripts/dev-infra.mjs logs",
     "dev:doctor": "node --conditions=react-server scripts/dev-doctor.mjs",
     "dev:seed:users": "node scripts/dev-seed-users.mjs",
-    "dev:prepare:application": "pnpm check:containers && pnpm check:dev-ports && pnpm preferences:sync && pnpm dev:build && pnpm dev:queue:prepare && pnpm dev:migrate && pnpm dev:seed",
+    "dev:prepare:application": "pnpm check:containers && pnpm check:dev-ports && pnpm preferences:sync && pnpm dev:build && pnpm dev:queue:prepare && pnpm dev:migrate && pnpm dev:seed && pnpm dev:seed:users",
     "qa:build:auth": "node scripts/qa.mjs build auth",
     "qa:build:s3": "node scripts/qa.mjs build s3",
     "qa:build:db": "node scripts/qa.mjs build db",
