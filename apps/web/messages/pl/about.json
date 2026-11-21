@@ -1,0 +1,175 @@
+{
+  "about": {
+    "metadataTitle": "O projekcie | FORMIQ",
+    "eyebrow": "Poznaj FORMIQ",
+    "title": "Jedna baza. Wiele zastosowań.",
+    "description": "FORMIQ łączy dostęp użytkowników, pliki i zadania w jeden fundament aplikacji biznesowej.",
+    "scopeTitle": "Od tożsamości użytkownika po wynik zadania",
+    "scope": {
+      "identity": {
+        "title": "Tożsamość i dostęp",
+        "description": "Keycloak odpowiada za tożsamość, a aplikacja obsługuje sesję i sprawdza uprawnienia do operacji. Sam widoczny przycisk nie zastępuje kontroli dostępu po stronie serwera.",
+        "first": "Logowanie i sesje",
+        "second": "Role użytkowników",
+        "third": "Dostęp do zasobów"
+      },
+      "files": {
+        "title": "Pliki i produkty",
+        "description": "Dokumenty mają metadane, wersje i kontrolowany cykl życia. Produkty korzystają ze wspólnego katalogu plików, a ich zawartość pozostaje w prywatnym magazynie obiektowym.",
+        "first": "Katalog i wersje",
+        "second": "Przesyłanie i pobieranie",
+        "third": "Produkty i załączniki"
+      },
+      "workspace": {
+        "title": "Spójna przestrzeń pracy",
+        "description": "Tabele, formularze, powiadomienia i nawigacja korzystają ze wspólnych komponentów. Język i preferencje wyglądu można dopasować do sposobu pracy.",
+        "first": "Polski i angielski",
+        "second": "Motywy i kontrast",
+        "third": "Wspólne komponenty UI"
+      },
+      "tasks": {
+        "title": "Operacje w tle",
+        "description": "Kolejka przechowuje zadania i zarządza ich ponowieniami. Wykonawca Python obsługuje zdefiniowane operacje; panel administratora pokazuje kolejkę oraz dostępność usług.",
+        "first": "Kolejka i ponowienia",
+        "second": "Wykonawca Python",
+        "third": "Monitoring usług"
+      }
+    },
+    "workflowTitle": "Jak to działa",
+    "workflow": {
+      "access": {
+        "title": "Zaloguj się",
+        "description": "Aplikacja rozpoznaje użytkownika i sprawdza jego sesję. Role określają zakres dostępnych operacji."
+      },
+      "work": {
+        "title": "Pracuj na danych",
+        "description": "Dodajesz pliki, przeglądasz katalogi i aktualizujesz dane w granicach swojego dostępu."
+      },
+      "process": {
+        "title": "Uruchom zadanie",
+        "description": "Operacja w tle otrzymuje własny identyfikator. Kolejka przekazuje ją do odpowiedniego wykonawcy i zapisuje stan."
+      },
+      "result": {
+        "title": "Sprawdź rezultat",
+        "description": "Odczytujesz postęp i wynik zadania. Błąd lub ponowienie są osobnymi stanami, a nie ukrytym oczekiwaniem."
+      }
+    },
+    "technologyTitle": "Technologie z konkretną rolą",
+    "directionLabel": "Planowany rozwój",
+    "directionTitle": "Lokalne modele i AI przez API",
+    "directionDescription": "Kolejny kierunek to połączenie lokalnego przetwarzania na CPU z możliwościami zewnętrznych modeli językowych. Każda ścieżka ma wyraźnego właściciela i określone zasady przekazywania danych.",
+    "teamLink": "Poznaj zespół",
+    "homeLink": "Strona główna",
+    "team": {
+      "metadataTitle": "Zespół | FORMIQ",
+      "eyebrow": "Ludzie za projektem",
+      "title": "Zespół developerski",
+      "description": "Osoby tworzące i rozwijające FORMIQ.",
+      "owner": "Właściciel projektu",
+      "architect": "Architekt",
+      "projectLead": "Lider projektu",
+      "kacper": {
+        "bio": "Odpowiada za architekturę, kierunek rozwoju i spójność techniczną FORMIQ.",
+        "motto": "Proste rozwiązania. Solidne fundamenty."
+      },
+      "namePlaceholder": "Imię i nazwisko",
+      "rolePlaceholder": "Rola",
+      "slotLabel": "Miejsce w zespole",
+      "photoPlaceholder": "Miejsce na zdjęcie",
+      "profileLabel": "{provider}: {name} — otwiera nową kartę",
+      "profilePlaceholder": "{provider}: link do uzupełnienia",
+      "aboutLink": "O projekcie"
+    },
+    "intro": "Projekt porządkuje elementy, które powracają w wielu systemach: użytkowników, uprawnienia, dokumenty, dane i operacje w tle. Wspólny rdzeń pozwala rozwijać kolejne funkcje bez budowania tych podstaw od początku.",
+    "contentsLabel": "Na tej stronie",
+    "sections": {
+      "idea": "Idea projektu",
+      "modules": "Możliwości",
+      "workflow": "Sposób działania",
+      "architecture": "Architektura",
+      "development": "Kierunek rozwoju"
+    },
+    "currentLabel": "Dostępna podstawa PoC",
+    "idea": {
+      "label": "Dlaczego FORMIQ",
+      "title": "Mniej powtarzania. Więcej miejsca na właściwy produkt.",
+      "description": "Logowanie, obsługa plików czy kontrola dostępu to nie osobne dodatki. To fundament codziennej pracy z aplikacją. FORMIQ zbiera je w jednym projekcie, z jasnym podziałem odpowiedzialności.",
+      "detail": "To rozwijany proof of concept: baza do sprawdzania pomysłów i integracji. Działające moduły można rozszerzać o kolejne procesy biznesowe; gotowość produkcyjna wymaga osobnej weryfikacji.",
+      "reuse": {
+        "title": "Wspólne elementy",
+        "description": "Jedne komponenty i zasady działania w kolejnych częściach aplikacji."
+      },
+      "access": {
+        "title": "Jasny dostęp",
+        "description": "Role i własność zasobów określają, kto może wykonać daną operację."
+      },
+      "visibility": {
+        "title": "Widoczny postęp",
+        "description": "Stan zadań i usług można sprawdzić w panelu administracyjnym."
+      }
+    },
+    "scopeDescription": "Cztery obszary współpracują ze sobą. Każdy ma własną odpowiedzialność, a użytkownik korzysta ze wspólnego interfejsu.",
+    "workflowDescription": "Zwykłe operacje przechodzą przez backend Web. Prace wymagające przetwarzania w tle mogą korzystać z kolejki i niezależnego wykonawcy.",
+    "architecture": {
+      "supportTitle": "Usługi wspierające backend",
+      "label": "Pod powierzchnią",
+      "title": "Jeden backend. Wyraźne granice odpowiedzialności.",
+      "description": "Next.js łączy interfejs z backendem. Baza danych, magazyn plików, tożsamość i wykonawcy wspierają aplikację przez określone połączenia.",
+      "browser": {
+        "title": "Przeglądarka",
+        "detail": "Interfejs i działania użytkownika"
+      },
+      "web": {
+        "title": "Backend Web",
+        "detail": "Uprawnienia i logika aplikacji"
+      },
+      "data": {
+        "title": "Dane i pliki",
+        "detail": "PostgreSQL oraz magazyn S3"
+      },
+      "identity": "Keycloak · tożsamość",
+      "queue": "pg-boss · kolejka",
+      "python": "Python · wykonanie",
+      "note": "Przeglądarka komunikuje się z aplikacją. Dostęp do prywatnych danych i usług kontroluje backend."
+    },
+    "technologies": {
+      "web": "Interfejs, renderowanie i backend aplikacji.",
+      "auth": "Tożsamość, logowanie i zarządzanie rolami.",
+      "database": "Dane aplikacji, sesje i trwały zapis zadań.",
+      "storage": "Prywatna zawartość plików przez interfejs S3.",
+      "queue": "Przekazywanie zadań, stany i kontrolowane ponowienia.",
+      "python": "Oddzielny wykonawca operacji przetwarzania."
+    },
+    "environments": {
+      "title": "Ten sam projekt, różne sposoby uruchomienia",
+      "description": "DEV i QA korzystają z tych samych lokalnych adresów, ale mają oddzielną konfigurację i dane. Środowisko produkcyjne pozostaje planowanym etapem.",
+      "available": "Zaimplementowane",
+      "planned": "Planowane",
+      "dev": {
+        "title": "Rozwój lokalny",
+        "description": "Web i workery działają na komputerze developera, a infrastruktura w Dockerze. Zmiany kodu można szybko sprawdzać."
+      },
+      "qa": {
+        "title": "Weryfikacja integracji",
+        "description": "Aplikacje uruchamiają się ze zbudowanych obrazów. To miejsce na sprawdzenie współpracy usług w pełnym stacku."
+      },
+      "prod": {
+        "title": "Wdrożenie produkcyjne",
+        "description": "Oddzielne środowisko, konfiguracja i procedury utrzymania. Wymaga osobnej walidacji przed udostępnieniem."
+      }
+    },
+    "ai": {
+      "localTitle": "Małe modele lokalnie",
+      "localDescription": "Pyworker ma wykonywać zadania takie jak wykrywanie danych wrażliwych i klasyfikacja tekstu, z ograniczeniami pamięci oraz współbieżności.",
+      "localPath": "PYWORKER → CPU",
+      "cloudTitle": "LLM przez backend Web",
+      "cloudDescription": "Backend Web ma wywoływać OpenAI API dla rozmów, podsumowań i analiz. Długie operacje będą mogły korzystać z kolejki.",
+      "cloudPath": "WEB → OPENAI API",
+      "note": "Obsługa modeli, maskowanie PII i integracja OpenAI nie są jeszcze wdrożone. Gdy maskowanie będzie wymagane, jego niepowodzenie ma blokować wysyłkę danych do API."
+    },
+    "teamCta": {
+      "title": "Za kodem stoją ludzie",
+      "description": "Poznaj osobę odpowiedzialną za architekturę i kierunek rozwoju oraz miejsce dla kolejnych współtwórców."
+    }
+  }
+}

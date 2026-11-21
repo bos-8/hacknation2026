@@ -1,0 +1,11 @@
+fastapi==0.163.1
+uvicorn==0.54.0
+httpx2==2.16.2
+ruff==0.17.5
+psycopg==3.3.9
+psycopg-binary==3.3.9
+psycopg-pool==3.3.3
+pillow==13.0.0
+pypdfium2==5.15.2
+tesserocr==2.13.0
+python-multipart==0.0.34

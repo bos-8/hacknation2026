@@ -1,4 +1,59 @@
+# Environment values, retain safe templates
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# JavaScript dependencies and generated output
+node_modules/
+.pnpm-store/
+.next/
+dist/
+build/
+out/
+coverage/
+*.tsbuildinfo
+
+# Python environments and caches
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.uv-cache/
+
+# Terraform local state, plans and populated variable files
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+.terraform.tfstate.lock.info
+*.tfvars
+*.tfvars.json
+# Keep .terraform.lock.hcl and *.tfvars.example in Git
+
+# Runtime data and private infrastructure material
+/var/
+/.local/
+/infra/local/data/
+/infra/local/backups/
+/infra/local/certs/
+/infra/local/secrets/
+/infra/aws/data/
+/infra/aws/backups/
+/infra/aws/certs/
+/infra/aws/secrets/
+/apps/pyworker/.cache/
+
+# Logs and operating-system artifacts
+*.log
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+/certs/
+
+# Local COI reference material
 /materials/*
 !/materials/.gitkeep
-/.agents/skills/
-/.codex/skills/

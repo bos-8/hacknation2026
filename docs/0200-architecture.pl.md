@@ -1,10 +1,53 @@
 ---
-brief: Dokumenty opisujące architekturę generatora formularzy COI.
-tags: [architektura, dokumentacja]
+brief: Działający stos FORMIQ i projekt konwersji blankietów do JSON.
+tags: [architektura, nextjs, prisma, keycloak, ocr]
 ---
 
-# Architektura
+# Architektura FORMIQ
 
-- [Pierwsze podejście do architektury](0201-initial-design.pl.md) — podział webu i API, przetwarzanie dokumentów, Keycloak, środowiska Docker i plan pierwszego wydania.
-- [Audyt architektury](0202-architecture-audit.pl.md) — ryzyka dla odbioru, zalecane zmiany i kryteria weryfikacji.
-- [Backlog i kryteria odbioru](9999-backlog.pl.md) — wymagania, reguły importera i przypadki testowe.
+## Działający stos
+
+FORMIQ działa bez Nginx. Przeglądarka łączy się przez HTTPS bezpośrednio z Next.js, a podczas logowania z Keycloak. Web przechowuje sesje Better Auth i dane aplikacji w PostgreSQL przez Prisma. Keycloak odpowiada za poświadczenia i własną bazę. W DEV Web i oba workery działają na hoście, w QA w kontenerach. [Porty, środowiska i certyfikaty](0302-local-docker.pl.md)
+
+```text
+Przeglądarka → Next.js (HTTPS) ↔ Keycloak (OIDC) → keycloak_db
+                  ├── Prisma → app_db (sesje, wersje plików, wyniki i zatwierdzenia)
+                  ├── S3 → SeaweedFS (pliki źródłowe i eksporty)
+                  └── zadania → pg-boss / queue_db → worker Node.js → pyworker (OCR, PII, PDF)
+```
+
+Administrator wybiera wersję PDF lub obrazu do 8 MiB, sprawdza wynik OCR obok dokumentu i może zlecić wygenerowanie PDF z danymi, zaczernieniami lub etykietami. Stan analizy pozostaje dostępny po ponownym otwarciu strony. Prywatna trasa wykonawcza workera to `POST /v1/tasks/document`. [Praca z dokumentem](0208-document-redaction.pl.md) · [Bazy i kolejka](0303-prisma-database.pl.md)
+
+## Projekt konwertera COI
+
+Poniższy schemat, ścieżki HTTP i limity opisują zaprojektowany wariant plik → JSON. Jego odbiór wymaga m.in. próby importu w systemie COI. [Kryteria odbioru](9999-backlog.pl.md)
+
+```text
+Przeglądarka ──HTTPS──► apps/web (Node + Next.js)
+                         ├── Better Auth ──OIDC/PKCE──► Keycloak ──► keycloak_db
+                         ├── Prisma ──► app_db (PostgreSQL)
+                         └── prywatne HTTP ──► apps/pyworker
+                                                ├── PDFium / Tesseract pol+eng
+                                                └── tekst ──► lokalne API LLM ──► JSON
+Klient S3 ──HTTP──► SeaweedFS
+```
+
+### Projektowany przebieg
+
+1. Better Auth rozpoczyna logowanie przez dostawcę `keycloak`. Callback `/api/v1/auth/callback/keycloak` tworzy sesję w PostgreSQL. Web ustawia bezpieczne ciasteczko sesji dla danego środowiska.
+2. Panel przesyła dokument jako jedno pole `file` do `POST /api/v1/forms/convert`. Handler Next.js sprawdza origin i sesję, a następnie strumieniuje żądanie do prywatnego workera z tokenem usługi. Pyworker ma własny endpoint o tej samej ścieżce.
+3. Worker sprawdza nazwę, sygnaturę i rozmiar. PDFium odczytuje warstwę tekstową PDF, Tesseract rozpoznaje skany. Ten sam OCR jest dostępny pod prywatnym `POST /api/v1/ocr`; ustawienie `OCR_API_URL` kieruje rozpoznawanie do osobnej lokalnej usługi. Model otrzymuje rozpoznany tekst. Pydantic sprawdza odpowiedź modelu, a eksporter tworzy sekcje, identyfikatory UUID, strony `MAIN` i `FINISH` oraz `flow.links`.
+4. Na tej samej stronie użytkownik porównuje źródło z JSON-em i może pobrać wynik. Przesłany plik i tekst OCR nie trafiają do PostgreSQL ani S3. Magazyn SeaweedFS ma własny wolumen oraz oddzielną uwierzytelnioną konsolę.
+
+### Założenia kontraktu konwertera
+
+| Element | Zachowanie |
+| --- | --- |
+| HTTPS | Next.js i Keycloak obsługują TLS bezpośrednio na osobnych portach localhost. S3 i jego konsola udostępniają własne porty na pętli zwrotnej. |
+| Uwierzytelnienie | Dostęp do konwersji ma użytkownik z sesją Better Auth. Prywatny worker wymaga tokenu usługi. Autoryzacja per rola `forms.convert` i publiczny klient integracyjny pozostają w backlogu. |
+| Dane | PostgreSQL ma osobne bazy aplikacji i Keycloak. Schemat w `packages/database/prisma` obejmuje użytkowników, konta dostawców, sesje i dane weryfikacyjne. Migracja dotyczy wyłącznie `app_db`. |
+| OCR i model | PDF do 12 stron, jednoobrazowy PNG/JPEG do 24 MP, plik do 20 MiB, tekst do 100 tys. znaków. Jeden proces obsługuje jedną konwersję naraz. Model jest osobną usługą wskazaną w konfiguracji. |
+| Kontrakt | Sukces zwraca konfigurację JSON. Błędy obejmują brak dostępu (401/403), rozmiar (413), format (415), nieczytelny dokument (422), zajęty worker (429) i niedostępny lub błędnie odpowiadający model (502). |
+| Odbiór COI | Zakres obejmuje podstawowe pola, pełny zestaw typów, dokumenty biurowe, dane inicjalne i długie skany. Testy w docelowym importerze mają osobne kryteria odbioru. |
+
+[Start DEV i QA oraz domeny](../README.md) · [Pierwotne wymagania projektowe](0201-initial-design.pl.md) · [Audyt projektu](0202-architecture-audit.pl.md) · [Backlog COI](9999-backlog.pl.md)

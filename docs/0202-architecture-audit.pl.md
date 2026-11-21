@@ -5,7 +5,11 @@ tags: [architektura, audyt, coi, bezpieczenstwo, wdrozenie]
 
 # Audyt architektury generatora formularzy COI
 
+> Audyt historycznego projektu z Nginx. W obecnym FORMIQ nie ma Nginx. Próby uploadu i odpowiedzi HTTP należy wykonywać pod adresem HTTPS Next.js. [Architektura FORMIQ](0200-architecture.pl.md)
+
 ## Wniosek
+
+**Aktualizacja po audycie.** Pierwotny wniosek poniżej dotyczył wspólnej aplikacji web i API. Przyjęty później projekt wydziela klienta webowego oraz kontener formiq z kontraktem plik → JSON. Ustalenia o importerze, jakości OCR i budżecie konwersji dotyczą kontenera. [Aktualna granica usług](0201-initial-design.pl.md#od-blankietu-do-odpowiedzi)
 
 Zachować jeden FastAPI ze wspólną ścieżką konwersji dla REST i panelu Jinja2. Zmienić kolejność prac tak, aby przed rozbudową panelu potwierdzić zgodność z importerem COI, dostępność parserów zgodnych z polityką licencyjną oraz koszt synchronicznego przetwarzania najcięższych skanów. Obecny plan zaczyna od panelu, migracji i OIDC, podczas gdy te trzy kwestie mogą zmienić kontrakt lub sposób dostawy. [Projekt architektury](0201-initial-design.pl.md#kolejność-realizacji) · [Backlog](9999-backlog.pl.md)
 

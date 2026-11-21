@@ -1,0 +1,39 @@
+{
+  "name": "@formiq/database",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "license": "SEE LICENSE IN ../../LICENSE.md",
+  "exports": {
+    "./config": { "types": "./dist/config-contracts.d.ts", "default": "./dist/config-contracts.js" },
+    ".": {
+      "browser": null,
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "pnpm db:generate && tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json",
+    "db:generate": "prisma generate --config prisma.config.ts",
+    "db:validate": "prisma validate --config prisma.config.ts",
+    "db:format": "prisma format --config prisma.config.ts",
+    "db:migrate": "prisma migrate dev --config prisma.config.ts",
+    "db:deploy": "prisma migrate deploy --config prisma.config.ts",
+    "db:status": "prisma migrate status --config prisma.config.ts",
+    "db:seed": "prisma db seed --config prisma.config.ts",
+    "db:seed:execute": "pnpm build && node prisma/seed.ts",
+    "db:seed:prepared": "node --env-file=.env prisma/seed.ts",
+    "db:studio": "prisma studio --config prisma.config.ts --port 5555"
+  },
+  "dependencies": {
+    "@prisma/adapter-pg": "7.10.1",
+    "@prisma/client": "7.10.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "prisma": "7.10.1",
+    "typescript": "5.9.3"
+  }
+}

@@ -1,0 +1,207 @@
+{
+  "realm": "FORMIQ",
+  "eventsEnabled": true,
+  "enabledEventTypes": [
+    "LOGIN",
+    "LOGIN_ERROR"
+  ],
+  "eventsListeners": [
+    "jboss-logging"
+  ],
+  "displayName": "FORMIQ",
+  "displayNameHtml": "FORMIQ",
+  "enabled": true,
+  "sslRequired": "external",
+  "registrationAllowed": true,
+  "registrationEmailAsUsername": true,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "resetPasswordAllowed": false,
+  "bruteForceProtected": true,
+  "internationalizationEnabled": true,
+  "supportedLocales": [
+    "pl",
+    "en"
+  ],
+  "defaultLocale": "pl",
+  "clients": [
+    {
+      "clientId": "formiq-directory",
+      "name": "FORMIQ user directory (read only)",
+      "protocol": "openid-connect",
+      "enabled": true,
+      "publicClient": false,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "${AUTH_DIRECTORY_CLIENT_SECRET}",
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true,
+      "fullScopeAllowed": false,
+      "defaultClientScopes": [
+        "roles"
+      ],
+      "optionalClientScopes": []
+    },
+    {
+      "clientId": "formiq-web",
+      "name": "FORMIQ Web server-side OIDC",
+      "protocol": "openid-connect",
+      "enabled": true,
+      "publicClient": false,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "${KEYCLOAK_WEB_CLIENT_SECRET}",
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "fullScopeAllowed": false,
+      "redirectUris": [
+        "${APP_PUBLIC_URL}/api/v1/auth/callback/keycloak"
+      ],
+      "webOrigins": [
+        "${APP_PUBLIC_URL}"
+      ],
+      "attributes": {
+        "pkce.code.challenge.method": "S256",
+        "post.logout.redirect.uris": "${APP_PUBLIC_URL}/pl##${APP_PUBLIC_URL}/en"
+      },
+      "defaultClientScopes": [
+        "profile",
+        "email"
+      ],
+      "optionalClientScopes": []
+    }
+  ],
+  "loginTheme": "FORMIQ",
+  "accountTheme": "FORMIQ",
+  "roles": {
+    "realm": [
+      {
+        "name": "ROOT",
+        "composite": true,
+        "composites": {
+          "realm": [
+            "SADMIN"
+          ]
+        },
+        "attributes": {
+          "level": [
+            "100"
+          ]
+        },
+        "description": "Emergency application superuser; reserved for recovery and critical configuration."
+      },
+      {
+        "name": "SADMIN",
+        "description": "System administrator for the entire FORMIQ deployment.",
+        "attributes": {
+          "level": [
+            "90"
+          ]
+        },
+        "composite": true,
+        "composites": {
+          "realm": [
+            "ADMIN"
+          ]
+        }
+      },
+      {
+        "name": "ADMIN",
+        "composite": true,
+        "composites": {
+          "realm": [
+            "USER"
+          ]
+        },
+        "attributes": {
+          "level": [
+            "80"
+          ]
+        },
+        "description": "Day-to-day application administration."
+      },
+      {
+        "name": "AUDITOR",
+        "description": "Independent read-only audit and log review; no administration or business-write permissions.",
+        "attributes": {}
+      },
+      {
+        "name": "VIEWER",
+        "description": "Independent read-only business access; no administration or audit-log permissions.",
+        "attributes": {}
+      },
+      {
+        "name": "USER",
+        "attributes": {
+          "level": [
+            "50"
+          ]
+        },
+        "description": "Standard application user; assigned to newly registered users.",
+        "composite": true,
+        "composites": {
+          "realm": [
+            "LOGED"
+          ]
+        }
+      },
+      {
+        "name": "GUEST",
+        "description": "Explicit limited guest access; independent of the user hierarchy and never an anonymous fallback.",
+        "attributes": {}
+      },
+      {
+        "name": "SYSTEM",
+        "description": "Technical service identity outside the human role hierarchy; no interactive application access.",
+        "composite": false,
+        "attributes": {}
+      },
+      {
+        "name": "LOGED",
+        "description": "Authenticated application user; baseline level without business or administrative privileges.",
+        "attributes": {
+          "level": [
+            "0"
+          ]
+        },
+        "composite": false
+      }
+    ]
+  },
+  "ssoSessionIdleTimeout": "${AUTH_SESSION_IDLE_SECONDS:1800}",
+  "ssoSessionMaxLifespan": "${AUTH_SESSION_MAX_SECONDS:28800}",
+  "clientSessionIdleTimeout": "${AUTH_SESSION_IDLE_SECONDS:1800}",
+  "clientSessionMaxLifespan": "${AUTH_SESSION_MAX_SECONDS:28800}",
+  "clientScopeMappings": {
+    "realm-management": [
+      {
+        "client": "formiq-directory",
+        "roles": [
+          "view-users",
+          "query-users",
+          "view-events"
+        ]
+      }
+    ]
+  },
+  "users": [
+    {
+      "username": "service-account-formiq-directory",
+      "enabled": true,
+      "serviceAccountClientId": "formiq-directory",
+      "clientRoles": {
+        "realm-management": [
+          "view-users",
+          "query-users",
+          "view-events"
+        ]
+      },
+      "realmRoles": [
+        "SYSTEM"
+      ]
+    }
+  ],
+  "rememberMe": true
+}

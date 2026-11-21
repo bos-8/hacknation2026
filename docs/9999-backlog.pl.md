@@ -5,11 +5,13 @@ tags: [backlog, formularze, hacknation, licencje]
 
 # Backlog — Cyfryzacja formularzy
 
-Urzędnik przesyła blankiet wniosku i w odpowiedzi otrzymuje konfigurację JSON gotową do importu w systemie docelowym. Podstawą odbioru są treść blankietu, reguły projektowania formularzy i przykłady dostarczone przez COI. [Opis wyzwania](../materials/Cyfryzacja%20formularzy.docx) · [Materiały referencyjne](../materials/)
+Urzędnik przesyła blankiet wniosku i w odpowiedzi otrzymuje konfigurację JSON gotową do importu w systemie docelowym. Podstawą odbioru są treść blankietu, reguły projektowania formularzy i przykłady dostarczone przez COI. [Materiały referencyjne](../materials/)
+
+Baza techniczna obejmuje Next.js, Better Auth z Keycloak, PostgreSQL z Prisma, SeaweedFS oraz prywatny worker OCR. Poniższe kryteria dotyczą odbioru konkursowego. [Aktualne możliwości i limity](0200-architecture.pl.md)
 
 ## 1. Obowiązkowe minimum — od pliku do JSON
 
-- [ ] Udostępnić endpoint REST, który przyjmuje jeden plik na żądanie i w odpowiedzi zwraca dokument JSON z konfiguracją formularza.
+- [ ] Uruchomić samodzielny kontener formiq w Pythonie 3.14+. Wywołać `POST /api/v1/forms/convert` bez uruchamiania webu. Wysłać jeden blankiet jako pole `file` w `multipart/form-data` i otrzymać w tym samym żądaniu `200 application/json` z konfiguracją formularza COI.
 - [ ] Obsłużyć dokumenty PDF (`.pdf`) i dokumenty tekstowe w obu formatach Word (`.doc`, `.docx`).
 - [ ] Obsłużyć arkusze kalkulacyjne (`.ods`, `.xlsx`).
 - [ ] Obsłużyć skany JPEG (`.jpg`, `.jpeg`) i PNG (`.png`), w tym rozpoznać tekst oraz pola blankietu.
@@ -35,7 +37,7 @@ Podstawa: [reguły obowiązkowe][reguly], [opis pól importera][opis-json] i [sc
 | Strona końcowa | Reguły obowiązkowe dopuszczają wyłącznie pole `INFO_SECTION`. Oba wzorce mają w sekcji końcowej `TEXT_BLOCK`, a standardy UX także opisują blok tekstu. | Generować `INFO_SECTION` wewnątrz sekcji, bez pól wejściowych. Potwierdzić typ z COI lub w importerze. |
 | Pola wewnątrz sekcji | Schemat i opis mają klucz `repetingSectionGrid`. Oba JSON-y i przykłady zapytań JSONata używają `repeatingSectionGrid`. | Zapisywać `repeatingSectionGrid` i sprawdzać jego elementy własnym walidatorem. Literówka w schemacie pozwala pominąć walidację dzieci. |
 | Wartość domyślna i identyfikator przejścia | Schemat opisuje `defaultValue` jako tekst. W zagnieżdżonych polach wyboru występuje np. tablica `["Polska"]`. Wzorzec podatkowy używa też krótkich identyfikatorów przejść mimo wymogu UUID w opisie. | Sprawdzać typ wartości w kontekście komponentu i generować UUID dla nowych przejść. W testach porównywać znaczenie powiązań. |
-| Edycja danych inicjalnych | PDF o danych inicjalnych wymaga pola tylko do odczytu. Przykładowy opis danych kontaktowych w standardach UX mówi o możliwości zmiany lub usunięcia kontaktu z MLPZ. | Dla pola zasilanego z rejestru stosować regułę `readOnly` i potwierdzić z COI zachowanie kontaktu. |
+| Edycja danych inicjalnych | PDF wymaga blokady edycji. We wzorcach nr 1 i 5 po sześć pól MLPZ ma `readOnly: false` (`postCode`, `street`, `building`, `apartment`, `phoneNumber`, `email`). Standardy UX opisują możliwość zmiany lub usunięcia kontaktu z MLPZ. | Przy odbiorze rozszerzenia I stosować `readOnly: true` dla każdego pola zasilanego danymi inicjalnymi. Rozbieżność wzorców z PDF przekazać COI do potwierdzenia. |
 
 ### Projekt cyfrowego formularza
 
@@ -78,7 +80,7 @@ Punkty I–V poniżej odpowiadają progom kompletności wymienionym w sekcji 8 o
 - [ ] **I. Słowniki i dane inicjalne.** Powiązać pola w wynikowym JSON z pasującymi pozycjami z materiałów COI.
 - [ ] **II. Nowy słownik.** Zaproponować słownik dla wybranego pola, gdy dostarczona baza nie zawiera odpowiedniego.
 - [ ] **III. Zależności dynamiczne.** Odwzorować, które pola, sekcje lub strony pojawiają się w zależności od wyborów użytkownika.
-- [ ] **IV. Interfejs importu.** Umożliwić urzędnikowi przesłanie pliku w przeglądarce i obejrzenie wynikowego JSON.
+- [ ] **IV. Interfejs importu.** Web wysyła jeden plik do osobnego kontenera formiq. W czasie oczekiwania pokazuje stan przetwarzania. Po sukcesie na tej samej stronie widać dokument wejściowy i JSON zwrócony przez API. Sprawdzić porównanie na komputerze i telefonie, pobranie JSON oraz ponowienie po błędzie. Po zmianie pliku poprzedni wynik znika.
 - [ ] **V. Walidacja pól.** Generować reguły dopasowane do pola, np. typ i długość wartości, poprawność numeru telefonu lub PESEL.
 - [ ] Wyświetlić wynikowy JSON jako formularz e-usługi, aby urzędnik mógł przejrzeć strony i pola z perspektywy obywatela.
 - [ ] Ułatwić pracę z wieloma formularzami, np. przez przetwarzanie zbiorowe w interfejsie. Alternatywnym przykładem materiału UX podanym przez COI są makiety.
@@ -86,9 +88,42 @@ Punkty I–V poniżej odpowiadają progom kompletności wymienionym w sekcji 8 o
 ### Kryteria odbioru rozszerzeń
 
 - [ ] **Słowniki.** Obsłużyć słowniki województw, powiatów, gmin, miejscowości, krajów oraz numerów kierunkowych. Cztery słowniki terytorialne i słownik krajów przypisywać wyłącznie do `SELECT`. Ogólnie mechanizm słowników dopuszcza też `RADIO` i `CHECKBOX`. Wskazać `dictionaryName` i pozostawić puste `options`; dla własnych opcji zapisać `id`, `name` i `techName`. Propozycja nowego słownika ma podawać nazwę, strukturę i miejsce użycia. [Opis słowników][slowniki]
-- [ ] **Dane inicjalne.** Przypisać jednemu polu dokładnie jedno źródło i jeden atrybut z katalogu `PESEL`, `PESEL_ADDRESS` lub `MLPZ`. Przykład: `defaultValue: "PESEL.name"`, `defaultValueType: "EXTERNAL_SYSTEM"`, `readOnly: true`. Generator zapisuje powiązanie w JSON. Przy braku wartości pole pozostaje puste i zablokowane. [Dane inicjalne, s. 1–3][inicjalne]
+- [ ] **Dane inicjalne.** Dla każdego pola zasilanego z rejestru sprawdzić wygenerowany JSON według [katalogu i prób odbiorowych](#dane-inicjalne). [Dane inicjalne, s. 1–3][inicjalne]
 - [ ] **Widoczność i przebieg.** Rozpoznawać zależności z blankietu. Kiedy zależność występuje, zapisać ją zgodnie z regułami w `states[].query` jako JSONata. Dla sekcji dozwolony jest `SHOW`, dla pola także `READ_ONLY`. Sprawdzić odwołanie po `techName` oraz kontekst bieżącego powtórzenia (`$repeatingSectionIndex`). Przy zmianie całego etapu uwzględnić stronę alternatywną. [Reguły stanów][reguly]
 - [ ] **Walidatory.** Dobierać kody do typu pola: `REQUIRED`, `EMAIL`, `PESEL`, `NIP`, `REGON`, `ZIP_CODE`, `EPUAP`, `ADE`, `SERIAL_NUMBER_ID_CARD`. Przetestować adres krajowy z walidacją polskiego kodu i adres zagraniczny bez polskiego wzorca. [Reguły pól][reguly] · [Standardy adresowe, s. 12–15][standardy]
+
+### Dane inicjalne
+
+Generator zapisuje w konfiguracji pola dokładnie jedną parę `ŹRÓDŁO.atrybut`. Podczas wypełniania formularza system docelowy pobiera wskazaną wartość dla zalogowanego obywatela. Przykładowy fragment konfiguracji pola daty urodzenia wygląda następująco. [Dane inicjalne, s. 1][inicjalne]
+
+```json
+{
+  "type": "DATEPICKER",
+  "defaultValue": "PESEL.birthDate",
+  "defaultValueType": "EXTERNAL_SYSTEM",
+  "readOnly": true
+}
+```
+
+Katalog obejmuje 51 par. Nazwy źródeł i atrybutów w JSON zachowują podaną wielkość liter. W tabeli „brak typu w PDF” oznacza, że COI wymienia atrybut, ale zostawia pustą komórkę typu pola. [Katalog COI, s. 1–3][inicjalne]
+
+| Źródło | Zakres | Atrybuty | Typ pola |
+| --- | --- | --- | --- |
+| `PESEL` | Dane osobowe z Rejestru PESEL | `pesel`, `name`, `secondName`, `surname`, `familyName`, `sex`, `citizenship` | `TEXT_FIELD` |
+| `PESEL` | Urodzenie | `birthDate` | `DATEPICKER` |
+| `PESEL` | Miejsce i kraj urodzenia, zagraniczne miasto USC urodzenia | `birthPlace`, `birthCountry`, `foreignBirthUSC` | `TEXT_FIELD` |
+| `PESEL` | Rodzice | `motherName`, `motherSurname`, `fatherName`, `fatherSurname` | `TEXT_FIELD` |
+| `PESEL` | Stan cywilny | `maritalStatus` | Brak typu w PDF |
+| `PESEL_ADDRESS` | Adres zameldowania tymczasowego | `temporaryAddressVoivodeship`, `temporaryAddressCommunity`, `temporaryAddressPlace`, `temporaryAddressStreetType`, `temporaryAddressStreet`, `temporaryAddressHouseNumber`, `temporaryAddressApartmentNumber`, `temporaryAddressPostalCode` | `TEXT_FIELD` |
+| `PESEL_ADDRESS` | Region zameldowania tymczasowego | `temporaryAddressDistrict` | Brak typu w PDF |
+| `PESEL_ADDRESS` | Adres zameldowania stałego | `permanentAddressVoivodeship`, `permanentAddressDistrict`, `permanentAddressCommunity`, `permanentAddressPlace`, `permanentAddressStreetType`, `permanentAddressStreet`, `permanentAddressHouseNumber`, `permanentAddressApartmentNumber`, `permanentAddressPostalCode` | `TEXT_FIELD` |
+| `MLPZ` | Dane osobowe i kontakt zalogowanego użytkownika | `name`, `secondName`, `surname`, `pesel`, `phoneNumber`, `email` | `TEXT_FIELD` |
+| `MLPZ` | Adres zalogowanego użytkownika | `country`, `voivodeship`, `district`, `community`, `place`, `postCode`, `street`, `building`, `apartment` | `TEXT_FIELD` |
+| `MLPZ` | Nazwa i opisowa nazwa organizacji | `institutionName`, `descriptiveOrganizationName` | `TEXT_FIELD` |
+
+- [ ] **Konfiguracja.** Dla każdego powiązania sprawdzić, czy `defaultValue` jest pojedynczym tekstem z parą z katalogu, `defaultValueType` ma wartość `EXTERNAL_SYSTEM`, a `readOnly` jest wartością logiczną `true`. Sprawdzić typ komponentu tam, gdzie określa go PDF. Typy dla dwóch pustych komórek potwierdzić z COI.
+- [ ] **Błędne powiązania.** Walidator odrzuca atrybut przypisany do niewłaściwego źródła (np. `PESEL.email`), listę dwóch źródeł lub atrybutów w jednym polu oraz konfigurację z brakującym znacznikiem systemu zewnętrznego lub bez blokady edycji.
+- [ ] **Zachowanie formularza.** Na danych testowych sprawdzić pole z dostępną wartością oraz to samo pole przy braku wartości w źródle. W pierwszym przypadku obywatel widzi pobraną wartość i nie może jej zmienić ani usunąć. W drugim pole pozostaje puste i zablokowane także przy próbie ręcznego wpisania danych.
 
 ## 6. Oddanie projektu i obrona
 
@@ -120,10 +155,10 @@ Priorytety poniżej dotyczą realizacji projektu. Wymagania organizatora i przyp
 ### P1 — przed udostępnieniem usługi
 
 - [ ] **Izolacja analizy.** Uruchamiać parsery, OCR i analizę modelową w procesie roboczym z ograniczonymi uprawnieniami, bez dostępu do sieci, sekretów i bazy. Egzekwować limity rozmiaru po rozpakowaniu, liczby elementów archiwum, stron i pikseli. Potwierdzić kontrolowane odrzucanie uszkodzonych i ponadlimitowych plików oraz możliwość obsługi kolejnego żądania.
-- [ ] **Sprzątanie plików i prywatność.** Zinwentaryzować zapis w proxy, obsłudze multipart, parserach i OCR. Ograniczyć przestrzeń roboczą, stosować nazwy generowane przez aplikację i usuwać osierocone pliki. Sprawdzić brak kopii po sukcesie, błędzie, timeoutach, rozłączeniach i wymuszonym zakończeniu procesu oraz brak treści dokumentu i wyniku w telemetrii i trwałych pamięciach podręcznych.
+- [ ] **Sprzątanie plików i prywatność.** Zinwentaryzować zapis w serwerze Web, obsłudze multipart, parserach i OCR. Ograniczyć przestrzeń roboczą, stosować nazwy generowane przez aplikację i usuwać osierocone pliki. Sprawdzić brak kopii po sukcesie, błędzie, timeoutach, rozłączeniach i wymuszonym zakończeniu procesu oraz brak treści dokumentu i wyniku w telemetrii i trwałych pamięciach podręcznych.
 - [ ] **Wierność wyniku AI.** Powiązać propozycje modelu z fragmentami dokumentu, budować JSON deterministycznie w kodzie i ustalić zachowanie przy słabym OCR lub niespójnej ekstrakcji. Na wzorcach i wcześniej niewidzianym blankiecie ocenić kompletność pól, wymagalność, zgody i zależności oddzielnie od poprawności schematu. Dla zestawów nr 8 i 9 uwzględnić kryteria długich skanów z sekcji 6.
 - [ ] **OIDC i sesje.** Rozdzielić klientów panelu i integracji, zdefiniować mapowanie `forms.convert`, walidację tokenów, rotację JWKS i zachowanie przy niedostępności IdP. Dla panelu ustalić obsługę `state` i `nonce`, ważność sesji, wylogowanie i aktualizację uprawnień. Zweryfikować odmowę przy błędnym `aud`, braku roli, nieważnej sesji oraz niepoprawnym CSRF.
-- [ ] **Kontrakt HTTP przez proxy.** Opisać w OpenAPI pole multipart, dodatkowe części, limit pliku, odpowiedzi błędów, identyfikator żądania i zasady ponawiania. Rozróżnić zbyt duży plik, nieobsługiwany format, nieprzetwarzalny dokument i brak wolnych zasobów. Potwierdzić odpowiedzi przez Nginx, także poniżej limitu, na jego granicy i powyżej, z uwzględnieniem narzutu multipart.
+- [ ] **Kontrakt HTTP na wejściu HTTPS Next.js.** Opisać w OpenAPI pole multipart, dodatkowe części, limit pliku, odpowiedzi błędów, identyfikator żądania i zasady ponawiania. Rozróżnić zbyt duży plik, nieobsługiwany format, nieprzetwarzalny dokument i brak wolnych zasobów. Potwierdzić odpowiedzi przez serwer HTTPS Next.js, także poniżej limitu, na jego granicy i powyżej, z uwzględnieniem narzutu multipart.
 - [ ] **Wersjonowanie reguł i uprawnienia bazy.** Ustalić właściciela reguł i słowników. Jeżeli edycja w czasie pracy nie jest wymagana, dostarczać je ze schematem jako wersjonowane artefakty tylko do odczytu. Określić zakres bazy aplikacji i oddzielić uprawnienia migracji od uprawnień procesu aplikacji. Sprawdzić, czy z manifestu wydania można ustalić wersje reguł, schematu i modelu użyte do konwersji.
 - [ ] **Powtarzalność wydania i odtworzenie.** Promować z QA manifest obejmujący digesty obrazów oraz sumy kontrolne modelu, OCR i kontraktu COI. Mierzyć czasy etapów, współbieżność, odrzucenia, timeouty i zużycie pamięci. Ustalić dopuszczalną utratę danych i czas odtworzenia, a następnie przećwiczyć odtworzenie baz aplikacji i tożsamości oraz cofnięcie wydania po migracji.
 
@@ -143,5 +178,5 @@ Priorytety poniżej dotyczą realizacji projektu. Wymagania organizatora i przyp
 [standardy]: <../materials/Materiały do zadania dla Uczestników/HackNation - Standardy i dobre praktyki projektowania formularzy.pdf>
 [slowniki]: <../materials/Materiały do zadania dla Uczestników/Hacknation - Słowniki  (1).docx>
 [inicjalne]: <../materials/Materiały do zadania dla Uczestników/Dane inicjalne - materialy dodatkowe do zadania rozszerzającego (2).pdf>
-[wzor1]: <../materials/1. Wniosek o ustalenie numeru porządkowego nieruchomości - materiał referencyjny dla Uczestników do zadania/>
-[wzor5]: <../materials/5. Wniosek o stwierdzenie nadpłaty podatku - materiał referencyjny dla Uczestników do zadania/>
+[wzor1]: <../materials/formularze/01-numer-nieruchomosci/>
+[wzor5]: <../materials/formularze/05-nadplata-podatku/>

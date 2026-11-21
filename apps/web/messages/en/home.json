@@ -1,0 +1,33 @@
+{
+  "home": {
+    "title": "A shared application core",
+    "description": "Sign-in, files and tasks in one place.",
+    "eyebrow": "Proof of concept",
+    "about": "About the project",
+    "team": "Meet the team",
+    "capabilities": {
+      "title": "Capabilities",
+      "identity": {
+        "title": "Sign-in and roles",
+        "description": "Sessions and access control."
+      },
+      "documents": {
+        "title": "Files and documents",
+        "description": "Uploads, versions and downloads."
+      },
+      "interface": {
+        "title": "Your interface",
+        "description": "Language, theme and contrast."
+      },
+      "tasks": {
+        "title": "Background tasks",
+        "description": "Queue and progress tracking."
+      }
+    },
+    "access": {
+      "label": "Project information",
+      "license": "License",
+      "contact": "Contact"
+    }
+  }
+}

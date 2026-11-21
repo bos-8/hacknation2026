@@ -1,0 +1,513 @@
+@import "tailwindcss";
+
+/* Shared shell geometry: both navigation rows remain inside [data-navbar]. */
+.navbar-main { min-height: 48px; padding-block: 4px; transition: height 200ms ease; }
+.navbar-primary a { width: 100px; height: 48px; flex-direction: column; gap: 2px; }
+.navbar-primary a > svg { transform: scale(1); transition: transform 200ms ease; }
+.navbar-primary .navbar-link-label { max-height: 16px; overflow: hidden; opacity: 1; transition: max-height 200ms ease, opacity 200ms ease; }
+.navbar-mobile-links a { min-height: 44px; justify-content: flex-start; }
+.navbar-subnav { --subnav-size: 36px; height: 0; opacity: 0; visibility: hidden; transition: height 200ms ease, opacity 200ms ease, visibility 200ms; }
+.navbar-subnav[data-open="true"] { height: var(--subnav-size); opacity: 1; visibility: visible; border-top-width: 1px; border-bottom-width: 1px; }
+.navbar-secondary-links { height: calc(var(--subnav-size) - 2px); scrollbar-width: none; }
+.navbar-secondary-links::-webkit-scrollbar { display: none; }
+.navbar-secondary-links a { border-radius: 0; }
+.navbar-secondary-links > span { border-radius: 0; }
+.navbar-subnav > nav { transform: translateY(-100%); transition: transform 200ms ease; }
+.navbar-subnav[data-open="true"] > nav { transform: translateY(0); }
+.navbar-brand-name { max-width: 200px; overflow: hidden; white-space: nowrap; opacity: 1; transition: max-width 200ms ease, opacity 200ms ease; }
+#main-content, main section[id] { scroll-margin-top: calc(var(--navigation-height, 100px) + 16px); }
+
+body:has([data-chat-workspace]) { height: 100dvh; min-height: 0; overflow: hidden; }
+body:has([data-chat-workspace]) [data-aside-content],
+body:has([data-chat-workspace]) #main-content { min-height: 0; }
+body:has([data-chat-workspace]) [data-aside-content] > :not(#main-content) { flex-shrink: 0; }
+body:has([data-chat-workspace]) [data-shell-footer] { display: none; }
+@container navbar (min-width: 640px) {
+  .navbar-main { height: 48px; min-height: 44px; padding-block: 0; }
+}
+@container navbar (min-width: 768px) {
+  [data-navbar][data-at-top="false"]:not(:hover):not(:focus-within) .navbar-primary a { gap: 0; }
+  [data-navbar][data-at-top="false"]:not(:hover):not(:focus-within) .navbar-primary a > svg { transform: scale(1.333333); }
+  [data-navbar][data-at-top="false"]:not(:hover):not(:focus-within) .navbar-primary .navbar-link-label { max-height: 0; opacity: 0; }
+}
+@media (pointer: coarse) { .navbar-subnav { --subnav-size: 44px; } }
+@media (prefers-reduced-motion: reduce) {
+  .navbar-main, .navbar-primary a, .navbar-primary a > svg, .navbar-primary .navbar-link-label, .navbar-brand-name, .navbar-subnav, .navbar-subnav > nav { transition: none; }
+}
+
+@keyframes notification-pulse {
+  from { box-shadow: 0 0 0 0 hsl(var(--notification-pulse) / 0.65); }
+  to { box-shadow: 0 0 0 10px hsl(var(--notification-pulse) / 0); }
+}
+.notification-pulse { animation: notification-pulse 1s ease-out 3; }
+.notification-strip {
+  border-color: hsl(var(--strip-color));
+  background: linear-gradient(to left, hsl(var(--strip-color) / 0.24), hsl(var(--strip-color) / 0.08) 55%, transparent);
+  transition: transform 180ms ease-in, opacity 180ms ease-in;
+}
+.notification-strip[data-exit] { opacity: 0; }
+.notification-strip[data-exit="collapse"] { transform: scaleX(0.025) scaleY(0.32); }
+.notification-flight {
+  position: fixed;
+  z-index: 35;
+  width: 12px;
+  height: 12px;
+  margin: -6px 0 0 -6px;
+  border-radius: 50%;
+  pointer-events: none;
+  background: hsl(var(--strip-color));
+  animation: notification-flight var(--flight-duration) cubic-bezier(0.22, 0.8, 0.3, 1) both;
+}
+@keyframes notification-flight {
+  from { transform: translate(0, 0) scale(1); opacity: 1; }
+  75% { opacity: 1; }
+  to { transform: translate(var(--flight-x), var(--flight-y)) scale(0.35); opacity: 0; }
+}
+.aside-layer { pointer-events: none; }
+.aside-layer:popover-open { display: block; }
+.aside-panel { transform: translateX(100%); transition: transform 200ms ease; }
+.aside-layer[data-open="true"] .aside-panel { transform: translateX(0); }
+.aside-layer[data-open="true"] .aside-backdrop { opacity: 1; }
+.aside-content { margin-right: var(--aside-reserved-width, 0px); transition: margin-right 200ms ease; }
+.aside-content[data-resizing="true"] { transition: none; }
+@media (prefers-reduced-motion: reduce) {
+  .aside-panel, .aside-content { transition: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .notification-pulse, .notification-flight { animation: none; }
+  .notification-strip { transition: none; }
+}
+
+/* Explicit preferences override the OS, including Tailwind dark utilities. */
+@custom-variant dark {
+  &:where([data-theme="dark"], [data-theme="dark"] *) { @slot; }
+  @media (prefers-color-scheme: dark) {
+    &:where(:root:not([data-theme="light"]):not([data-theme="dark"]), :root:not([data-theme="light"]):not([data-theme="dark"]) *) { @slot; }
+  }
+}
+
+/* HSL channels match TrueGuard's component and chart color convention. */
+@theme inline {
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-border: hsl(var(--border));
+  --color-button-border: hsl(var(--button-border));
+  --color-button: hsl(var(--button-background));
+  --color-button-foreground: hsl(var(--button-foreground));
+  --color-button-hover: hsl(var(--button-hover));
+  --color-button-active: hsl(var(--button-active));
+  --color-button-ring: hsl(var(--button-ring));
+  --color-input: hsl(var(--input-background));
+  --color-input-foreground: hsl(var(--input-foreground));
+  --color-input-border: hsl(var(--input-border));
+  --color-input-placeholder: hsl(var(--input-placeholder));
+  --color-input-readonly: hsl(var(--input-readonly));
+  --color-input-disabled: hsl(var(--input-disabled));
+  --color-input-ring: hsl(var(--input-ring));
+  --color-panel: hsl(var(--panel-background));
+  --color-panel-foreground: hsl(var(--panel-foreground));
+  --color-panel-border: hsl(var(--panel-border));
+  --color-tooltip: hsl(var(--tooltip-background));
+  --color-tooltip-foreground: hsl(var(--tooltip-foreground));
+  --color-tooltip-border: hsl(var(--tooltip-border));
+  --color-navbar: hsl(var(--navbar-background));
+  --color-navbar-foreground: hsl(var(--navbar-foreground));
+  --color-navbar-border: hsl(var(--navbar-border));
+  --color-footer: hsl(var(--footer-background));
+  --color-footer-foreground: hsl(var(--footer-foreground));
+  --color-footer-border: hsl(var(--footer-border));
+  --color-table: hsl(var(--table-background));
+  --color-table-foreground: hsl(var(--table-foreground));
+  --color-table-border: hsl(var(--table-border));
+  --color-table-heading: hsl(var(--table-heading));
+  --color-table-hover: hsl(var(--table-hover));
+  --color-badge: hsl(var(--badge-background));
+  --color-badge-foreground: hsl(var(--badge-foreground));
+  --color-badge-border: hsl(var(--badge-border));
+  --color-shadow: hsl(var(--shadow-color));
+  --shadow-button: var(--button-shadow);
+  --shadow-input: var(--input-shadow);
+  --shadow-panel: var(--panel-shadow);
+  --shadow-tooltip: var(--tooltip-shadow);
+  --shadow-navbar: var(--navbar-shadow);
+  --shadow-footer: var(--footer-shadow);
+  --shadow-table: var(--table-shadow);
+  --shadow-badge: var(--badge-shadow);
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-accent-hover: hsl(var(--accent-hover));
+  --color-accent-active: hsl(var(--accent-active));
+  --color-standard: hsl(var(--standard));
+  --color-standard-foreground: hsl(var(--standard-foreground));
+  --color-standard-border: hsl(var(--standard-border));
+  --color-standard-hover: hsl(var(--standard-hover));
+  --color-standard-active: hsl(var(--standard-active));
+  --color-ring: hsl(var(--ring));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-primary-hover: hsl(var(--primary-hover));
+  --color-primary-active: hsl(var(--primary-active));
+  --color-success: hsl(var(--success));
+  --color-success-foreground: hsl(var(--success-foreground));
+  --color-success-hover: hsl(var(--success-hover));
+  --color-success-active: hsl(var(--success-active));
+  --color-warning: hsl(var(--warning));
+  --color-warning-foreground: hsl(var(--warning-foreground));
+  --color-warning-hover: hsl(var(--warning-hover));
+  --color-warning-active: hsl(var(--warning-active));
+  --color-error: hsl(var(--error));
+  --color-error-foreground: hsl(var(--error-foreground));
+  --color-error-hover: hsl(var(--error-hover));
+  --color-error-active: hsl(var(--error-active));
+  --color-danger: hsl(var(--danger));
+  --color-danger-foreground: hsl(var(--error-foreground));
+  --color-active: hsl(var(--active));
+  --color-surface: hsl(var(--card));
+  --color-hover: hsl(var(--muted));
+  --color-focus-ring: hsl(var(--ring));
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+}
+
+/* Independently tuned Bootstrap-inspired hues. Pair every filled hue with its
+   matching -foreground; the neutral standard appearance stays unchanged. */
+:root {
+  color-scheme: light;
+  --background: 0 0% 100%;
+  --foreground: 0 0% 9%;
+  --card: 0 0% 98%;
+  --card-foreground: 0 0% 9%;
+  --muted: 0 0% 94%;
+  --muted-foreground: 0 0% 32%;
+  --border: 0 0% 83%;
+  --button-border: 0 0% 76%;
+  --accent: 267 66% 39%;
+  --accent-foreground: 0 0% 100%;
+  --accent-hover: 267 66% 36%;
+  --accent-active: 267 66% 33%;
+  --primary: 216 82% 38%;
+  --primary-foreground: 0 0% 100%;
+  --primary-hover: 216 82% 35%;
+  --primary-active: 216 82% 32%;
+  --success: 153 66% 26%;
+  --success-foreground: 0 0% 100%;
+  --success-hover: 153 66% 23%;
+  --success-active: 153 66% 20%;
+  --warning: 37 88% 28%;
+  --warning-foreground: 0 0% 100%;
+  --warning-hover: 37 88% 25%;
+  --warning-active: 37 88% 22%;
+  --error: 3 70% 39%;
+  --error-foreground: 0 0% 100%;
+  --error-hover: 3 70% 36%;
+  --error-active: 3 70% 33%;
+  --ring: 0 0% 25%;
+  --active: 0 0% 90%;
+  --shadow-color: 0 0% 0%;
+  --shadow-strength: 0.1;
+
+  /* Component aliases inherit the active light/dark palette, with independent override points. */
+  --button-background: var(--card);
+  --button-foreground: var(--card-foreground);
+  --button-hover: var(--muted);
+  --button-active: var(--active);
+  --button-ring: var(--ring);
+  --button-shadow: none;
+
+  /* Neutral appearance stays unchanged; danger is the legacy name for error. */
+  --standard: var(--button-background);
+  --standard-foreground: var(--button-foreground);
+  --standard-border: var(--button-border);
+  --standard-hover: var(--button-hover);
+  --standard-active: var(--button-active);
+  --danger: var(--error);
+
+  --input-background: var(--background);
+  --input-foreground: var(--foreground);
+  --input-border: var(--border);
+  --input-placeholder: var(--muted-foreground);
+  --input-readonly: var(--muted);
+  --input-disabled: var(--muted);
+  --input-ring: var(--ring);
+  --input-shadow: none;
+
+  --panel-background: var(--card);
+  --panel-foreground: var(--card-foreground);
+  --panel-border: var(--border);
+  --panel-shadow: 0 10px 15px -3px hsl(var(--shadow-color) / var(--shadow-strength)), 0 4px 6px -4px hsl(var(--shadow-color) / var(--shadow-strength));
+
+  /* Inverted tooltip colors, matching TrueGuard in both light and dark themes. */
+  --tooltip-background: 0 0% 9%;
+  --tooltip-foreground: 0 0% 100%;
+  --tooltip-border: 0 0% 9%;
+  --tooltip-shadow: var(--panel-shadow);
+
+  --navbar-background: var(--card);
+  --navbar-foreground: var(--card-foreground);
+  --navbar-border: var(--border);
+  --navbar-shadow: none;
+
+  --footer-background: var(--card);
+  --footer-foreground: var(--card-foreground);
+  --footer-border: var(--border);
+  --footer-shadow: none;
+
+  --table-background: var(--background);
+  --table-foreground: var(--foreground);
+  --table-border: var(--border);
+  --table-heading: var(--muted);
+  --table-hover: var(--muted);
+  --table-shadow: none;
+
+  --badge-background: var(--muted);
+  --badge-foreground: var(--foreground);
+  --badge-border: var(--border);
+  --badge-shadow: none;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --background: 0 0% 4%;
+  --foreground: 0 0% 93%;
+  --card: 0 0% 9%;
+  --card-foreground: 0 0% 93%;
+  --muted: 0 0% 15%;
+  --muted-foreground: 0 0% 64%;
+  --border: 0 0% 25%;
+  --button-border: 0 0% 16%;
+  --tooltip-background: 0 0% 100%;
+  --tooltip-foreground: 0 0% 0%;
+  --tooltip-border: 0 0% 100%;
+  --accent: 267 78% 78%;
+  --accent-foreground: 0 0% 4%;
+  --accent-hover: 267 78% 81%;
+  --accent-active: 267 78% 84%;
+  --primary: 216 85% 72%;
+  --primary-foreground: 0 0% 4%;
+  --primary-hover: 216 85% 75%;
+  --primary-active: 216 85% 78%;
+  --success: 153 63% 63%;
+  --success-foreground: 0 0% 4%;
+  --success-hover: 153 63% 66%;
+  --success-active: 153 63% 69%;
+  --warning: 37 92% 68%;
+  --warning-foreground: 0 0% 4%;
+  --warning-hover: 37 92% 71%;
+  --warning-active: 37 92% 74%;
+  --error: 3 83% 76%;
+  --error-foreground: 0 0% 4%;
+  --error-hover: 3 83% 79%;
+  --error-active: 3 83% 82%;
+  --ring: 0 0% 83%;
+  --active: 0 0% 20%;
+  --shadow-strength: 0.35;
+}
+
+@media (prefers-color-scheme: dark) {
+  /* Also covers the initial render before the preference controller hydrates. */
+  :root:not([data-theme="light"]):not([data-theme="dark"]) {
+    color-scheme: dark;
+    --background: 0 0% 4%;
+    --foreground: 0 0% 93%;
+    --card: 0 0% 9%;
+    --card-foreground: 0 0% 93%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 64%;
+    --border: 0 0% 25%;
+    --button-border: 0 0% 16%;
+    --tooltip-background: 0 0% 100%;
+    --tooltip-foreground: 0 0% 0%;
+    --tooltip-border: 0 0% 100%;
+    --accent: 267 78% 78%;
+    --accent-foreground: 0 0% 4%;
+    --accent-hover: 267 78% 81%;
+    --accent-active: 267 78% 84%;
+    --primary: 216 85% 72%;
+    --primary-foreground: 0 0% 4%;
+    --primary-hover: 216 85% 75%;
+    --primary-active: 216 85% 78%;
+    --success: 153 63% 63%;
+    --success-foreground: 0 0% 4%;
+    --success-hover: 153 63% 66%;
+    --success-active: 153 63% 69%;
+    --warning: 37 92% 68%;
+    --warning-foreground: 0 0% 4%;
+    --warning-hover: 37 92% 71%;
+    --warning-active: 37 92% 74%;
+    --error: 3 83% 76%;
+    --error-foreground: 0 0% 4%;
+    --error-hover: 3 83% 79%;
+    --error-active: 3 83% 82%;
+    --ring: 0 0% 83%;
+    --active: 0 0% 20%;
+    --shadow-strength: 0.35;
+  }
+}
+
+/* Contrast is an independent preference: normal/high, for either theme. */
+:root[data-contrast="high"] {
+  --background: 0 0% 100%;
+  --foreground: 0 0% 0%;
+  --card: 0 0% 100%;
+  --card-foreground: 0 0% 0%;
+  --muted: 0 0% 96%;
+  --muted-foreground: 0 0% 15%;
+  --border: 0 0% 0%;
+  --button-border: 0 0% 0%;
+  --tooltip-background: 0 0% 0%;
+  --tooltip-foreground: 0 0% 100%;
+  --tooltip-border: 0 0% 0%;
+  --accent: 267 86% 26%;
+  --accent-foreground: 0 0% 100%;
+  --accent-hover: 267 86% 24%;
+  --accent-active: 267 86% 22%;
+  --primary: 216 100% 25%;
+  --primary-foreground: 0 0% 100%;
+  --primary-hover: 216 100% 23%;
+  --primary-active: 216 100% 21%;
+  --success: 153 100% 18%;
+  --success-foreground: 0 0% 100%;
+  --success-hover: 153 100% 16%;
+  --success-active: 153 100% 14%;
+  --warning: 37 100% 19%;
+  --warning-foreground: 0 0% 100%;
+  --warning-hover: 37 100% 17%;
+  --warning-active: 37 100% 15%;
+  --error: 3 92% 27%;
+  --error-foreground: 0 0% 100%;
+  --error-hover: 3 92% 25%;
+  --error-active: 3 92% 23%;
+  --ring: 0 0% 0%;
+  --active: 0 0% 90%;
+  --button-shadow: none;
+  --input-shadow: none;
+  --panel-shadow: none;
+  --navbar-shadow: none;
+  --footer-shadow: none;
+  --table-shadow: none;
+  --badge-shadow: none;
+}
+
+:root[data-theme="dark"][data-contrast="high"] {
+  --background: 0 0% 0%;
+  --foreground: 0 0% 100%;
+  --card: 0 0% 0%;
+  --card-foreground: 0 0% 100%;
+  --muted: 0 0% 10%;
+  --muted-foreground: 0 0% 90%;
+  --border: 0 0% 100%;
+  --button-border: 0 0% 100%;
+  --tooltip-background: 0 0% 100%;
+  --tooltip-foreground: 0 0% 0%;
+  --tooltip-border: 0 0% 100%;
+  --accent: 267 100% 87%;
+  --accent-foreground: 0 0% 0%;
+  --accent-hover: 267 100% 89%;
+  --accent-active: 267 100% 91%;
+  --primary: 216 100% 84%;
+  --primary-foreground: 0 0% 0%;
+  --primary-hover: 216 100% 86%;
+  --primary-active: 216 100% 88%;
+  --success: 153 100% 80%;
+  --success-foreground: 0 0% 0%;
+  --success-hover: 153 100% 82%;
+  --success-active: 153 100% 84%;
+  --warning: 37 100% 80%;
+  --warning-foreground: 0 0% 0%;
+  --warning-hover: 37 100% 82%;
+  --warning-active: 37 100% 84%;
+  --error: 3 100% 86%;
+  --error-foreground: 0 0% 0%;
+  --error-hover: 3 100% 88%;
+  --error-active: 3 100% 90%;
+  --ring: 0 0% 100%;
+  --active: 0 0% 20%;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-contrast="high"]:not([data-theme="light"]):not([data-theme="dark"]) {
+    --background: 0 0% 0%;
+    --foreground: 0 0% 100%;
+    --card: 0 0% 0%;
+    --card-foreground: 0 0% 100%;
+    --muted: 0 0% 10%;
+    --muted-foreground: 0 0% 90%;
+    --border: 0 0% 100%;
+    --button-border: 0 0% 100%;
+    --tooltip-background: 0 0% 100%;
+    --tooltip-foreground: 0 0% 0%;
+    --tooltip-border: 0 0% 100%;
+    --accent: 267 100% 87%;
+    --accent-foreground: 0 0% 0%;
+    --accent-hover: 267 100% 89%;
+    --accent-active: 267 100% 91%;
+    --primary: 216 100% 84%;
+    --primary-foreground: 0 0% 0%;
+    --primary-hover: 216 100% 86%;
+    --primary-active: 216 100% 88%;
+    --success: 153 100% 80%;
+    --success-foreground: 0 0% 0%;
+    --success-hover: 153 100% 82%;
+    --success-active: 153 100% 84%;
+    --warning: 37 100% 80%;
+    --warning-foreground: 0 0% 0%;
+    --warning-hover: 37 100% 82%;
+    --warning-active: 37 100% 84%;
+    --error: 3 100% 86%;
+    --error-foreground: 0 0% 0%;
+    --error-hover: 3 100% 88%;
+    --error-active: 3 100% 90%;
+    --ring: 0 0% 100%;
+    --active: 0 0% 20%;
+  }
+}
+
+:root[data-contrast="high"] :focus-visible {
+  outline: 3px solid hsl(var(--ring));
+  outline-offset: 3px;
+}
+
+:root[data-contrast="high"] :disabled {
+  opacity: 1;
+  border-style: dashed;
+}
+
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+    border-color: hsl(var(--border));
+  }
+
+  html, body {
+    min-height: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+  }
+
+  body {
+    font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  }
+
+  a { color: inherit; }
+  button, input, select, textarea { font: inherit; }
+
+  :focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: 0s !important; }
+}
+
+/* Shared table row appearance; timing is provided by TableDataRegion from styles.ts. */
+@keyframes table-data-enter { from { opacity: 0; } to { opacity: 1; } }
+.table-data-enter { animation: table-data-enter var(--table-motion-duration, 100ms) var(--table-motion-easing, ease-out); }
+@media (prefers-reduced-motion: reduce) { .table-data-enter { animation: none; } }

@@ -1,0 +1,166 @@
+# QA image construction and startup are separate operations.
+x-qa-runtime: &qa-runtime
+  restart: unless-stopped
+  init: true
+  security_opt: [no-new-privileges:true]
+  cap_drop: [ALL]
+  stop_grace_period: 30s
+
+x-qa-ca: &qa-ca
+  type: bind
+  source: ${CERTS_DIR:-./certs}/${TLS_CA_PEM:-rootCA.pem}
+  target: /run/certs/rootCA.pem
+  read_only: true
+  bind: {create_host_path: false}
+
+# All settings originate from .env.qa; the launcher percent-encodes DB credentials in memory.
+x-qa-databases: &qa-databases
+  DATABASE_URL: "${QA_DATABASE_URL:?Use pnpm qa commands}"
+  QUEUE_DATABASE_URL: "${QA_QUEUE_DATABASE_URL:?Use pnpm qa commands}"
+
+x-qa-public: &qa-public
+  NODE_ENV: production
+  TZ: "${TZ:-Europe/Warsaw}"
+  NODE_EXTRA_CA_CERTS: /run/certs/rootCA.pem
+  NODE_OPTIONS: "--import=/app/scripts/qa-localhost.mjs"
+  AUTH_BASE_URL: "${APP_PUBLIC_URL}"
+  AUTH_ISSUER: "${AUTH_PUBLIC_URL}/realms/FORMIQ"
+
+x-qa-storage: &qa-storage
+  S3_ENDPOINT: http://s3:8333
+  S3_REGION: "${S3_REGION}"
+  S3_BUCKET: "${S3_BUCKET}"
+  S3_APP_ACCESS_KEY: "${S3_APP_ACCESS_KEY}"
+  S3_APP_SECRET_KEY: "${S3_APP_SECRET_KEY}"
+
+services:
+  web:
+    <<: *qa-runtime
+    image: ${WEB_IMAGE:-formiq-web:qa}
+    container_name: ${STACK_NAME:?Required}-web-${INSTANCE_INDEX:-0}
+    cpus: ${WEB_CPU_LIMIT:-1.0}
+    mem_limit: ${WEB_MEMORY_LIMIT:-512m}
+    build:
+      context: ../..
+      dockerfile: apps/web/Dockerfile
+      target: web
+      args:
+        NODE_IMAGE: ${NODE_IMAGE:-node:26.12.1-bookworm-slim}
+        APP_NAME: ${WEB_APP_NAME:-FORMIQ QA}
+        LANGUAGE_COOKIE_NAME: ${WEB_LANGUAGE_COOKIE_NAME:-formiq_qa_locale}
+        THEME_COOKIE_NAME: ${WEB_THEME_COOKIE_NAME:-formiq_qa_theme}
+        CONTRAST_COOKIE_NAME: ${WEB_CONTRAST_COOKIE_NAME:-formiq_qa_contrast}
+    environment:
+      <<: [*qa-databases, *qa-public, *qa-storage]
+      HOSTNAME: 0.0.0.0
+      PORT: "${WEB_HTTPS_PORT}"
+      APP_NAME: "${WEB_APP_NAME}"
+      LANGUAGE_COOKIE_NAME: "${WEB_LANGUAGE_COOKIE_NAME}"
+      THEME_COOKIE_NAME: "${WEB_THEME_COOKIE_NAME}"
+      CONTRAST_COOKIE_NAME: "${WEB_CONTRAST_COOKIE_NAME}"
+      UI_PREFERENCE_COOKIE_DOMAIN: "${UI_PREFERENCE_COOKIE_DOMAIN}"
+      AUTH_SECRET: "${AUTH_SECRET}"
+      AUTH_COOKIE_PREFIX: "${AUTH_COOKIE_PREFIX}"
+      OPENAI_API_KEY: "${OPENAI_API_KEY:-}"
+      OPENAI_MODEL_INSTANT: "${OPENAI_MODEL_INSTANT:-}"
+      OPENAI_MODEL_THINKING: "${OPENAI_MODEL_THINKING:-}"
+      AUTH_CLIENT_ID: formiq-web
+      AUTH_CLIENT_SECRET: "${KEYCLOAK_WEB_CLIENT_SECRET}"
+      AUTH_DIRECTORY_URL: "${AUTH_ADMIN_PUBLIC_URL}/admin/realms/FORMIQ"
+      AUTH_DIRECTORY_CLIENT_ID: formiq-directory
+      AUTH_DIRECTORY_CLIENT_SECRET: "${AUTH_DIRECTORY_CLIENT_SECRET}"
+      SESSION_TTL: "${SESSION_TTL}"
+      SESSION_WARNING: "${SESSION_WARNING}"
+      SESSION_AUTO_REFRESH: "${SESSION_AUTO_REFRESH}"
+      SESSION_MAX_REFRESHES: "${SESSION_MAX_REFRESHES}"
+      S3_AVATAR_ENDPOINT: http://s3:8333
+      S3_AVATAR_REGION: "${S3_REGION}"
+      S3_AVATAR_BUCKET: "${S3_AVATAR_BUCKET}"
+      S3_AVATAR_ACCESS_KEY: "${S3_AVATAR_ACCESS_KEY}"
+      S3_AVATAR_SECRET_KEY: "${S3_AVATAR_SECRET_KEY}"
+    ports: ["127.0.0.1:${WEB_HTTPS_PORT}:${WEB_HTTPS_PORT}"]
+    volumes:
+      - *qa-ca
+      - ${CERTS_DIR:-./certs}/${TLS_CERT_PEM:-localhost.pem}:/run/tls/localhost.pem:ro
+      - ${CERTS_DIR:-./certs}/${TLS_CERT_KEY:-localhost-key.pem}:/run/tls/localhost-key.pem:ro
+    networks: [edge, database]
+    depends_on:
+      db: {condition: service_healthy}
+      auth: {condition: service_healthy}
+      s3: {condition: service_healthy}
+    healthcheck:
+      test: [CMD, node, -e, "fetch(process.env.AUTH_BASE_URL + '/api/v1/health/ready').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+  queue:
+    <<: *qa-runtime
+    image: ${QUEUE_IMAGE:-formiq-queue:qa}
+    container_name: ${STACK_NAME:?Required}-queue-${INSTANCE_INDEX:-0}
+    build: {context: ../.., dockerfile: apps/web/Dockerfile, target: queue, args: {NODE_IMAGE: "${NODE_IMAGE:-node:26.12.1-bookworm-slim}"}}
+    environment:
+      <<: [*qa-databases, *qa-public, *qa-storage]
+      PYWORKER_URL: http://pyworker:8010
+      PYWORKER_PROGRESS_NETWORK: private
+      PYWORKER_API_TOKEN: "${PYWORKER_API_TOKEN}"
+      PYWORKER_ALLOW_PRIVATE_NETWORK: "true"
+      MONITOR_PYWORKER_URL: http://pyworker:8010/health/ready
+      QUEUE_HEALTH_FILE: /tmp/queue-ready.json
+    volumes: [*qa-ca]
+    read_only: true
+    tmpfs: ["/tmp:rw,noexec,nosuid,size=16m,mode=1777"]
+    networks: [database, edge, workers]
+    cpus: ${QUEUE_CPU_LIMIT:-1.0}
+    mem_limit: ${QUEUE_MEMORY_LIMIT:-384m}
+    depends_on:
+      db: {condition: service_healthy}
+      pyworker: {condition: service_healthy}
+    healthcheck:
+      test: [CMD, node, scripts/qa-health.mjs]
+      interval: 15s
+      timeout: 8s
+      retries: 5
+      start_period: 25s
+
+  pyworker:
+    <<: *qa-runtime
+    image: ${PYWORKER_IMAGE:-formiq-pyworker:qa}
+    container_name: ${STACK_NAME:?Required}-pyworker-${INSTANCE_INDEX:-0}
+    build: {context: ../.., dockerfile: apps/pyworker/Dockerfile, target: runtime, args: {PYTHON_IMAGE: "${PYTHON_IMAGE:-python:3.14.7-slim-bookworm}"}}
+    environment:
+      PYWORKER_API_TOKEN: "${PYWORKER_API_TOKEN}"
+      PYWORKER_HOST: 0.0.0.0
+      PYWORKER_PROGRESS_NETWORK: private
+      PYWORKER_ALLOW_NETWORK_BIND: "true"
+      PYWORKER_PORT: "8010"
+      PYWORKER_MAX_CONCURRENCY: "${PYWORKER_MAX_CONCURRENCY:-4}"
+      PYWORKER_TASK_TIMEOUT_SECONDS: "${PYWORKER_TASK_TIMEOUT_SECONDS:-5}"
+      PYWORKER_LOG_LEVEL: "${PYWORKER_LOG_LEVEL:-info}"
+    read_only: true
+    tmpfs: ["/tmp:rw,noexec,nosuid,size=48m,mode=1777"]
+    networks: [workers]
+    cpus: ${PYWORKER_CPU_LIMIT:-4.0}
+    mem_limit: ${PYWORKER_MEMORY_LIMIT:-8g}
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8010/health/ready', timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      retries: 8
+      start_period: 10s
+
+  maintenance:
+    profiles: [maintenance]
+    image: ${MAINTENANCE_IMAGE:-formiq-maintenance:qa}
+    build: {context: ../.., dockerfile: apps/web/Dockerfile, target: maintenance, args: {NODE_IMAGE: "${NODE_IMAGE:-node:26.12.1-bookworm-slim}"}}
+    environment: *qa-databases
+    init: true
+    security_opt: [no-new-privileges:true]
+    cap_drop: [ALL]
+    networks: [database]
+
+
+networks:
+  workers:
+    internal: true

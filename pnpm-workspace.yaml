@@ -1,0 +1,13 @@
+packages:
+  - apps/*
+  - packages/*
+
+# Explicit build-script policy for Web and Prisma dependencies.
+allowBuilds:
+  sharp: false
+  unrs-resolver: false
+  '@parcel/watcher': true
+  '@swc/core': true
+  '@prisma/engines': true
+  prisma: true
+

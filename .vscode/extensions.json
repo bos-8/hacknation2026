@@ -1,0 +1,19 @@
+{
+  "recommendations": [
+    "prisma.prisma",
+    "bradlc.vscode-tailwindcss",
+    "ms-python.python",
+    "ms-python.vscode-pylance",
+    "ms-python.vscode-python-envs",
+    "ms-azuretools.vscode-containers",
+    "hashicorp.terraform",
+    "amazonwebservices.aws-toolkit-vscode",
+    "ms-vscode.powershell",
+    "ms-vscode-remote.remote-ssh",
+    "postman.postman-for-vscode",
+    "bierner.markdown-mermaid",
+    "davidanson.vscode-markdownlint",
+    "yzhang.markdown-all-in-one",
+    "streetsidesoftware.code-spell-checker"
+  ]
+}

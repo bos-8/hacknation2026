@@ -1,0 +1,113 @@
+/* Match the neutral surfaces, blue actions and compact controls in FORMIQ. */
+:root {
+  color-scheme: light;
+  --mod-background: #fff; --mod-surface: #fafafa; --mod-text: #171717;
+  --mod-muted: #525252; --mod-border: #d4d4d4; --mod-accent: #2563eb;
+  --mod-on-accent: #fff;
+}
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --mod-background: #0a0a0a; --mod-surface: #171717; --mod-text: #ededed;
+  --mod-muted: #a3a3a3; --mod-border: #404040; --mod-accent: #60a5fa;
+  --mod-on-accent: #0a0a0a;
+}
+:root, :root.pf-v5-theme-dark {
+  --pf-v5-global--FontFamily--text: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --pf-v5-global--FontFamily--heading: var(--pf-v5-global--FontFamily--text);
+  --pf-v5-global--BackgroundColor--100: var(--mod-background);
+  --pf-v5-global--BackgroundColor--200: var(--mod-surface);
+  --pf-v5-global--Color--100: var(--mod-text);
+  --pf-v5-global--Color--200: var(--mod-muted);
+  --pf-v5-global--BorderColor--100: var(--mod-border);
+  --pf-v5-global--primary-color--100: var(--mod-accent);
+  --pf-v5-global--link--Color: var(--mod-accent);
+}
+body, .pf-v5-c-page, .keycloak__loading-container { background: var(--mod-background); color: var(--mod-text); }
+.pf-v5-c-masthead, .pf-v5-c-page__sidebar, .pf-v5-c-page__main-section, .pf-v5-c-card {
+  background: var(--mod-surface); color: var(--mod-text);
+}
+.pf-v5-c-masthead { border-bottom: 1px solid var(--mod-border); }
+#app img:is([src$='/FORMIQ.svg'], [src$='/FORMIQDark.svg']) {
+  width: 160px; max-width: 100%; height: auto; max-height: none;
+}
+.pf-v5-c-page__main-section { padding: 24px; }
+.pf-v5-c-title { font-weight: 600; letter-spacing: -.025em; }
+.pf-v5-c-form { max-width: 760px; }
+.pf-v5-c-form-control {
+  background: var(--mod-background); color: var(--mod-text);
+  border: 1px solid var(--mod-border); border-radius: 6px;
+}
+.pf-v5-c-form-control::before, .pf-v5-c-form-control::after { border: 0; }
+.pf-v5-c-form-control > input { min-height: 32px; font-size: 14px; }
+.pf-v5-c-button { border-radius: 6px; font-size: 14px; min-height: 32px; }
+.pf-v5-c-button.pf-m-primary { background: var(--mod-accent); color: var(--mod-on-accent); }
+.pf-v5-c-button.pf-m-secondary { color: var(--mod-text); }
+.pf-v5-c-button::after { border-radius: 6px; }
+:is(button, a, input, select):focus-visible { outline: 2px solid var(--mod-text); outline-offset: 2px; }
+.mod-account-preferences {
+  display: flex; justify-content: flex-end; padding: 8px 24px;
+  background: var(--mod-surface); border-bottom: 1px solid var(--mod-border);
+}
+.mod-account-preferences button {
+  width: 120px; min-height: 32px; padding: 4px 8px; cursor: pointer;
+  border: 1px solid var(--mod-border); border-radius: 6px;
+  background: var(--mod-background); color: var(--mod-text); font: 500 13px system-ui;
+}
+.mod-account-preferences button:hover { filter: brightness(.95); }
+body:has(.mod-account-preferences) #app { height: calc(100% - 49px); }
+@media (max-width: 600px) {
+  .pf-v5-c-page__main-section { padding: 16px; }
+  .mod-account-preferences { padding: 8px 16px; }
+}
+@media (pointer: coarse) {
+  .pf-v5-c-button, .mod-account-preferences button, .pf-v5-c-form-control > input { min-height: 44px; }
+  body:has(.mod-account-preferences) #app { height: calc(100% - 61px); }
+}
+
+body { font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; }
+.pf-v5-c-masthead .pf-v5-c-toolbar,
+.pf-v5-c-masthead .pf-v5-c-menu-toggle,
+.pf-v5-c-masthead .pf-v5-c-button { background: var(--mod-surface); color: var(--mod-text); }
+.pf-v5-c-nav__link, .pf-v5-c-nav__link:hover, .pf-v5-c-nav__link:focus { color: var(--mod-text); }
+.pf-v5-c-nav__link.pf-m-current, .pf-v5-c-nav__link:hover { background: var(--mod-border); }
+.pf-v5-c-page__main, .pf-v5-c-page__main-section, .pf-v5-c-form__group { min-width: 0; }
+@media (max-width: 767px) {
+  .pf-v5-c-form { width: 100%; }
+  .pf-v5-c-form__group { display: block; }
+  .pf-v5-c-form__group-label { padding-bottom: 8px; }
+  .pf-v5-c-form-control { max-width: 100%; }
+}
+
+.pf-v5-c-nav .pf-v5-c-nav__link.pf-m-current,
+.pf-v5-c-nav .pf-v5-c-nav__link.pf-m-current:hover,
+.pf-v5-c-masthead .pf-v5-c-masthead__toggle .pf-v5-c-button,
+.pf-v5-c-masthead .pf-v5-c-menu-toggle.pf-m-plain { color: var(--mod-text); }
+
+.mod-native-return { display: none !important; }
+.mod-account-preferences { gap: 8px; flex-wrap: wrap; }
+.mod-account-preferences :is(a, button) {
+  box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center;
+  gap: 6px; width: 120px; height: 32px; padding: 4px 8px;
+  border: 1px solid var(--mod-border); border-radius: 6px;
+  background: var(--mod-background); color: var(--mod-text);
+  text-decoration: none; font: 500 13px system-ui; cursor: pointer;
+  transition: background-color 75ms, box-shadow 75ms;
+}
+.mod-account-preferences :is(a, button):hover { background: var(--mod-border); filter: none; }
+.mod-account-preferences svg { flex-shrink: 0; width: 16px; height: 16px; }
+@media (max-width: 420px) {
+  .mod-account-preferences { padding: 8px; gap: 6px; justify-content: center; }
+  .mod-account-preferences :is(a, button) { width: min(120px, calc((100vw - 28px) / 3)); font-size: 12px; }
+}
+@media (pointer: coarse) {
+  .mod-account-preferences :is(a, button) { height: 44px; }
+}
+.mod-avatar-upload { display: grid; gap: 12px; min-width: 0; }
+.mod-avatar-upload > img { border-radius: 50%; object-fit: cover; border: 1px solid var(--pf-v5-global--BorderColor--100); }
+.mod-avatar-controls { display: flex; flex-wrap: wrap; gap: 8px; }
+.mod-avatar-controls button { padding: 6px 12px; border: 1px solid currentColor; border-radius: 6px; color: inherit; background: transparent; cursor: pointer; }
+.mod-avatar-controls button:hover { color: var(--pf-v5-global--BackgroundColor--100); background: var(--pf-v5-global--Color--100); }
+.mod-avatar-controls button:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+.mod-avatar-controls button:disabled { opacity: .6; cursor: not-allowed; }
+.mod-avatar-hint, .mod-avatar-status { margin: 0; font-size: 12px; line-height: 1.5; }
+.mod-avatar-status[role='alert'] { color: #dc2626; }

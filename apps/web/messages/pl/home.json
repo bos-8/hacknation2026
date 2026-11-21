@@ -1,0 +1,33 @@
+{
+  "home": {
+    "title": "Wspólny rdzeń aplikacji",
+    "description": "Logowanie, pliki i zadania w jednym miejscu.",
+    "eyebrow": "Proof of concept",
+    "about": "O projekcie",
+    "team": "Poznaj zespół",
+    "capabilities": {
+      "title": "Możliwości",
+      "identity": {
+        "title": "Logowanie i role",
+        "description": "Sesje i kontrola dostępu."
+      },
+      "documents": {
+        "title": "Pliki i dokumenty",
+        "description": "Przesyłanie, wersje i pobieranie."
+      },
+      "interface": {
+        "title": "Twój interfejs",
+        "description": "Język, motyw i kontrast."
+      },
+      "tasks": {
+        "title": "Zadania w tle",
+        "description": "Kolejka i podgląd postępu."
+      }
+    },
+    "access": {
+      "label": "Informacje o projekcie",
+      "license": "Licencja",
+      "contact": "Kontakt"
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "@formiq/pyworker",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "license": "SEE LICENSE IN ../../LICENSE.md",
+  "scripts": {
+    "setup": "node ../../scripts/pyworker.mjs setup",
+    "dev": "node ../../scripts/pyworker.mjs dev",
+    "start": "node ../../scripts/pyworker.mjs start",
+    "test": "node ../../scripts/pyworker.mjs test",
+    "lint": "node ../../scripts/pyworker.mjs lint"
+  }
+}

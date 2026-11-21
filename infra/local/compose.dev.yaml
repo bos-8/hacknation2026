@@ -1,0 +1,2 @@
+# The DEV web server and workers run on the host.
+services: {}

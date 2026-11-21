@@ -1,0 +1,21 @@
+TrueGuard Polish Keycloak message bundles
+
+The login and account message bundles contain Polish translations derived from
+Keycloak 26.7.3, distributed under the Apache License, Version 2.0.
+Copyright the Keycloak authors and contributors.
+Upstream project: https://github.com/keycloak/keycloak
+
+Source bundles extracted from the local Keycloak 26.7.3 distribution:
+  keycloak-themes: theme/base/login/messages/messages_pl.properties
+  keycloak-themes: theme/base/account/messages/messages_pl.properties
+  keycloak-account-ui: theme/keycloak.v3/account/messages/messages_pl.properties
+
+TrueGuard retains its branding overrides and supplies translations for missing
+English keys. The account bundle combines the base and React account UI messages;
+the React UI messages take precedence for duplicate keys.
+
+The license text is included in LICENSE.txt beside this notice.
+
+Modulon adaptation: branding, configurable preference cookies and application URLs
+were adapted from the authorized TrueGuard project theme. Original upstream
+translation notices and Apache-2.0 license are retained.
