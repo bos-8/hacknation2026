@@ -5,23 +5,19 @@
     "eyebrow": "Proof of concept",
     "about": "O projekcie",
     "team": "Poznaj zespół",
-    "capabilities": {
-      "title": "Możliwości",
-      "identity": {
-        "title": "Logowanie i role",
-        "description": "Sesje i kontrola dostępu."
+    "services": {
+      "label": "Usługi projektu",
+      "authConsole": {
+        "title": "Konsola administracyjna Keycloak",
+        "description": "Zarządzaj użytkownikami i rolami w Keycloak."
       },
-      "documents": {
-        "title": "Pliki i dokumenty",
-        "description": "Przesyłanie, wersje i pobieranie."
+      "keycloak": {
+        "title": "Konfiguracja OIDC Keycloak",
+        "description": "Sprawdź adresy usług logowania i kluczy publicznych."
       },
-      "interface": {
-        "title": "Twój interfejs",
-        "description": "Język, motyw i kontrast."
-      },
-      "tasks": {
-        "title": "Zadania w tle",
-        "description": "Kolejka i podgląd postępu."
+      "swagger": {
+        "title": "Swagger UI pyworkera",
+        "description": "Przeglądaj i testuj endpointy API workera."
       }
     },
     "access": {

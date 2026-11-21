@@ -5,23 +5,19 @@
     "eyebrow": "Proof of concept",
     "about": "About the project",
     "team": "Meet the team",
-    "capabilities": {
-      "title": "Capabilities",
-      "identity": {
-        "title": "Sign-in and roles",
-        "description": "Sessions and access control."
+    "services": {
+      "label": "Project services",
+      "authConsole": {
+        "title": "Keycloak Admin Console",
+        "description": "Manage users and roles in Keycloak."
       },
-      "documents": {
-        "title": "Files and documents",
-        "description": "Uploads, versions and downloads."
+      "keycloak": {
+        "title": "Keycloak OIDC configuration",
+        "description": "Find the sign-in and public key endpoints."
       },
-      "interface": {
-        "title": "Your interface",
-        "description": "Language, theme and contrast."
-      },
-      "tasks": {
-        "title": "Background tasks",
-        "description": "Queue and progress tracking."
+      "swagger": {
+        "title": "Pyworker Swagger UI",
+        "description": "Explore and test the worker API endpoints."
       }
     },
     "access": {

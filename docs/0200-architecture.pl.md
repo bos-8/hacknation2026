@@ -13,10 +13,16 @@ FORMIQ działa bez Nginx. Przeglądarka łączy się przez HTTPS bezpośrednio z
 Przeglądarka → Next.js (HTTPS) ↔ Keycloak (OIDC) → keycloak_db
                   ├── Prisma → app_db (sesje, wersje plików, wyniki i zatwierdzenia)
                   ├── S3 → SeaweedFS (pliki źródłowe i eksporty)
-                  └── zadania → pg-boss / queue_db → worker Node.js → pyworker (OCR, PII, PDF)
+                  └── zadania → pg-boss / queue_db → worker Node.js → pyworker (diagnostyka)
 ```
 
-Administrator wybiera wersję PDF lub obrazu do 8 MiB, sprawdza wynik OCR obok dokumentu i może zlecić wygenerowanie PDF z danymi, zaczernieniami lub etykietami. Stan analizy pozostaje dostępny po ponownym otwarciu strony. Prywatna trasa wykonawcza workera to `POST /v1/tasks/document`. [Praca z dokumentem](0208-document-redaction.pl.md) · [Bazy i kolejka](0303-prisma-database.pl.md)
+Pyworker udostępnia sprawdzanie gotowości, żywotności i uwierzytelnione zadanie diagnostyczne. [Swagger UI w DEV](http://localhost:8010/docs) · [Bazy i kolejka](0303-prisma-database.pl.md)
+
+## Przyjęcie blankietu w FastAPI
+
+Działający prywatny endpoint `POST /v1/forms/validate` przyjmuje jeden plik PDF, PNG lub JPEG jako pole `file` w `multipart/form-data`. W [Swagger UI](http://localhost:8010/docs) wybierz **Authorize**, podaj `PYWORKER_API_TOKEN`, a następnie otwórz operację w grupie **Forms**.
+
+Worker sprawdza nazwę, rozszerzenie, typ MIME i początkową sygnaturę pliku. Limit wynosi 20 MiB na plik i dodatkowe 64 KiB na obudowę multipart. Jeden proces przyjmuje jeden upload naraz, z limitem 30 sekund. Plik pozostaje w RAM do końca żądania. Odpowiedź HTTP 200 zawiera `status: validated`, `media_type` i `size_bytes`. Ten etap nie dekoduje stron ani nie wywołuje OCR lub LLM.
 
 ## Projekt konwertera COI
 
@@ -27,7 +33,7 @@ Przeglądarka ──HTTPS──► apps/web (Node + Next.js)
                          ├── Better Auth ──OIDC/PKCE──► Keycloak ──► keycloak_db
                          ├── Prisma ──► app_db (PostgreSQL)
                          └── prywatne HTTP ──► apps/pyworker
-                                                ├── PDFium / Tesseract pol+eng
+                                                ├── API OCR
                                                 └── tekst ──► lokalne API LLM ──► JSON
 Klient S3 ──HTTP──► SeaweedFS
 ```
@@ -36,7 +42,7 @@ Klient S3 ──HTTP──► SeaweedFS
 
 1. Better Auth rozpoczyna logowanie przez dostawcę `keycloak`. Callback `/api/v1/auth/callback/keycloak` tworzy sesję w PostgreSQL. Web ustawia bezpieczne ciasteczko sesji dla danego środowiska.
 2. Panel przesyła dokument jako jedno pole `file` do `POST /api/v1/forms/convert`. Handler Next.js sprawdza origin i sesję, a następnie strumieniuje żądanie do prywatnego workera z tokenem usługi. Pyworker ma własny endpoint o tej samej ścieżce.
-3. Worker sprawdza nazwę, sygnaturę i rozmiar. PDFium odczytuje warstwę tekstową PDF, Tesseract rozpoznaje skany. Ten sam OCR jest dostępny pod prywatnym `POST /api/v1/ocr`; ustawienie `OCR_API_URL` kieruje rozpoznawanie do osobnej lokalnej usługi. Model otrzymuje rozpoznany tekst. Pydantic sprawdza odpowiedź modelu, a eksporter tworzy sekcje, identyfikatory UUID, strony `MAIN` i `FINISH` oraz `flow.links`.
+3. Worker sprawdza nazwę, sygnaturę i rozmiar. Usługa OCR odczytuje dokument przez API. Model otrzymuje rozpoznany tekst. Pydantic sprawdza odpowiedź modelu, a eksporter tworzy sekcje, identyfikatory UUID, strony `MAIN` i `FINISH` oraz `flow.links`.
 4. Na tej samej stronie użytkownik porównuje źródło z JSON-em i może pobrać wynik. Przesłany plik i tekst OCR nie trafiają do PostgreSQL ani S3. Magazyn SeaweedFS ma własny wolumen oraz oddzielną uwierzytelnioną konsolę.
 
 ### Założenia kontraktu konwertera

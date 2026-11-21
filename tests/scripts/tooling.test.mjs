@@ -36,18 +36,18 @@ async function put(root, file, value = 'fixture') {
 
 test('cleanup previews and removes dependencies, outputs and compiler caches by default', async (t) => {
   const root = await fixture(t);
-  const preserved = ['apps/web/.env', 'apps/web/src/page.ts', 'apps/web/src/keep.tsbuildinfo', 'apps/pyworker/.venv/keep',
+  const preserved = ['apps/web/.env', 'apps/web/src/page.ts', 'apps/web/src/keep.tsbuildinfo', 'apps/web/.venv/keep',
     'infra/local/data/keep', 'infra/local/certs/localhost-key.pem', 'pnpm-lock.yaml',
     'packages/database/prisma/migrations/keep'];
-  const generated = ['apps/web/.next/cache', 'packages/database/dist/client', 'dist/output',
+  const generated = ['apps/pyworker/.venv/keep', 'apps/web/.next/cache', 'packages/database/dist/client', 'dist/output',
     'node_modules/keep', 'apps/web/node_modules/keep', 'packages/database/node_modules/keep',
     'tsconfig.tsbuildinfo', 'apps/web/tsconfig.tsbuildinfo', 'packages/database/.eslintcache'];
   for (const file of [...preserved, ...generated]) {
     await put(root, file);
   }
-  assert.equal(await clean(root, { dryRun: true, log: quiet }), 9);
+  assert.equal(await clean(root, { dryRun: true, log: quiet }), 10);
   for (const file of [...preserved, ...generated]) await access(path.join(root, file));
-  assert.equal(await clean(root, { log: quiet }), 9);
+  assert.equal(await clean(root, { log: quiet }), 10);
   await assert.rejects(access(path.join(root, 'dist')), { code: 'ENOENT' });
   for (const file of preserved) await access(path.join(root, file));
   for (const file of generated) await assert.rejects(access(path.join(root, file)), { code: 'ENOENT' });

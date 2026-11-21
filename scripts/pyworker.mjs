@@ -154,7 +154,6 @@ export async function pyworkerEnvironment(root = ROOT, inherited = process.env) 
   // Explicit process needs; application credentials never cross this boundary.
   const runtimeKeys = new Set(['PATH', 'SYSTEMROOT', 'WINDIR', 'COMSPEC', 'PATHEXT', 'TEMP', 'TMP', 'TMPDIR', 'HOME', 'USERPROFILE', 'LOCALAPPDATA', 'APPDATA', 'LANG', 'LC_ALL', 'LC_CTYPE', 'TZ', 'NO_COLOR', 'FORCE_COLOR', 'SSL_CERT_FILE', 'SSL_CERT_DIR']);
   const workerKeys = new Set(['PYWORKER_HOST', 'PYWORKER_PORT', 'PYWORKER_API_TOKEN', 'PYWORKER_MAX_CONCURRENCY', 'PYWORKER_TASK_TIMEOUT_SECONDS', 'PYWORKER_LOG_LEVEL', 'PYWORKER_DATABASE_URL', 'PYWORKER_QUEUE_URL', 'PYWORKER_QUEUE_TOKEN']);
-  workerKeys.add('PYWORKER_PII_MODEL_DIR');
   const runtime = Object.fromEntries(Object.entries(inherited).filter(([key]) => runtimeKeys.has(key.toUpperCase()) || workerKeys.has(key)));
   return { ...runtime, ...Object.fromEntries(Object.entries(local).filter(([key]) => workerKeys.has(key) && !(key in inherited))),
     PYTHONPATH: path.join(directory, 'src'), PYTHONNOUSERSITE: '1',

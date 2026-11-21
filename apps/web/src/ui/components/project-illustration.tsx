@@ -8,9 +8,9 @@ const modules = [
 ] as const;
 
 /** Decorative project graphic; capability descriptions remain ordinary page content. */
-export function ProjectIllustration() {
+export function ProjectIllustration({ engine = false }: { engine?: boolean }) {
   return (
-    <div aria-hidden="true" className="relative mx-auto aspect-[6/5] w-full max-w-lg select-none">
+    <div role={engine ? "img" : undefined} aria-label={engine ? "FORMIQ ENGINE" : undefined} aria-hidden={engine ? undefined : true} className="relative mx-auto aspect-[6/5] w-full max-w-lg select-none">
       <svg viewBox="0 0 480 400" fill="none" className="absolute inset-0 size-full text-accent">
         <defs>
           <pattern id="project-grid" width="24" height="24" patternUnits="userSpaceOnUse">
@@ -33,8 +33,15 @@ export function ProjectIllustration() {
       </svg>
       <div className="absolute left-1/2 top-1/2 size-32 -translate-x-1/2 -translate-y-1/2 rounded-3xl border border-accent/20 bg-accent/10 rotate-12" />
       <div className="absolute left-1/2 top-1/2 flex size-28 -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center gap-3 rounded-2xl border border-accent bg-panel text-accent shadow-panel">
-        <BoxSeam className="size-10" />
-        <span className="text-[10px] font-bold tracking-[0.2em]">FORMIQ</span>
+        <BoxSeam aria-hidden="true" className={engine ? "size-8" : "size-10"} />
+        {engine ? (
+          <span className="flex flex-col items-center gap-1.5 pl-[0.25em] font-mono text-xs font-semibold leading-none tracking-[0.25em]">
+            <span>FORMIQ</span>
+            <span>ENGINE</span>
+          </span>
+        ) : (
+          <span className="text-[10px] font-bold tracking-[0.2em]">FORMIQ</span>
+        )}
       </div>
       {modules.map(({ icon: Icon, position, tone }, index) => (
         <div key={index} className={`absolute flex h-[23%] w-[23%] flex-col items-center justify-center gap-3 rounded-xl border border-panel-border bg-panel shadow-panel ${position} ${tone}`}>

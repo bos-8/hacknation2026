@@ -24,7 +24,7 @@ export async function withSpinner(message, action, { stream = process.stdout } =
   }
 }
 
-export async function clean(root, { dryRun = false, dependencies = true, log = logStatus } = {}) {
+export async function clean(root, { dryRun = false, dependencies = true, pythonVenv = dependencies, log = logStatus } = {}) {
   root = await realpath(root);
   const owners = ['.'];
   for (const folder of ['apps', 'packages']) {
@@ -58,6 +58,7 @@ export async function clean(root, { dryRun = false, dependencies = true, log = l
     }
     count++;
   }
+  if (pythonVenv) await removeOutput(path.join('apps', 'pyworker', '.venv'), true);
   // Fixed output names at package roots only. No recursive scan of source or infrastructure data.
   for (const owner of owners) {
     for (const name of names) {
@@ -81,7 +82,7 @@ main(import.meta.url, async () => {
     'dry-run': { type: 'boolean' }, dependencies: { type: 'boolean' }, help: { type: 'boolean' },
   } });
   if (values.help) {
-    console.log('Usage: pnpm clean [--dry-run]\nRemoves node_modules, build outputs, *.tsbuildinfo and .eslintcache at workspace/package roots. --dependencies is accepted for compatibility. Preserves source, lockfile, env, venv, certificates and data.');
+    console.log('Usage: pnpm clean (preview: pnpm clean:dry)\nRemoves apps/pyworker/.venv, node_modules, build outputs, *.tsbuildinfo and .eslintcache at workspace/package roots. --dependencies is accepted for compatibility. Preserves source, lockfile, env, certificates and data.');
     return;
   }
   await clean(ROOT, { dryRun: values['dry-run'], dependencies: values.dependencies });

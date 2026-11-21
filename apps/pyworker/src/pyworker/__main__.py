@@ -51,7 +51,11 @@ def main() -> None:
             server.should_exit = True
 
         threading.Thread(target=parent_control, daemon=True).start()
-    server.run()
+    try:
+        server.run()
+    except KeyboardInterrupt:
+        # Uvicorn can re-raise SIGINT after completing its shutdown.
+        pass
 
 
 if __name__ == "__main__":

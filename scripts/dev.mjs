@@ -54,7 +54,7 @@ export async function cleanComponent(root, component) {
 /** Reusable workflow: tests supply harmless commands and disposable generated paths. */
 export async function devWorkflow(action, component, {
   root = ROOT, run, checkStopped = () => checkHostStopped(root),
-  cleanAll = () => clean(root), cleanPart = name => cleanComponent(root, name),
+  cleanAll = () => clean(root, { pythonVenv: false }), cleanPart = name => cleanComponent(root, name),
   pythonBase = () => existingPython(root),
   checkTools = async () => checkDevTools({ root, python: await pythonBase() }),
   log = logStatus,

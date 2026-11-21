@@ -21,10 +21,8 @@ RUN python -m venv /opt/venv && /opt/venv/bin/python -m pip install \
 FROM ${PYTHON_IMAGE} AS runtime
 WORKDIR /app
 RUN groupadd --gid 10001 worker && useradd --uid 10001 --gid 10001 --no-create-home worker
-RUN apt-get update && apt-get install -y --no-install-recommends fonts-dejavu-core && rm -rf /var/lib/apt/lists/*
 COPY --from=dependencies /opt/venv /opt/venv
 COPY apps/pyworker/src ./src
-COPY apps/pyworker/resources ./resources
 ENV PATH=/opt/venv/bin:$PATH PYTHONPATH=/app/src PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 PYWORKER_HOST=0.0.0.0 PYWORKER_ALLOW_NETWORK_BIND=true
 USER worker

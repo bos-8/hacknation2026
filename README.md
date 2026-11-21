@@ -1,6 +1,6 @@
 # FORMIQ
 
-FORMIQ to pracownia do odczytu i weryfikacji dokumentów. Administrator wgrywa PDF, PNG lub JPEG, porównuje oryginał z rozpoznanym tekstem, poprawia odczyt i zatwierdza wynik. Aplikacja pozwala pobrać PDF, również w wariancie z zasłoniętymi lub oznaczonymi danymi. Docelowym wynikiem konwersji blankietu dla COI jest formularz JSON.
+FORMIQ to pracownia do cyfryzacji formularzy. Docelowym wynikiem konwersji blankietu dla COI jest formularz JSON.
 
 ## Lokalne adresy usług
 
@@ -11,6 +11,7 @@ FORMIQ to pracownia do odczytu i weryfikacji dokumentów. Administrator wgrywa P
 | S3 Console — panel SeaweedFS | [localhost:8090/login](http://localhost:8090/login) | [localhost:18090/login](http://localhost:18090/login) |
 | Auth Console — administracja Keycloak | [localhost:8443/admin/](https://localhost:8443/admin/) | [localhost:9443/admin/](https://localhost:9443/admin/) |
 | Aplikacja FORMIQ | [localhost:3000](https://localhost:3000) | [localhost:3100](https://localhost:3100) |
+| Pyworker — Swagger UI | [Otwórz Swagger UI na localhost](http://localhost:8010/docs) | W sieci Compose pod `http://pyworker:8010/docs` |
 | Pyworker — stan gotowości | [localhost:8010/health/ready](http://localhost:8010/health/ready) | Tylko w sieci Compose pod `http://pyworker:8010/health/ready` |
 | S3 API — dla klientów S3 | [localhost:8333](http://localhost:8333) | [localhost:18333](http://localhost:18333) |
 | Keycloak — konfiguracja OIDC realmu FORMIQ | [Discovery DEV](https://localhost:8443/realms/FORMIQ/.well-known/openid-configuration) | [Discovery QA](https://localhost:9443/realms/FORMIQ/.well-known/openid-configuration) |
@@ -21,11 +22,7 @@ Logowanie użytkownika rozpocznij w aplikacji. Better Auth korzysta z klienta `f
 
 ## Od pliku do wyniku
 
-1. Zaloguj się jako administrator, wgraj plik do katalogu plików i otwórz analizę OCR wybranej wersji. Limit przesyłanego pliku wynosi 8 MiB.
-2. Worker Python odczytuje warstwę tekstową PDF przez PDFium, a skany rozpoznaje lokalnie przez Tesseract z danymi polskimi i angielskimi. Zapisuje wynik z położeniem słów na stronie, dzięki czemu można sprawdzić odczyt na tle dokumentu.
-3. Porównaj dokument z transkrypcją, popraw tekst i zatwierdź OCR. Po weryfikacji oznaczeń danych możesz wyeksportować PDF w wariancie oryginalnym, z zaczernieniami lub etykietami. Pliki przechowuje SeaweedFS, a wersje, wyniki analizy i zatwierdzenia zapisuje PostgreSQL.
-
-**Projekt konwersji do JSON.** Przepływ dla COI zakłada przekazanie tekstu OCR do lokalnego modelu przez API zgodne z OpenAI, walidację wyniku oraz podgląd i pobranie JSON obok oryginału. Ten wariant, łącznie z proponowanym interfejsem OCR, opisano w projekcie architektury. Działający panel opisany powyżej eksportuje PDF. [Projekt konwersji do JSON](docs/0200-architecture.pl.md) · [Wymagania COI i kryteria odbioru](docs/9999-backlog.pl.md)
+Katalog plików przechowuje dokumenty w SeaweedFS. Worker Python udostępnia diagnostykę i schemat OpenAPI. Przetwarzanie nowych dokumentów w dotychczasowym panelu OCR jest niedostępne po usunięciu lokalnego silnika. Konwerter COI będzie korzystał z API OCR i LLM. [Architektura](docs/0200-architecture.pl.md)
 
 ## Pierwsze uruchomienie DEV
 
@@ -61,7 +58,7 @@ DEV i QA mają osobne dane dostępowe i wolumeny. Prywatne pliki środowiskowe i
 | Katalog | Odpowiedzialność |
 | --- | --- |
 | `apps/web` | Next.js App Router, serwer HTTPS, interfejs PL/EN, Better Auth, panel administracyjny, katalog produktów, plików i tagów oraz przegląd OCR |
-| `apps/pyworker` | Prywatne API FastAPI/Uvicorn, zadania dokumentowe, wykrywanie danych, eksport PDF i diagnostyka |
+| `apps/pyworker` | Prywatne API FastAPI/Uvicorn, diagnostyka i Swagger UI |
 | `packages/database` | Schemat aplikacji, klient i migracje Prisma 7.10.1 dla `app_db` |
 | `packages/queue` | Kolejka pg-boss w `queue_db`. Worker Node.js pobiera zadania, obsługuje ponowienia i zleca przetwarzanie workerowi Python. |
 | `packages/monitoring` | Monitorowanie usług i ich gotowości |
@@ -81,9 +78,9 @@ Bazę techniczną projektu zaczerpnięto z Modulon PoC. Keycloak zarządza tożs
 | `pnpm dev:infra:status` / `pnpm dev:infra:logs` | Pokazuje stan kontenerów lub ich logi. |
 | `pnpm dev:prepare` | Przygotowuje aplikację i kolejkę przed osobnym uruchomieniem `pnpm dev:web`, `pnpm dev:pyworker` i `pnpm dev:queue` w oddzielnych terminalach. |
 | `pnpm queue:setup` / `pnpm pyworker:setup` | Przygotowuje odpowiednio kolejkę i środowisko Pythona. |
-| `pnpm check` | Sprawdza typy, lint i testy projektu. `pnpm test:web` oraz `pnpm test:pyworker` uruchamiają wybrane zestawy, w tym testy OCR i eksportu PDF w Pythonie. |
+| `pnpm check` | Sprawdza typy, lint i testy projektu. `pnpm test:web` oraz `pnpm test:pyworker` uruchamiają wybrane zestawy. |
 | `pnpm build` / `pnpm start` | Buduje aplikację webową lub uruchamia przygotowaną wersję. |
-| `pnpm clean:dry` / `pnpm dev:clean` | Pokazuje zakres czyszczenia lub usuwa wygenerowane pliki i zależności po zatrzymaniu usług. `dev:clean` zachowuje środowisko wirtualne Pythona. |
+| `pnpm clean:dry` / `pnpm dev:clean` | `pnpm clean` usuwa również `apps/pyworker/.venv`. Podgląd pokazuje zakres czyszczenia, a `dev:clean` usuwa wygenerowane pliki i zależności po zatrzymaniu usług. `dev:clean` zachowuje środowisko wirtualne Pythona. |
 | `pnpm dev:rebuild` | Odtwarza zależności i środowisko Pythona, przebudowuje kontenery i uruchamia pełny DEV. |
 | `pnpm qa:build`, `pnpm qa:deploy`, `pnpm qa:start` | Wykonuje oddzielne etapy przygotowania QA. Do obsługi służą `pnpm qa:status`, `pnpm qa:logs` i `pnpm qa:stop`. |
 
@@ -101,4 +98,4 @@ Po zatrzymaniu procesów hosta można przebudować jeden komponent poleceniem `p
 - [Audyt architektury](docs/0202-architecture-audit.pl.md)
 - [Wymagania COI, backlog i próby odbiorowe](docs/9999-backlog.pl.md)
 
-Właścicielem projektu jest Kacper Boś, prowadzący działalność jako Kacper Boś IT. Materiały właściciela podlegają licencji własnościowej w wersji 2.1. Komponenty zewnętrzne zachowują własne licencje. [Licencja repozytorium](LICENSE.md) · [Licencja danych językowych OCR](apps/pyworker/resources/tessdata/LICENSE) · [Kontakt](mailto:kacper.bos.it@gmail.com)
+Właścicielem projektu jest Kacper Boś, prowadzący działalność jako Kacper Boś IT. Materiały właściciela podlegają licencji własnościowej w wersji 2.1. Komponenty zewnętrzne zachowują własne licencje. [Licencja repozytorium](LICENSE.md) · [Kontakt](mailto:kacper.bos.it@gmail.com)

@@ -6,18 +6,16 @@ from contextlib import asynccontextmanager
 from time import perf_counter
 from uuid import uuid4
 
-from fastapi import FastAPI, Request
+from fastapi import Depends, FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
-from starlette.datastructures import UploadFile
+from fastapi.security import HTTPBearer
 
 from pyworker.config import Settings
 from pyworker.contracts import CheckRequest, CheckResponse
 from pyworker.dispatcher import Dispatcher
-from pyworker.document_executor import execute_document
-from pyworker.pii_executor import PiiExecutor
+from pyworker.forms import router as forms_router
 from pyworker.tasks.diagnostic import run_check
-from pyworker.tasks.document_types import DocumentTask
 from pyworker.transport import TaskBoundary
 
 logger = logging.getLogger("pyworker")
@@ -28,9 +26,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     @asynccontextmanager
     async def lifespan(app: FastAPI):
+        app.state.upload_slot = asyncio.Lock()
         app.state.slots = asyncio.Semaphore(settings.concurrency)
-        app.state.document_slot = asyncio.Lock()
-        app.state.pii = PiiExecutor()
         app.state.dispatcher = Dispatcher(settings.concurrency)
         async with app.state.dispatcher.lifespan():
             app.state.ready = True
@@ -39,17 +36,16 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                 yield
             finally:
                 app.state.ready = False
-                app.state.pii.close()
-                logger.info("event=worker_stopped")
+        logger.info("event=worker_stopped Goodbye!")
 
     app = FastAPI(
         title="FORMIQ Python worker",
         version="1.0",
         lifespan=lifespan,
-        docs_url=None,
+        docs_url="/docs",
         redoc_url=None,
-        openapi_url=None,
     )
+    app.include_router(forms_router)
     app.state.ready = False
     app.add_middleware(TaskBoundary, settings=settings)
 
@@ -85,36 +81,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             status_code=200 if is_ready else 503,
         )
 
-    @app.post("/v1/tasks/document")
-    async def document(request: Request):
-        if not app.state.ready or app.state.slots.locked() or app.state.document_slot.locked():
-            return JSONResponse({"error": "busy"}, status_code=503)
-        async with app.state.document_slot, app.state.slots:
-            try:
-                async with asyncio.timeout(15):
-                    form = await request.form(max_files=1, max_fields=1, max_part_size=6000000)
-                try:
-                    task = DocumentTask.model_validate_json(form.get("task", ""))
-                    source = form.get("source")
-                    if task.operation != "detect" and (
-                        not isinstance(source, UploadFile) or not 0 < (source.size or 0) <= 8388608
-                    ):
-                        raise ValueError("Invalid source")
-                    if task.operation == "detect" and source is not None:
-                        raise ValueError("Unexpected source")
-                    if task.operation == "detect":
-                        return await app.state.dispatcher.run(lambda: app.state.pii.run(task.pages))
-                    return await app.state.dispatcher.run(
-                        lambda: execute_document(task, source.file if source else None)
-                    )
-                finally:
-                    await form.close()
-            except ValueError:
-                return JSONResponse({"error": "document_processing_failed"}, status_code=422)
-            except TimeoutError:
-                return JSONResponse({"error": "document_timeout"}, status_code=504)
-
-    @app.post("/v1/tasks/check", response_model=CheckResponse)
+    @app.post("/v1/tasks/check", response_model=CheckResponse, dependencies=[Depends(HTTPBearer())])
     async def check(task: CheckRequest, request: Request):
         if not app.state.ready:
             return JSONResponse({"error": "not_ready"}, status_code=503)

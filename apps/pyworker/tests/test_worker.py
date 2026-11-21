@@ -30,6 +30,25 @@ class WorkerTests(unittest.TestCase):
                 self.assertNotIn(TOKEN, response.text)
         self.assertFalse(self.app.state.ready)
 
+    def test_swagger_lists_current_routes_and_bearer_auth(self):
+        with TestClient(self.app) as client:
+            self.assertIn("SwaggerUIBundle", client.get("/docs").text)
+            schema = client.get("/openapi.json").json()
+            self.assertEqual(
+                set(schema["paths"]),
+                {
+                    "/health",
+                    "/health/live",
+                    "/health/ready",
+                    "/v1/tasks/check",
+                    "/v1/forms/validate",
+                },
+            )
+            self.assertEqual(
+                schema["paths"]["/v1/tasks/check"]["post"]["security"], [{"HTTPBearer": []}]
+            )
+            self.assertNotIn(TOKEN, str(schema))
+
     def test_authenticated_idempotent_diagnostic(self):
         with TestClient(self.app) as client:
             self.assertEqual(client.post("/v1/tasks/check", json=self.task).status_code, 401)
