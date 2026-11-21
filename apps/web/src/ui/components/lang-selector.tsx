@@ -4,6 +4,7 @@ import { useTransition } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Translate } from "react-bootstrap-icons";
 import { LANGUAGE_COOKIE_KEY, persistLanguage } from "@/cookies";
+import { readCookieConsent } from "@/cookies/core.js";
 import { usePathname, useRouter } from "@/i18n/navigation";
 import { DEFAULT_LOCALE, LOCALE_META, getNextLocale, isAppLocale } from "@/schemas/i18n";
 import { Button, type TooltipPlacement } from "@/ui/basic";
@@ -35,7 +36,7 @@ export function LangSelector({ variant = "text", cookieName = LANGUAGE_COOKIE_KE
     disabled={pending}
     aria-busy={pending}
     onClick={() => {
-      persistLanguage(nextLocale, cookieName);
+      if (readCookieConsent() === "preferences") persistLanguage(nextLocale, cookieName);
       startTransition(() => {
         router.replace(`${pathname}${window.location.search}${window.location.hash}`, { locale: nextLocale, scroll: false });
       });

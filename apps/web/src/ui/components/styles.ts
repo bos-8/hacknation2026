@@ -133,7 +133,7 @@ export const asideSectionStyles = {
 
 export const popupStyles = {
   frame: cx(radius.control, "max-h-[calc(100dvh-2rem)] overflow-hidden border-border bg-card p-0 text-card-foreground shadow-2xl outline-none open:flex open:flex-col"),
-  sizes: { default: "max-w-xl", wide: "max-w-5xl" },
+  sizes: { default: "max-w-xl", wide: "max-w-5xl", compact: "max-w-[32.2rem] sm:aspect-[56/45]" },
   header: "flex shrink-0 items-center justify-between gap-4 border-b border-border pl-5 pr-1 py-1",
   title: "min-w-0 flex-1 break-words text-base font-semibold text-foreground",
   close: cx(radius.control, "ml-auto size-8 min-h-8 shrink-0 p-0"),

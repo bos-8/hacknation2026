@@ -9,6 +9,7 @@ import { getPublicConfig } from "@/config/server";
 import { initialDocumentPreferences } from "@/cookies/initial-document";
 import { APP_LOCALES, isAppLocale } from "@/schemas/i18n";
 import { Navbar, Footer } from "@/ui/layout";
+import { CookieConsent } from "@/ui/components/cookie-consent";
 import { ThemeProvider } from "@/ui/components/theme-provider";
 import { ContrastProvider } from "@/ui/components/contrast-provider";
 import { NotificationProvider } from "@/ui/components/notification-provider";
@@ -47,15 +48,15 @@ export default async function RootLayout({ children, params }: LayoutProps<"/[lo
       suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <head>
-        <script id="formiq-initial-preferences" dangerouslySetInnerHTML={{
-          __html: initialDocumentPreferences(config.THEME_COOKIE_NAME, config.CONTRAST_COOKIE_NAME),
-        }} />
-      </head>
       <body className="min-h-full flex flex-col">
+        {/* The HTML parser applies preferences on document loads. Client navigations use the providers below. */}
+        <div hidden dangerouslySetInnerHTML={{
+          __html: `<script id="formiq-initial-preferences">${initialDocumentPreferences(config.THEME_COOKIE_NAME, config.CONTRAST_COOKIE_NAME)}</script>`,
+        }} />
         <NextIntlClientProvider>
           <ThemeProvider cookieName={config.THEME_COOKIE_NAME} cookieDomain={config.UI_PREFERENCE_COOKIE_DOMAIN}>
             <ContrastProvider cookieName={config.CONTRAST_COOKIE_NAME} cookieDomain={config.UI_PREFERENCE_COOKIE_DOMAIN}>
+              <CookieConsent cookieNames={[config.LANGUAGE_COOKIE_NAME, config.THEME_COOKIE_NAME, config.CONTRAST_COOKIE_NAME]} cookieDomain={config.UI_PREFERENCE_COOKIE_DOMAIN} />
               <NotificationProvider>
               <AsideProvider>
               <AsideContent header={<Navbar languageCookieName={config.LANGUAGE_COOKIE_NAME} appName={config.APP_NAME} locale={locale} cookieDomain={config.UI_PREFERENCE_COOKIE_DOMAIN} />}>

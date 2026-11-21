@@ -184,6 +184,21 @@
       "skipContent": "Przejdź do treści",
       "loadingPreferences": "Ładowanie preferencji…"
     },
+    "cookies": {
+      "title": "Pliki cookies",
+      "settingsTitle": "Ustawienia cookies",
+      "openSettings": "Ustawienia cookies",
+      "description": "FORMIQ używa cookies do logowania i zapamiętania decyzji o cookies. Za Twoją zgodą może też zapamiętać język, motyw i kontrast.",
+      "essential": "Niezbędne",
+      "alwaysActive": "Zawsze aktywne",
+      "essentialDescription": "FORMIQ i Keycloak używają ciasteczek do logowania i utrzymania sesji. Czas ich działania zależy od ustawień sesji. Decyzję o cookies zapisujemy na maksymalnie rok.",
+      "preferences": "Zapamiętuj preferencje wyglądu",
+      "preferencesDescription": "Język, motyw i kontrast mogą być zapamiętane na maksymalnie rok. Motyw może być współdzielony z ekranem logowania Keycloak. Możesz używać tych ustawień także bez ich zapisywania.",
+      "reject": "Odrzuć opcjonalne",
+      "accept": "Zaakceptuj opcjonalne",
+      "customize": "Dostosuj",
+      "save": "Zapisz wybór"
+    },
     "footer": {
       "documentPending": "W przygotowaniu",
       "navigation": "Stopka",

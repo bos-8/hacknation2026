@@ -6,6 +6,7 @@ import { Link } from "@/i18n/navigation";
 import type { AppLocale } from "@/schemas/i18n";
 import { cx } from "@/ui/basic/styles";
 import { LangSelectorButton, ThemeSelectorButton, ContrastSelectorButton, SystemStatus, BackToTop } from "@/ui/components";
+import { CookieSettingsButton } from "@/ui/components/cookie-consent";
 import { layoutStyles } from "./styles";
 
 export type FooterProps = {
@@ -43,6 +44,7 @@ export async function Footer({ appName, companyName, locale, languageCookieName,
                   <span className="text-xs">{t("footer.documentPending")}</span>
                 </li>;
               })}
+              <li><CookieSettingsButton className={`${layoutStyles.footerLink} cursor-pointer`} /></li>
               <li><a href="/LICENSE.md" target="_blank" rel="noopener noreferrer" className={layoutStyles.footerLink}>{t("footer.license")}</a></li>
             </ul>
           </div>

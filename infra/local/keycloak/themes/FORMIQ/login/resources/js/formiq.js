@@ -1,11 +1,11 @@
 (() => {
-  const { PREFERENCE_COOKIE_NAMES, isPreferenceCookieName, readBrowserCookie, readPreferenceCookie, persistPreferenceCookie, removePreferenceCookie } = globalThis.FormiqPreferenceCookies;
+  const { PREFERENCE_COOKIE_NAMES, isPreferenceCookieName, readBrowserCookie, readCookieConsent, readPreferenceCookie, persistPreferenceCookie, removePreferenceCookie } = globalThis.FormiqPreferenceCookies;
   const requestedCookie = new URL(document.currentScript.src).searchParams.get('cookieName');
   const cookieName = isPreferenceCookieName(requestedCookie || "") ? requestedCookie : PREFERENCE_COOKIE_NAMES.theme;
   const modes = ['system', 'dark', 'light'];
-  const shared = readPreferenceCookie(cookieName);
+  const shared = readCookieConsent() === "preferences" ? readPreferenceCookie(cookieName) : undefined;
   const requestedTheme = new URL(location.href).searchParams.get('formiq_theme');
-  const stored = modes.includes(requestedTheme) ? requestedTheme : modes.includes(shared) ? shared : readBrowserCookie('theme');
+  const stored = modes.includes(requestedTheme) ? requestedTheme : modes.includes(shared) ? shared : readCookieConsent() === "preferences" ? readBrowserCookie('theme') : undefined;
   let mode = modes.includes(stored) ? stored : 'system';
   if (modes.includes(requestedTheme)) {
     const current = new URL(location.href);
@@ -44,12 +44,12 @@
       registrationForm.append(requiredFields);
     }
     function persistTheme() {
+      if (readCookieConsent() !== "preferences") return;
       persistPreferenceCookie(cookieName, mode, document.querySelector('.mod-footer')?.dataset.preferenceCookieDomain || '');
       if (cookieName !== 'theme' && readBrowserCookie(cookieName) === mode) {
         removePreferenceCookie('theme', location.protocol === 'https:');
       }
     }
-    persistTheme();
     render();
     const tooltip = document.createElement('div');
     tooltip.id = 'mod-tooltip';
@@ -147,7 +147,7 @@
     });
     window.addEventListener('pageshow', (event) => {
       if (!event.persisted) return;
-      const shared = readPreferenceCookie(cookieName);
+      const shared = readCookieConsent() === "preferences" ? readPreferenceCookie(cookieName) : undefined;
       if (modes.includes(shared)) { mode = shared; render(); }
       document.querySelectorAll('form').forEach((form) => { if (submitting.has(form)) { submitting.delete(form); setLoading(form, false); } });
       document.querySelectorAll('.mod-loading').forEach((element) => element.classList.remove('mod-loading'));

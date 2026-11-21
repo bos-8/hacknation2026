@@ -40,6 +40,35 @@ export function isPreferenceCookieDomain(value) {
 }
 
 export const PREFERENCE_COOKIE_MAX_AGE = 365 * 24 * 60 * 60;
+export const COOKIE_CONSENT_NAME = "formiq_cookie_consent";
+export const COOKIE_CONSENT_VERSION = "1";
+
+/** @param {(name: string) => string | undefined} [read] @returns {"essential" | "preferences" | null} */
+export function readCookieConsent(read = readBrowserCookie) {
+  const value = read(COOKIE_CONSENT_NAME);
+  if (value === `${COOKIE_CONSENT_VERSION}:preferences`) return "preferences";
+  if (value === `${COOKIE_CONSENT_VERSION}:essential`) return "essential";
+  return null;
+}
+
+/** @param {"essential" | "preferences"} value @param {string} [domain] */
+export function persistCookieConsent(value, domain = "") {
+  persistPreferenceCookie(COOKIE_CONSENT_NAME, `${COOKIE_CONSENT_VERSION}:${value}`, domain);
+}
+
+/** @param {string[]} names @param {string} [domain] */
+export function clearRememberedPreferences(names, domain = "") {
+  const secure = window.location.protocol === "https:";
+  const scope = preferenceDomain(domain, window.location.hostname);
+  for (const name of names) {
+    for (const cookie of [name, legacyPreferenceCookieName(name)]) {
+      if (!cookie) continue;
+      removePreferenceCookie(cookie, secure);
+      if (scope) removePreferenceCookie(cookie, secure, scope);
+    }
+  }
+}
+
 
 /** Non-sensitive preferences only. Authentication cookies must be issued by the auth server.
  * @param {string} name @param {string} value @param {boolean} [secure] @param {string} [domain] */

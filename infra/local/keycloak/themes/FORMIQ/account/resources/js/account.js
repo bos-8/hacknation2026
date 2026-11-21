@@ -1,12 +1,12 @@
 import { installAvatarUpload } from './avatar.js?v=2';
 
-const { PREFERENCE_COOKIE_NAMES, isPreferenceCookieName, readBrowserCookie, readPreferenceCookie, persistPreferenceCookie, removePreferenceCookie } = globalThis.FormiqPreferenceCookies;
+const { PREFERENCE_COOKIE_NAMES, isPreferenceCookieName, readBrowserCookie, readCookieConsent, readPreferenceCookie, persistPreferenceCookie, removePreferenceCookie } = globalThis.FormiqPreferenceCookies;
 const root = document.documentElement;
 const requestedCookie = new URL(import.meta.url).searchParams.get('cookieName');
 const cookieName = isPreferenceCookieName(requestedCookie || "") ? requestedCookie : PREFERENCE_COOKIE_NAMES.theme;
 const modes = ['system', 'dark', 'light'];
-const read = () => readPreferenceCookie(cookieName);
-const legacy = readBrowserCookie('theme');
+const read = () => readCookieConsent() === "preferences" ? readPreferenceCookie(cookieName) : undefined;
+const legacy = readCookieConsent() === "preferences" ? readBrowserCookie('theme') : undefined;
 let mode = modes.includes(read()) ? read() : modes.includes(legacy) ? legacy : 'system';
 const media = matchMedia('(prefers-color-scheme: dark)');
 const domain = new URL(import.meta.url).searchParams.get('cookieDomain') || '';
@@ -53,12 +53,12 @@ function render() {
   button.setAttribute('aria-label', `${pl ? 'Motyw' : 'Theme'}: ${themeLabels()[modes.indexOf(mode)]}`);
 }
 function persistTheme() {
+  if (readCookieConsent() !== "preferences") return;
   persistPreferenceCookie(cookieName, mode, domain);
   if (cookieName !== 'theme' && readBrowserCookie(cookieName) === mode) {
     removePreferenceCookie('theme', location.protocol === 'https:');
   }
 }
-persistTheme();
 button.addEventListener('click', () => {
   mode = modes[(modes.indexOf(mode) + 1) % modes.length];
   persistTheme();

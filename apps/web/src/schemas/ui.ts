@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
 export type PopupProps = {
-  size?: "default" | "wide";
+  size?: "default" | "wide" | "compact";
   children?: ReactNode;
   onClose: () => void;
   ariaLabel?: string;

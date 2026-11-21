@@ -9,6 +9,7 @@ import { isAppLocale } from "@/schemas/i18n";
 import type { AuthActionState } from "@/schemas/auth";
 import { getPublicConfig } from "@/config/server";
 import { isAppTheme } from "@/schemas/theme";
+import { readCookieConsent } from "@/cookies/core.js";
 
 export async function signIn(_previous: AuthActionState, form: FormData): Promise<AuthActionState> {
   const selected = form.get("locale");
@@ -16,7 +17,9 @@ export async function signIn(_previous: AuthActionState, form: FormData): Promis
   let destination: string | undefined;
   try {
     const config = getAuthConfig();
-    const preference = (await cookies()).get(getPublicConfig().THEME_COOKIE_NAME)?.value;
+    const jar = await cookies();
+    const read = (name: string) => jar.get(name)?.value;
+    const preference = readCookieConsent(read) === "preferences" ? read(getPublicConfig().THEME_COOKIE_NAME) : undefined;
     const result = await getAuth().api.signInSocial({ headers: await headers(), body: {
       provider: "keycloak", callbackURL: `${config.AUTH_BASE_URL}/${locale}`,
       additionalParams: { ui_locales: locale, formiq_theme: isAppTheme(preference) ? preference : "system" },

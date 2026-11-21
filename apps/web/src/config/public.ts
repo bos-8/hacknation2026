@@ -1,9 +1,9 @@
 import { z } from "zod";
 import { parseConfig } from "./parse.ts";
-import { PREFERENCE_COOKIE_NAMES } from "../cookies/core.js";
+import { COOKIE_CONSENT_NAME, PREFERENCE_COOKIE_NAMES } from "../cookies/core.js";
 import { isPreferenceCookieDomain, isPreferenceCookieName } from "../schemas/preference-cookie.ts";
 
-const cookieNameSchema = z.string().refine(isPreferenceCookieName, "Invalid preference cookie name or reserved prefix");
+const cookieNameSchema = z.string().refine(value => isPreferenceCookieName(value) && value !== COOKIE_CONSENT_NAME, "Invalid or reserved preference cookie name");
 
 /** Public settings only. Unknown fields, including secrets, are stripped. */
 export const webConfigSchema = z.object({

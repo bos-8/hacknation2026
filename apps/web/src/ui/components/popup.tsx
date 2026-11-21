@@ -71,7 +71,7 @@ export function Popup({ size = "default", children, onClose, ariaLabel, closeBut
     }}
     className={cx(popupStyles.frame, popupStyles.sizes[size])}>
     {(hasTitle || closeButton) && <div className={popupStyles.header}>
-        {hasTitle && <h2 id={`${id}-title`} className={popupStyles.title}>{title}</h2>}
+        {hasTitle && <h2 id={`${id}-title`} className={cx(popupStyles.title, size === "compact" && "text-lg")}>{title}</h2>}
         {closeButton && <Button size="icon" tone="danger-outline" aria-label={closeButtonAriaLabel ?? t("closeDialog")}
           onClick={() => onCloseRef.current()}
           className={popupStyles.close}>
@@ -81,7 +81,7 @@ export function Popup({ size = "default", children, onClose, ariaLabel, closeBut
         </Button>}
       </div>}
     {structured ? <>
-      {content !== undefined && <div id={`${id}-content`} className={popupStyles.content}>{content}</div>}
+      {content !== undefined && <div id={`${id}-content`} className={cx(popupStyles.content, size === "compact" && "flex-1")}>{content}</div>}
       {actions !== undefined && <div className={popupStyles.actions}><div className={cx(popupStyles.actionGrid, actionsClassName)}>{actions}</div></div>}
     </> : <div id={`${id}-content`} className={popupStyles.customContent}>{children}</div>}
   </Dialog></Blur>, document.body);
