@@ -106,6 +106,27 @@ Punkty I–V poniżej odpowiadają progom kompletności wymienionym w sekcji 8 o
 - [ ] **Długie skany.** Zestaw nr 8 zawiera PDF o 6 stronach i obraz 1654 × 14 034 px. W zestawie nr 9 PDF ma 16 stron, a obraz 1654 × 37 424 px. Sprawdzić pola z początku, środka i końca skanu oraz zachowanie wszystkich trzech rodzajów wniosku sportowego: stypendium, nagrody i wyróżnienia.
 - [ ] **MIME na rzeczywistym przykładzie.** Plik z rozszerzeniem `.DOC` w zestawie nr 5 jest pakietem DOCX (zawiera `word/document.xml` i deklarację typu OOXML). Oczekiwany wynik to odrzucenie rozbieżności typu. Poprawny binarny DOC sprawdzić np. w zestawie nr 1, a poprawne rozszerzenie zapisane wielkimi literami na pliku `.PDF` z zestawu nr 5.
 
+## 7. Zadania po audycie architektury
+
+Priorytety poniżej dotyczą realizacji projektu. Wymagania organizatora i przypadki referencyjne opisują sekcje 1–6. [Audyt architektury](0202-architecture-audit.pl.md)
+
+### P0 — przed rozbudową panelu
+
+- [ ] **Kontrakt importera.** Pozyskać paczkę referencyjną i dostęp do importera. Uzgodnić z COI rozbieżności z sekcji 1, zachować oryginalny schemat i zapisać rozstrzygnięcia w wersjonowanym profilu eksportu. Kryterium odbioru obejmuje import wyników dla zestawów nr 1 i 5 oraz porównanie znaczenia pól, sekcji i przejść po normalizacji identyfikatorów. Jeśli importer pozostaje niedostępny, oznaczyć zgodność jako otwarty warunek odbioru.
+- [ ] **Dobór parserów.** Przygotować macierz formatów z parserem, licencją, ograniczeniami i sposobem zachowania układu dla każdego wymaganego rozszerzenia. Sprawdzić zwłaszcza binarny DOC, ODS i XLSX oraz PDF łączący tekst i skany. W próbach potwierdzić powiązania etykiet z polami, zachowanie tabel i powtarzalnych grup oraz odrzucenie pliku z niezgodnym rozszerzeniem zgodnie z sekcją 2.
+- [ ] **Licencje i dostawa offline.** Uzgodnić zakres polityki licencyjnej dla warstw systemowych i wariant lokalnego IdP. Sporządzić SBOM konkretnego wydania oraz wykaz licencji i warunków redystrybucji, obejmujący biblioteki natywne, dane OCR i wagi modelu. Za kryterium przyjąć start i konwersję na czystym hoście z przygotowanej paczki, bez internetu i z docelowym wariantem IdP.
+- [ ] **Pełna ścieżka REST i budżet konwersji.** Uruchomić upload, izolowaną analizę, walidację i eksport na DOCX z zestawu nr 5. Wcześnie wykonać próby nr 8 i 9 na docelowej klasie sprzętu, przy zimnym i rozgrzanym starcie oraz pod obciążeniem równoległym. Zapisać czasy etapów i szczytową pamięć, a na ich podstawie ustalić limity czasu, stron, pikseli, pamięci i równoległości. Potwierdzić dostępność aplikacji oraz zwolnienie zasobów i miejsca na następne żądanie po timeoutach i rozłączeniach klienta.
+
+### P1 — przed udostępnieniem usługi
+
+- [ ] **Izolacja analizy.** Uruchamiać parsery, OCR i analizę modelową w procesie roboczym z ograniczonymi uprawnieniami, bez dostępu do sieci, sekretów i bazy. Egzekwować limity rozmiaru po rozpakowaniu, liczby elementów archiwum, stron i pikseli. Potwierdzić kontrolowane odrzucanie uszkodzonych i ponadlimitowych plików oraz możliwość obsługi kolejnego żądania.
+- [ ] **Sprzątanie plików i prywatność.** Zinwentaryzować zapis w proxy, obsłudze multipart, parserach i OCR. Ograniczyć przestrzeń roboczą, stosować nazwy generowane przez aplikację i usuwać osierocone pliki. Sprawdzić brak kopii po sukcesie, błędzie, timeoutach, rozłączeniach i wymuszonym zakończeniu procesu oraz brak treści dokumentu i wyniku w telemetrii i trwałych pamięciach podręcznych.
+- [ ] **Wierność wyniku AI.** Powiązać propozycje modelu z fragmentami dokumentu, budować JSON deterministycznie w kodzie i ustalić zachowanie przy słabym OCR lub niespójnej ekstrakcji. Na wzorcach i wcześniej niewidzianym blankiecie ocenić kompletność pól, wymagalność, zgody i zależności oddzielnie od poprawności schematu. Dla zestawów nr 8 i 9 uwzględnić kryteria długich skanów z sekcji 6.
+- [ ] **OIDC i sesje.** Rozdzielić klientów panelu i integracji, zdefiniować mapowanie `forms.convert`, walidację tokenów, rotację JWKS i zachowanie przy niedostępności IdP. Dla panelu ustalić obsługę `state` i `nonce`, ważność sesji, wylogowanie i aktualizację uprawnień. Zweryfikować odmowę przy błędnym `aud`, braku roli, nieważnej sesji oraz niepoprawnym CSRF.
+- [ ] **Kontrakt HTTP przez proxy.** Opisać w OpenAPI pole multipart, dodatkowe części, limit pliku, odpowiedzi błędów, identyfikator żądania i zasady ponawiania. Rozróżnić zbyt duży plik, nieobsługiwany format, nieprzetwarzalny dokument i brak wolnych zasobów. Potwierdzić odpowiedzi przez Nginx, także poniżej limitu, na jego granicy i powyżej, z uwzględnieniem narzutu multipart.
+- [ ] **Wersjonowanie reguł i uprawnienia bazy.** Ustalić właściciela reguł i słowników. Jeżeli edycja w czasie pracy nie jest wymagana, dostarczać je ze schematem jako wersjonowane artefakty tylko do odczytu. Określić zakres bazy aplikacji i oddzielić uprawnienia migracji od uprawnień procesu aplikacji. Sprawdzić, czy z manifestu wydania można ustalić wersje reguł, schematu i modelu użyte do konwersji.
+- [ ] **Powtarzalność wydania i odtworzenie.** Promować z QA manifest obejmujący digesty obrazów oraz sumy kontrolne modelu, OCR i kontraktu COI. Mierzyć czasy etapów, współbieżność, odrzucenia, timeouty i zużycie pamięci. Ustalić dopuszczalną utratę danych i czas odtworzenia, a następnie przećwiczyć odtworzenie baz aplikacji i tożsamości oraz cofnięcie wydania po migracji.
+
 ## Kryteria oceny COI
 
 | Kryterium | Waga |

@@ -1,2 +1,4 @@
 /materials/*
 !/materials/.gitkeep
+/.agents/skills/
+/.codex/skills/
