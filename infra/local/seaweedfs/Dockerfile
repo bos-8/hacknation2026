@@ -1,5 +1,5 @@
 ARG SEAWEEDFS_IMAGE=chrislusf/seaweedfs:4.51
-ARG NODE_IMAGE=node:26.12.1-alpine
+ARG NODE_IMAGE=node:26.12.1-bookworm-slim
 FROM ${SEAWEEDFS_IMAGE} AS storage
 FROM ${NODE_IMAGE}
 COPY --from=storage /usr/bin/weed /usr/local/bin/weed

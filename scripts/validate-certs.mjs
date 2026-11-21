@@ -15,7 +15,12 @@ export async function validateCertificates({ cert, key, ca, hosts = ['localhost'
     ['CA certificate', ca, (value) => new X509Certificate(value)],
   ]) {
     let data;
-    try { data = await readFile(file); } catch { throw new Error(`Cannot read ${label}: ${file}`); }
+    try { data = await readFile(file); } catch (error) {
+      if (label === 'private key' && error.code === 'ENOENT') {
+        throw new Error(`Missing TLS private key at ${file}. Provide the private key matching the server certificate or configure your own local certificate and key.`);
+      }
+      throw new Error(`Cannot read ${label}: ${file}`);
+    }
     try { parsed.push(parse(data)); } catch { throw new Error(`Invalid ${label} format: ${file} (contents hidden).`); }
   }
   const [leaf, privateKey, authority] = parsed;

@@ -23,26 +23,30 @@ tags: [compose, tls, dev, qa]
 
 ## Certyfikat z WSL i zaufanie Windows
 
-Domyślne położenie plików określają `CERTS_DIR`, `TLS_CERT_PEM`, `TLS_CERT_KEY` i `TLS_CA_PEM` w szablonie infrastruktury. Jeśli masz już komplet certyfikatów, sprawdź go poleceniem `pnpm validate:certs`. Przy pierwszym wystawieniu z użyciem zainstalowanego `mkcert` wykonaj poniższe polecenia w WSL z katalogu głównego projektu. Polecenia generowania zapisują nowy certyfikat i klucz pod wskazanymi nazwami.
+Po sklonowaniu projektu Next.js ma w `infra/local/certs` publiczne pliki `localhost.pem` i `rootCA.pem`. Dostarcz pasujący klucz serwera jako lokalny `localhost-key.pem` i sprawdź komplet przez `pnpm validate:certs`. Zarówno `pnpm dev:web`, jak i `node apps/web/https.mjs dev` rozpoznają katalog certyfikatów względem repozytorium. W QA Compose montuje pliki w kontenerze w trybie tylko do odczytu.
+
+Jeśli potrzebujesz własnego kompletu na stanowisku, ustaw `CERTS_DIR=./certs/workstation` w prywatnym `infra/local/.env.dev` (dla QA również w `.env.qa`). Poniższe polecenia WSL wystawiają certyfikat w tym katalogu i zachowują publiczne pliki z Git.
 
 ```sh
 mkcert -install
-mkcert -cert-file infra/local/certs/localhost.pem -key-file infra/local/certs/localhost-key.pem localhost 127.0.0.1 ::1
-cp "$(mkcert -CAROOT)/rootCA.pem" infra/local/certs/rootCA.pem
+mkdir -p infra/local/certs/workstation
+mkcert -cert-file infra/local/certs/workstation/localhost.pem -key-file infra/local/certs/workstation/localhost-key.pem localhost 127.0.0.1 ::1
+cp "$(mkcert -CAROOT)/rootCA.pem" infra/local/certs/workstation/rootCA.pem
 ```
 
 Przeglądarka Windows używa osobnego magazynu zaufania. Zaimportuj publiczny certyfikat tego samego CA w PowerShell. Jego prywatny klucz podpisujący pozostaje w magazynie wystawcy.
 
 ```powershell
-Import-Certificate -FilePath .\infra\local\certs\rootCA.pem -CertStoreLocation Cert:\CurrentUser\Root
+$formiqCa = '.\infra\local\certs\workstation\rootCA.pem' # Dla zestawu z repo użyj .\infra\local\certs\rootCA.pem
+Import-Certificate -FilePath $formiqCa -CertStoreLocation Cert:\CurrentUser\Root
 pnpm validate:certs
 ```
 
 Po wymianie certyfikatu uruchom ponownie procesy obsługujące TLS, np. przez `pnpm dev:restart`. W QA zatrzymaj i uruchom przygotowany stos. Samo sprawdzenie plików nie potwierdza zaufania klienta. Po starcie zweryfikuj odpowiedź HTTPS z CA projektu.
 
 ```powershell
-curl.exe --fail --cacert infra/local/certs/rootCA.pem https://localhost:3000/api/v1/health/live
-curl.exe --fail --cacert infra/local/certs/rootCA.pem https://localhost:8443/realms/FORMIQ/.well-known/openid-configuration
+curl.exe --fail --cacert $formiqCa https://localhost:3000/api/v1/health/live
+curl.exe --fail --cacert $formiqCa https://localhost:8443/realms/FORMIQ/.well-known/openid-configuration
 ```
 
 [Szablon DEV](../infra/local/.env.dev.example) · [Szablon QA](../infra/local/.env.qa.example) · [Usługi wspólne](../infra/local/compose.yaml) · [Usługi QA](../infra/local/compose.qa.yaml)

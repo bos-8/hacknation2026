@@ -162,7 +162,7 @@ services:
       context: ./seaweedfs
       args:
         SEAWEEDFS_IMAGE: ${S3_BASE_IMAGE:-chrislusf/seaweedfs:4.51}
-        NODE_IMAGE: ${S3_BOOTSTRAP_NODE_IMAGE:-node:26.12.1-alpine}
+        NODE_IMAGE: ${NODE_IMAGE:-node:26.12.1-bookworm-slim}
     container_name: ${STACK_NAME:?Required}-s3-${INSTANCE_INDEX:-0}
     mem_limit: ${S3_MEMORY_LIMIT:-1g}
     cpus: ${S3_CPU_LIMIT:-1.0}
@@ -184,7 +184,7 @@ services:
     networks: [edge]
     stop_grace_period: 30s
     healthcheck:
-      test: [CMD-SHELL, 'test -f /tmp/modulon-seaweed-ready && wget -q -O /dev/null http://127.0.0.1:9333/cluster/status']
+      test: [CMD, node, -e, "require('node:fs').accessSync('/tmp/modulon-seaweed-ready'); fetch('http://127.0.0.1:9333/cluster/status').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"]
       interval: 5s
       timeout: 3s
       retries: 30

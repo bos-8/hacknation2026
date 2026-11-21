@@ -35,10 +35,11 @@ ENV APP_NAME=${APP_NAME} LANGUAGE_COOKIE_NAME=${LANGUAGE_COOKIE_NAME} \
 RUN pnpm --filter ./apps/web run build
 
 FROM web-build AS web
-ENV NODE_ENV=production NEXT_TELEMETRY_DISABLED=1 FORMIQ_BIND=0.0.0.0
+ENV NODE_ENV=production NEXT_TELEMETRY_DISABLED=1 FORMIQ_BIND=0.0.0.0 \
+    WEB_TLS_CERT=/run/tls/localhost.pem WEB_TLS_KEY=/run/tls/localhost-key.pem
 RUN mkdir -p /app/apps/web/.next/cache && chown -R node:node /app/apps/web/.next/cache
 USER node
-CMD ["node", "apps/web/https.mjs", "start"]
+CMD ["node", "apps/web/server.mjs", "start"]
 
 FROM ${NODE_IMAGE} AS queue
 WORKDIR /app

@@ -54,7 +54,11 @@ __pycache__/
 Thumbs.db
 Desktop.ini
 
-/certs/
+/certs/*
+!/certs/formiq-dev.crt
+!/certs/formiq-dev-wildcard.crt
+!/certs/formiq-qa.crt
+!/certs/formiq-qa-wildcard.crt
 
 # Local COI reference material
 /materials/*

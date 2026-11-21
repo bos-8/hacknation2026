@@ -248,7 +248,7 @@ export class Qa {
     const argument = (key, value) => args.push('--build-arg', `${key}=${value}`);
     if (contexts[name]) {
       argument(name === 'auth' ? 'KEYCLOAK_IMAGE' : 'SEAWEEDFS_IMAGE', env[name === 'auth' ? 'AUTH_BASE_IMAGE' : 'S3_BASE_IMAGE']);
-      argument('NODE_IMAGE', env[name === 'auth' ? 'NODE_IMAGE' : 'S3_BOOTSTRAP_NODE_IMAGE']);
+      argument('NODE_IMAGE', env.NODE_IMAGE);
       args.push('--file', path.join(this.root, contexts[name], 'Dockerfile'), path.join(this.root, contexts[name]));
     } else {
       args.push('--file', path.join(this.root, name === 'pyworker' ? 'apps/pyworker/Dockerfile' : 'apps/web/Dockerfile'), '--target', name === 'pyworker' ? 'runtime' : name);
