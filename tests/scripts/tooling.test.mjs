@@ -9,6 +9,7 @@ import { promisify } from 'node:util';
 import { clean, withSpinner } from '../../scripts/clean.mjs';
 import { parseEnvironment, safePath, inside, formatStatus } from '../../scripts/lib/runtime.mjs';
 import { validateEnvironment } from '../../scripts/validate-env.mjs';
+import { copyEnvExamples } from '../../scripts/copy-env-examples.mjs';
 import { validateCertificates } from '../../scripts/validate-certs.mjs';
 import { checkPorts, portAvailable, parseListeners, parsePort, stopCommand } from '../../scripts/check-ports.mjs';
 
@@ -116,6 +117,24 @@ test('env parsing supports comments, export and multiline values, rejects duplic
       return true;
     });
   }
+});
+
+test('env example copy preserves bytes, environment names and existing private files', async (t) => {
+  const root = await fixture(t);
+  const bytes = Buffer.from('\uFEFF# Zażółć\r\nVALUE=CHANGE_ME\r\nEMPTY=');
+  const targets = ['apps/web/.env', 'infra/.env.dev', 'infra/.env.qa', '.env.staging.local'];
+  for (const file of targets) await put(root, file + '.example', bytes);
+  await put(root, 'node_modules/dependency/.env.example');
+  await put(root, 'notes.env.example');
+
+  await copyEnvExamples(root, quiet);
+  for (const file of targets) assert.deepEqual(await readFile(path.join(root, file)), bytes);
+  for (const file of ['node_modules/dependency/.env', 'notes.env']) {
+    await assert.rejects(access(path.join(root, file)), { code: 'ENOENT' });
+  }
+  await put(root, 'apps/web/.env', 'LOCAL=custom');
+  await copyEnvExamples(root, quiet);
+  assert.equal(await readFile(path.join(root, 'apps/web/.env'), 'utf8'), 'LOCAL=custom');
 });
 
 test('DEV env validation discovers templates, ignores files without templates and excludes generated directories', async (t) => {

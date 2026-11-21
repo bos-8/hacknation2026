@@ -86,6 +86,7 @@
     "clean": "node scripts/clean.mjs",
     "clean:dry": "node scripts/clean.mjs --dry-run",
     "validate:env": "node scripts/validate-env.mjs",
+    "env:example:copy": "node scripts/copy-env-examples.mjs",
     "validate:dev": "node scripts/validate-env.mjs --mode dev",
     "validate:qa": "node scripts/validate-env.mjs --mode qa --require-values",
     "validate:prod": "node scripts/validate-env.mjs --mode prod --require-values",
