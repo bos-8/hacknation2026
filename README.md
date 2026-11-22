@@ -59,6 +59,17 @@ Przetwarzanie korzysta z endpointu AWS obsługującego OCR i projektowanie formu
 
 Szczegółowe instrukcje opisują [Docker Compose PoC](docs/0307-docker-poc.pl.md) oraz [Harness API i termin dostępu](docs/0209-harness-api.pl.md).
 
+### 4. Zaloguj się i przetwórz pierwszy formularz
+
+1. Otwórz [aplikację PoC](http://127.0.0.1:4100/pl), kliknij logowanie i zaloguj się kontem `admin/admin` lub `user/user`.
+2. Przejdź do zakładki **Formularze**, kliknij **Dodaj plik**, wybierz dokument i poczekaj, aż pojawi się w tabeli.
+3. W akcjach wniosku kliknij **Opłać**, aby oznaczyć go jako **Opłacony**. W PoC jest to testowy status, bez transakcji finansowej. **Pyworker (FORMIQ Engine) przyjmie zlecenie analizy dopiero dla opłaconego wniosku.** Samo dodanie pliku nie uruchamia analizy.
+4. Kliknij **Wyślij do przetworzenia**. Zadanie zostanie zlecone do kolejki, a następnie rozpocznie się jego wykonywanie. Postęp i bieżący etap są widoczne w aplikacji oraz panelu powiadomień. Operacja może potrwać kilka minut.
+5. Po zakończeniu otwórz szczegóły pliku. **Po lewej stronie znajduje się oryginał, a po prawej wygenerowany JSON.**
+6. Kliknij **Przejdź do podglądu formularza**, aby przełączyć prawy panel z JSON-u na formularz utworzony z tego JSON-u. Możesz sprawdzić odczytane wartości, poprawić edytowalne pola i kliknąć **Zapisz dane**. JSON można też skopiować lub pobrać.
+
+**Przetwarzanie w pamięci ulotnej.** Pyworker nie przechowuje trwale dokumentów ani wyników analizy. W kontenerowym PoC korzysta z RAM oraz tymczasowego `/tmp` zamontowanego jako `tmpfs` w pamięci. Trwały zapis obsługuje warstwa aplikacji — oryginały znajdują się w SeaweedFS, a wyniki z relacją do pliku w PostgreSQL. Ta informacja dotyczy lokalnego pyworkera; usługi AI mają własne warunki przetwarzania danych.
+
 FORMIQ to pracownia do cyfryzacji formularzy. Wynikiem analizy dokumentu jest konfiguracja formularza JSON COI oraz odczytana treść dokumentu.
 
 Przykładowy JSON wygenerowany przez naszą aplikację znajduje się w katalogu [json-example](json-example/).
@@ -70,6 +81,18 @@ Przykładowy JSON wygenerowany przez naszą aplikację znajduje się w katalogu 
 FORMIQ pomaga urzędnikom zamieniać papierowe formularze, skany i dokumenty biurowe w formularze elektroniczne. Rozpoznaje pola, tabele, wpisane wartości i teksty informacyjne, a następnie buduje konfigurację JSON z sekcjami, zależnościami i odniesieniami do źródła. Użytkownik porównuje wynik z oryginałem, poprawia odczytane dane i eksportuje JSON.
 
 To działający PoC przygotowany dla wyzwania COI „Cyfryzacja formularzy”. Obsługuje PDF, DOC, DOCX, XLSX, ODS, JPG, JPEG i PNG. Wariant uruchamiany domyślnie przez Compose korzysta z API w AWS. Dostępny jest również osobny wariant lokalnego przetwarzania. Potwierdzenie importu do rzeczywistego systemu COI i odbiór wariantu offline pozostają otwarte.
+
+## Dostępność, języki i wygląd
+
+FORMIQ udostępnia funkcje wspierające osoby z niepełnosprawnościami wzroku, w tym osoby słabowidzące, oraz użytkowników korzystających z klawiatury i technologii asystujących. Punktem odniesienia są [wytyczne dostępności WCAG publikowane przez W3C WAI](https://www.w3.org/WAI/standards-guidelines/wcag/).
+
+- **Zwiększony kontrast** — przełącznik ułatwiający odróżnianie tekstu, elementów sterujących i tła.
+- **Motyw jasny i ciemny** — wybór wyglądu dopasowanego do preferencji użytkownika.
+- **Tłumaczenia interfejsu** — język polski i angielski, wybierane przełącznikiem języka.
+- **Obsługa klawiatury i oznaczenia dostępności** — widoczny fokus, etykiety dostępne dla czytników ekranu oraz semantyczne elementy interfejsu.
+- **Czytelne błędy formularza** — komunikaty powiązane z polami przez `aria-describedby` i oznaczenie niepoprawnych danych przez `aria-invalid`, uzupełniające czerwone wyróżnienie.
+
+Podczas testu użyj przełączników języka, motywu i kontrastu oraz sprawdź nawigację klawiszami `Tab`, `Shift+Tab` i `Enter`. Opis dotyczy wdrożonych udogodnień. Pełna zgodność całej aplikacji z określonym poziomem WCAG wymaga osobnego audytu dostępności.
 
 ## Prezentacja
 
