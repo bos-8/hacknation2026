@@ -103,7 +103,7 @@ for (const failedStep of [undefined, 'check:docker', 'dev:queue:prepare', 'db:de
     const original = JSON.parse(await readFile('package.json', 'utf8'));
     const scripts = { ...original.scripts };
     scripts.dev = scripts['dev:run'];
-    const steps = ['terminal:clear', 'pyworker:prepare', 'validate:dev', 'check:dev-auth', 'validate:certs', 'check:docker', 'check:containers', 'check:dev-ports', 'preferences:sync', 'build:database', 'build:queue', 'build:monitoring', 'dev:queue:prepare', 'check:dev-databases', 'db:deploy', 'check:dev-databases', 'db:seed:prepared'];
+    const steps = ['terminal:clear', 'pyworker:prepare', 'validate:dev', 'check:dev-auth', 'validate:certs', 'check:docker', 'check:containers', 'check:dev-ports', 'preferences:sync', 'build:database', 'build:queue', 'build:monitoring', 'dev:queue:prepare', 'check:dev-databases', 'db:deploy', 'check:dev-databases', 'db:seed:prepared', 'dev:seed:users'];
     const background = ['dev:web', 'dev:pythonworker', 'dev:queue'];
     for (const name of [...new Set([...steps, ...background])]) scripts[name] = `node step.mjs ${name}`;
     await writeFile(path.join(root, 'package.json'), JSON.stringify({ private: true, scripts }));

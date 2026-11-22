@@ -5,7 +5,7 @@ export function pythonEndpoint(env, path) {
     const privateWorker = env.PYWORKER_ALLOW_PRIVATE_NETWORK === 'true' && base.hostname === 'pyworker';
     if (!['http:', 'https:'].includes(base.protocol) || base.username || base.password || base.pathname !== '/' || base.search || base.hash
       || base.protocol === 'http:' && !['127.0.0.1', 'localhost', '[::1]'].includes(base.hostname) && !privateWorker) throw new Error('Invalid Python worker endpoint');
-    const token = env.PYWORKER_API_TOKEN || '';
+    const token = env.PYWORKER_API_TOKEN || (path.startsWith('/v1/forms/') && env.PYWORKER_FORMS_TOKEN) || '';
     if (!/^[A-Za-z0-9_-]{32,}$/.test(token) || token.includes('CHANGE_ME')) throw new Error('Python worker token not configured');
     return { url: new URL(path, base), headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' } };
 }

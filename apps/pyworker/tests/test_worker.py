@@ -13,6 +13,14 @@ HEADERS = {"Authorization": f"Bearer {TOKEN}"}
 
 
 class WorkerTests(unittest.TestCase):
+    def test_web_credential_can_validate_but_cannot_run_queue_tasks(self):
+        forms_token = "test-forms-" + "f" * 48
+        with TestClient(create_app(Settings(token=TOKEN, forms_token=forms_token)),
+                        headers={"Authorization": f"Bearer {forms_token}"}) as client:
+            self.assertEqual(client.post("/v1/forms/validate", json={}).status_code, 415)
+            self.assertEqual(client.post("/v1/forms/process", json={}).status_code, 401)
+            self.assertEqual(client.post("/v1/tasks/check", json=self.task).status_code, 401)
+
     def setUp(self):
         self.app = create_app(Settings(token=TOKEN, concurrency=1, task_timeout=1))
         self.task = {"job_id": str(uuid4()), "attempt": 0}

@@ -23,6 +23,8 @@ class Settings:
     eden: EdenSettings | None = None
     pipeline: PipelineSettings | None = None
 
+    forms_token: str = field(default="", repr=False)
+
     def __post_init__(self) -> None:
         if (
             not isinstance(self.token, str)
@@ -30,6 +32,11 @@ class Settings:
             or "CHANGE_ME" in self.token
         ):
             raise ValueError("PYWORKER_API_TOKEN must be configured")
+        if self.forms_token and (
+            not re.fullmatch(r"[A-Za-z0-9_-]{32,512}", self.forms_token)
+            or "CHANGE_ME" in self.forms_token or self.forms_token == self.token
+        ):
+            raise ValueError("Invalid PYWORKER_FORMS_TOKEN")
         if type(self.allow_network_bind) is not bool:
             raise ValueError("Invalid PYWORKER_ALLOW_NETWORK_BIND")
         if self.host not in {"127.0.0.1", "::1"} and not (
@@ -111,6 +118,7 @@ class Settings:
             )
         return cls(
             token=token,
+            forms_token=values.get("PYWORKER_FORMS_TOKEN", ""),
             eden=eden,
             pipeline=pipeline,
             host=host,

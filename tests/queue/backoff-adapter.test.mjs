@@ -36,8 +36,8 @@ test('schema preparation preserves an existing queue policy while explicit setup
     state.created = []; state.updated = [];
     const queue = new JobQueue('postgresql://fixture:private-password@localhost/fixture', { migrate: true, preserveQueuePolicy });
     await queue.start();
-    assert.equal(state.created.length, 1);
-    assert.equal(state.updated.length, preserveQueuePolicy ? 0 : 1);
+    assert.deepEqual(state.created.map(([name]) => name).sort(), ['form.process', 'system.check']);
+    assert.deepEqual(state.updated.map(([name]) => name), preserveQueuePolicy ? [] : ['system.check']);
     await queue.stop();
   }
 });

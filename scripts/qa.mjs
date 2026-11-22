@@ -75,7 +75,7 @@ export function runtimeEnvironments(env) {
     S3_APP_ACCESS_KEY: env.S3_APP_ACCESS_KEY, S3_APP_SECRET_KEY: env.S3_APP_SECRET_KEY };
   return {
     web: { ...databases, ...publicConfig, ...storage, PYWORKER_URL: 'http://pyworker:8010',
-      PYWORKER_ALLOW_PRIVATE_NETWORK: 'true', PYWORKER_API_TOKEN: env.PYWORKER_API_TOKEN, HOSTNAME: '0.0.0.0', PORT: env.WEB_HTTPS_PORT, APP_NAME: env.WEB_APP_NAME,
+      PYWORKER_ALLOW_PRIVATE_NETWORK: 'true', PYWORKER_FORMS_TOKEN: env.PYWORKER_FORMS_TOKEN, HOSTNAME: '0.0.0.0', PORT: env.WEB_HTTPS_PORT, APP_NAME: env.WEB_APP_NAME,
       LANGUAGE_COOKIE_NAME: env.WEB_LANGUAGE_COOKIE_NAME, THEME_COOKIE_NAME: env.WEB_THEME_COOKIE_NAME,
       CONTRAST_COOKIE_NAME: env.WEB_CONTRAST_COOKIE_NAME, UI_PREFERENCE_COOKIE_DOMAIN: env.UI_PREFERENCE_COOKIE_DOMAIN,
       AUTH_SECRET: env.AUTH_SECRET, AUTH_COOKIE_PREFIX: env.AUTH_COOKIE_PREFIX,
@@ -90,7 +90,7 @@ export function runtimeEnvironments(env) {
     queue: { ...databases, ...publicConfig, ...storage, PYWORKER_URL: 'http://pyworker:8010',
       PYWORKER_API_TOKEN: env.PYWORKER_API_TOKEN, PYWORKER_ALLOW_PRIVATE_NETWORK: 'true', PYWORKER_PROGRESS_NETWORK: 'private',
       MONITOR_PYWORKER_URL: 'http://pyworker:8010/health/ready', QUEUE_HEALTH_FILE: '/tmp/queue-ready.json' },
-    pyworker: { PYWORKER_API_TOKEN: env.PYWORKER_API_TOKEN, PYWORKER_HOST: '0.0.0.0', PYWORKER_PROGRESS_NETWORK: 'private',
+    pyworker: { PYWORKER_FORMS_TOKEN: env.PYWORKER_FORMS_TOKEN, PYWORKER_API_TOKEN: env.PYWORKER_API_TOKEN, PYWORKER_HOST: '0.0.0.0', PYWORKER_PROGRESS_NETWORK: 'private',
       PYWORKER_ALLOW_NETWORK_BIND: 'true', PYWORKER_PORT: '8010', PYWORKER_MAX_CONCURRENCY: env.PYWORKER_MAX_CONCURRENCY || '4',
       PYWORKER_TASK_TIMEOUT_SECONDS: env.PYWORKER_TASK_TIMEOUT_SECONDS || '5', PYWORKER_LOG_LEVEL: env.PYWORKER_LOG_LEVEL || 'info' },
     maintenance: databases,
@@ -172,7 +172,7 @@ export class Qa {
     const { env } = await this.settings();
     for (const [key, value] of Object.entries(env)) {
       if (OPENAI_VARIABLES.includes(key) || key === 'UI_PREFERENCE_COOKIE_DOMAIN') continue;
-      const minimum = ['AUTH_SECRET', 'PYWORKER_API_TOKEN'].includes(key) ? 32 : 1;
+      const minimum = ['AUTH_SECRET', 'PYWORKER_API_TOKEN', 'PYWORKER_FORMS_TOKEN'].includes(key) ? 32 : 1;
       if (!value || (SECRET.test(key) && (value.length < minimum || value.includes('CHANGE_ME')))) throw new Error(`Configure QA ${key}; run pnpm qa:init.`);
     }
     for (const [key, host] of [['APP_PUBLIC_URL', 'APP_HOST'], ['AUTH_PUBLIC_URL', 'AUTH_HOST'], ['AUTH_ADMIN_PUBLIC_URL', 'AUTH_ADMIN_HOST']]) {

@@ -54,7 +54,7 @@ services:
       <<: [*qa-databases, *qa-public, *qa-storage]
       PYWORKER_URL: http://pyworker:8010
       PYWORKER_ALLOW_PRIVATE_NETWORK: "true"
-      PYWORKER_API_TOKEN: "${PYWORKER_API_TOKEN}"
+      PYWORKER_FORMS_TOKEN: "${PYWORKER_FORMS_TOKEN}"
       HOSTNAME: 0.0.0.0
       PORT: "${WEB_HTTPS_PORT}"
       APP_NAME: "${WEB_APP_NAME}"
@@ -133,6 +133,7 @@ services:
     container_name: ${STACK_NAME:?Required}-pyworker-${INSTANCE_INDEX:-0}
     build: {context: ../.., dockerfile: apps/pyworker/Dockerfile, target: runtime, args: {PYTHON_IMAGE: "${PYTHON_IMAGE:-python:3.14.7-slim-bookworm}"}}
     environment:
+      PYWORKER_FORMS_TOKEN: "${PYWORKER_FORMS_TOKEN}"
       PYWORKER_API_TOKEN: "${PYWORKER_API_TOKEN}"
       PYWORKER_HOST: 0.0.0.0
       PYWORKER_PROGRESS_NETWORK: private

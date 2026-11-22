@@ -45,7 +45,15 @@ class TaskBoundary:
             return
         headers = dict(scope["headers"])
         expected = f"Bearer {self.settings.token}".encode("ascii")
-        if not hmac.compare_digest(headers.get(b"authorization", b""), expected):
+        supplied = headers.get(b"authorization", b"")
+        web_operation = (
+            scope["method"] == "GET" and scope["path"] == PROCESS_PATH
+            or scope["method"] == "POST" and scope["path"] in (UPLOAD_PATH, CHECK_ANSWERS, ADDRESS_PATH, REVIEW, EVALUATE)
+        )
+        forms_authorized = web_operation and self.settings.forms_token and hmac.compare_digest(
+            supplied, f"Bearer {self.settings.forms_token}".encode("ascii")
+        )
+        if not hmac.compare_digest(supplied, expected) and not forms_authorized:
             await JSONResponse({"error": "unauthorized"}, status_code=401)(scope, receive, send)
             return
         if protected_read:
