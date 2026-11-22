@@ -83,14 +83,12 @@ class Settings:
             eden = EdenSettings(
                 api_key=values.get("EDENAI_API_KEY", "").strip(),
                 ocr_only=form_mode == "ocr",
+                transcription_model=values.get("EDENAI_VISION_MODEL") or VISION_MODEL,
                 vision_model=(values.get("EDENAI_VISION_MODEL") or VISION_MODEL)
                 if form_mode == "vision"
                 else "",
                 upload_url=values.get("EDENAI_UPLOAD_URL") or defaults.upload_url,
-                ocr_url=values.get("EDENAI_OCR_URL") or defaults.ocr_url,
                 llm_url=values.get("EDENAI_LLM_URL") or defaults.llm_url,
-                ocr_model=values.get("EDENAI_OCR_MODEL") or defaults.ocr_model,
-                pdf_ocr_model=values.get("EDENAI_PDF_OCR_MODEL") or defaults.pdf_ocr_model,
                 llm_model=values.get("EDENAI_LLM_MODEL") or defaults.llm_model,
                 local_llm_url="" if form_mode == "vision" else values.get("PYWORKER_LOCAL_LLM_URL", "").strip(),
                 local_llm_model=values.get("PYWORKER_LOCAL_LLM_MODEL") or defaults.local_llm_model,

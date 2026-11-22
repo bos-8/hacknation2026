@@ -33,11 +33,12 @@ class EdenTests(unittest.IsolatedAsyncioTestCase):
                 self.assertIn(b"example input", await request.aread())
                 return httpx2.Response(200, json={"file_id": FILE_ID})
             body = json.loads(request.content)
-            if request.url.path == "/v3/universal-ai":
-                self.assertEqual(body["model"], "ocr/ocr/mistral/mistral-ocr-4-1")
-                self.assertEqual(body["input"], {"file": FILE_ID})
-                return httpx2.Response(200, json={"output": {"text": "example OCR text"}})
             self.assertEqual(body["model"], "deepinfra/Qwen/Qwen3-VL-235B-A22B-Instruct")
+            if body["messages"][0]["role"] == "user":
+                image = body["messages"][0]["content"][1]["image_url"]["url"]
+                self.assertTrue(image.startswith("data:image/jpeg;base64,"))
+                choice = {"finish_reason": "stop", "message": {"content": "example OCR text"}}
+                return httpx2.Response(200, json={"choices": [choice]})
             self.assertEqual(body["max_tokens"], 24_576)
             self.assertEqual(body["reasoning_effort"], "none")
             self.assertEqual(body["routing"], {"sort": "latency"})
@@ -51,13 +52,19 @@ class EdenTests(unittest.IsolatedAsyncioTestCase):
             else:
                 self.assertEqual(content, [{"type": "file", "file": {"file_id": FILE_ID}}])
             response = draft if replies is None else next(replies)
-            if requests.count("/v3/chat/completions") == 2:
+            if not mime.startswith("image/") and requests.count("/v3/chat/completions") == 2:
                 self.assertIn("first response was invalid", body["messages"][0]["content"])
             choice = {"finish_reason": finish, "message": {"content": json.dumps(response)}}
             return httpx2.Response(200, json={"choices": [choice]})
 
         client = partial(httpx2.AsyncClient, transport=httpx2.MockTransport(api))
-        source = UploadFile(io.BytesIO(b"example input"), filename="document")
+        data = io.BytesIO(b"example input")
+        if mime.startswith("image/"):
+            from PIL import Image
+            data = io.BytesIO()
+            Image.new("RGB", (16, 16)).save(data, format="PNG")
+            data.seek(0)
+        source = UploadFile(data, filename="document")
         try:
             with patch("pyworker.eden.httpx2.AsyncClient", client):
                 return await convert_document(EdenSettings(api_key="fixture-key"), source, mime)
@@ -65,9 +72,9 @@ class EdenTests(unittest.IsolatedAsyncioTestCase):
             await source.close()
             self.assertEqual(requests, expected_paths)
 
-    async def test_image_upload_ocr_and_structured_llm(self):
+    async def test_image_transcription_and_structured_llm(self):
         draft, ocr = await self.convert(
-            "image/png", ["/v3/upload", "/v3/universal-ai", "/v3/chat/completions"]
+            "image/png", ["/v3/chat/completions"] * 2
         )
         self.assertEqual(draft.model_dump(), DRAFT)
         self.assertTrue(ocr)
@@ -283,43 +290,31 @@ class EdenTests(unittest.IsolatedAsyncioTestCase):
         finally:
             await source.close()
 
-    async def test_pdf_ocr_polls_until_it_can_send_all_pages_to_the_model(self):
-        job_id = "46f83077-0053-4af9-adee-4f38a8bcd706"
-        requests = []
+    async def test_pdf_transcribes_pages_in_order(self):
+        transcriptions = iter(["Page one", "Page two"])
 
         async def api(request):
-            requests.append((request.method, request.url.path))
-            if request.url.path == "/v3/upload":
-                return httpx2.Response(200, json={"file_id": FILE_ID})
-            if request.url.path == "/v3/universal-ai/async":
-                self.assertEqual(
-                    json.loads(request.content),
-                    {
-                        "model": "ocr/ocr_async/mistral/mistral-ocr-4-1",
-                        "input": {"file": FILE_ID},
-                    },
-                )
-                return httpx2.Response(200, json={"status": "processing", "public_id": job_id})
-            if request.url.path == f"/v3/universal-ai/async/{job_id}":
-                return httpx2.Response(
-                    200,
-                    json={
-                        "status": "success",
-                        "output": {
-                            "raw_text": "Page one\nPage two",
-                            "number_of_pages": 2,
-                        },
-                    },
-                )
-            content = json.loads(request.content)["messages"][-1]["content"]
-            self.assertEqual(content, [{"type": "text", "text": "Page one\nPage two"}])
-            choice = {"finish_reason": "stop", "message": {"content": json.dumps(DRAFT)}}
+            self.assertEqual(request.url.path, "/v3/chat/completions")
+            body = json.loads(request.content)
+            content = body["messages"][-1]["content"]
+            if body["messages"][0]["role"] == "user":
+                text = next(transcriptions)
+                self.assertEqual(content[1]["image_url"]["url"], "data:image/jpeg;base64," + text)
+            else:
+                self.assertEqual(content, [{"type": "text", "text": "Page one\nPage two"}])
+                text = json.dumps(DRAFT)
+            choice = {"finish_reason": "stop", "message": {"content": text}}
             return httpx2.Response(200, json={"choices": [choice]})
 
         client = partial(httpx2.AsyncClient, transport=httpx2.MockTransport(api))
         source = UploadFile(io.BytesIO(b"%PDF-1.4"), filename="A sample.pdf")
         try:
-            with patch("pyworker.eden.httpx2.AsyncClient", client):
+            with (
+                patch("pyworker.eden.httpx2.AsyncClient", client),
+                patch("pyworker.eden.render_pages", return_value=[
+                    ("Page one", "", []), ("Page two", "", [])
+                ]),
+            ):
                 draft, ocr = await convert_document(
                     EdenSettings(api_key="fixture-key"), source, "application/pdf"
                 )
@@ -327,12 +322,3 @@ class EdenTests(unittest.IsolatedAsyncioTestCase):
             self.assertTrue(ocr)
         finally:
             await source.close()
-        self.assertEqual(
-            requests,
-            [
-                ("POST", "/v3/upload"),
-                ("POST", "/v3/universal-ai/async"),
-                ("GET", f"/v3/universal-ai/async/{job_id}"),
-                ("POST", "/v3/chat/completions"),
-            ],
-        )

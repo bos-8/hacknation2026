@@ -21,7 +21,6 @@ from pyworker.docx import docx_source_blocks
 from pyworker.form_compiler import convert_to_coi
 from pyworker.form_ir import ActorRole, DomainBlock, SemanticType
 from pyworker.ocr_form import form_from_text
-from pyworker.ocr_image import ocr_upload
 from pyworker.pdf_text import native_pdf_pages
 from pyworker.reader_loop import with_reader_pipes
 from pyworker.spreadsheet import SHEET_FORMATS, detection_text, spreadsheet_blocks
@@ -32,17 +31,13 @@ from pyworker.vision_pages import render_pages
 
 DOCX = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
 MAX_PROVIDER_RESPONSE = 2 * 1024 * 1024
-MAX_PDF_OCR_RESPONSE = 8 * 1024 * 1024
 
 
 @dataclass(frozen=True, slots=True)
 class EdenSettings:
     api_key: str = field(repr=False)
     upload_url: str = "https://api.edenai.run/v3/upload"
-    ocr_url: str = "https://api.edenai.run/v3/universal-ai"
     llm_url: str = "https://api.edenai.run/v3/chat/completions"
-    ocr_model: str = "ocr/ocr/mistral/mistral-ocr-4-1"
-    pdf_ocr_model: str = "ocr/ocr_async/mistral/mistral-ocr-4-1"
     llm_model: str = DEFAULT_QWEN_MODEL
     timeout_seconds: int = 300
     max_input_chars: int = 200_000
@@ -50,6 +45,7 @@ class EdenSettings:
     local_llm_url: str = ""
     local_llm_model: str = "Qwen/Qwen3-4B-Instruct-2507"
     ocr_only: bool = False
+    transcription_model: str = DEFAULT_QWEN_MODEL
     vision_model: str = ""
 
     def uses_vision(self, mime: str) -> bool:
@@ -62,7 +58,7 @@ class EdenSettings:
             raise ValueError("Invalid EDENAI_MAX_INPUT_CHARS")
         if type(self.max_output_tokens) is not int or not 1 <= self.max_output_tokens <= 32_768:
             raise ValueError("Invalid EDENAI_MAX_OUTPUT_TOKENS")
-        for url in (self.upload_url, self.ocr_url, self.llm_url):
+        for url in (self.upload_url, self.llm_url):
             parsed = httpx2.URL(url)
             if (
                 parsed.scheme != "https"
@@ -193,56 +189,36 @@ async def request_json(
         raise EdenFailure(stage, reason="invalid_response") from error
 
 
-async def read_ocr(client, settings: EdenSettings, file_id: str, mime: str, headers) -> str:
-    code = "eden_ocr_failed"
-    pdf = mime == "application/pdf"
-    if pdf:
-        url = settings.ocr_url.rstrip("/") + "/async"
-        result = await request_json(
-            client,
-            url,
-            code,
-            headers=headers,
-            max_bytes=MAX_PDF_OCR_RESPONSE,
-            json={"model": settings.pdf_ocr_model, "input": {"file": file_id}},
+async def transcribe_pages(client, settings, data, mime, headers):
+    try:
+        rendered = await render_pages(data, mime, settings.max_input_chars)
+    except ValueError as error:
+        raise EdenFailure("document_text_failed", 422, reason="document_reader") from error
+    pages = []
+    for image, _, _ in rendered:
+        content = [
+            {"type": "text", "text": "Transcribe all visible text verbatim in reading order. Preserve table columns, blank cells and entered values. Return only the transcription."},
+            {"type": "image_url", "image_url": {"url": "data:image/jpeg;base64," + image}},
+        ]
+        response = await request_json(
+            client, settings.llm_url, "eden_ocr_failed", headers=headers,
+            json={
+                "model": settings.transcription_model,
+                "messages": [{"role": "user", "content": content}],
+                "reasoning_effort": "none",
+                "temperature": 0,
+                "max_tokens": settings.max_output_tokens,
+            },
         )
-        pending = ("pending", "queued", "processing", "running")
-        if result.get("status") in pending:
-            try:
-                job_id = str(UUID(result["public_id"]))
-            except (KeyError, TypeError, AttributeError, ValueError) as error:
-                raise EdenFailure(code, reason="invalid_response") from error
-            # The total conversion deadline also covers waiting for the OCR job.
-            while result.get("status") in pending:
-                await asyncio.sleep(1.5)
-                result = await request_json(
-                    client,
-                    f"{url}/{job_id}",
-                    code,
-                    method="GET",
-                    headers=headers,
-                    max_bytes=MAX_PDF_OCR_RESPONSE,
-                )
-        if result.get("status") != "success":
-            raise EdenFailure(code, reason="ocr_failed")
-    else:
-        result = await request_json(
-            client,
-            settings.ocr_url,
-            code,
-            headers=headers,
-            json={"model": settings.ocr_model, "input": {"file": file_id}},
-        )
-        if result.get("status") not in (None, "success"):
-            raise EdenFailure(code, reason="ocr_failed")
-
-    output = result.get("output")
-    text = output.get("raw_text" if pdf else "text") if isinstance(output, dict) else None
-    if not isinstance(text, str):
-        raise EdenFailure(code, reason="invalid_response")
-    if not text.strip():
-        raise EdenFailure(code, 422, reason="ocr_no_text")
-    return bounded_text(text, settings.max_input_chars)
+        try:
+            choice = response["choices"][0]
+            text = choice["message"]["content"]
+            if not isinstance(text, str) or choice.get("finish_reason") != "stop":
+                raise ValueError
+        except (KeyError, IndexError, TypeError, ValueError) as error:
+            raise EdenFailure("eden_ocr_failed", reason="invalid_response") from error
+        pages.append(text.strip())
+    return pages, rendered
 
 
 def parse_draft(result: dict, model: type[BaseModel] = GeneratedDraft):
@@ -412,6 +388,7 @@ async def convert_document(
                 except ValueError as error:
                     raise EdenFailure("eden_llm_invalid_json", reason="invalid_response") from error
             pages = []
+            rendered = []
             if mime == "application/pdf" and (ocr_form_id or coi_form_id):
                 advance("extracting")
                 try:
@@ -463,37 +440,31 @@ async def convert_document(
                 else:
                     text = (await file.read()).decode("utf-8-sig")
                 content = [{"type": "text", "text": bounded_text(text, settings.max_input_chars)}]
+            elif use_ocr:
+                advance("ocr")
+                pages, rendered = await transcribe_pages(client, settings, data, mime, eden_headers)
+                text = "\n".join(pages)
+                if text.strip():
+                    bounded_text(text, settings.max_input_chars)
+                elif not ocr_only:
+                    raise EdenFailure("eden_ocr_failed", 422, reason="ocr_no_text")
+                content = [{"type": "text", "text": text}]
             else:
-                if use_ocr:
-                    advance("extracting")
-                    upload_data = await asyncio.to_thread(ocr_upload, data, mime)
-                else:
-                    upload_data = data
                 advance("provider_upload")
                 upload = await request_json(
                     client,
                     settings.upload_url,
                     "eden_upload_failed",
                     headers=eden_headers,
-                    files={"file": (file.filename, upload_data, mime)},
-                    data={"purpose": "ocr" if use_ocr else "assistants"},
+                    files={"file": (file.filename, data, mime)},
+                    data={"purpose": "assistants"},
                 )
                 try:
                     file_id = str(UUID(upload["file_id"]))
                 except (KeyError, TypeError, AttributeError, ValueError) as error:
                     raise EdenFailure("eden_upload_failed") from error
 
-                if use_ocr:
-                    advance("ocr")
-                    try:
-                        text = await read_ocr(client, settings, file_id, mime, eden_headers)
-                    except EdenFailure as error:
-                        if not (ocr_only and error.reason == "ocr_no_text"):
-                            raise
-                        text = ""
-                    content = [{"type": "text", "text": text}]
-                else:
-                    content = [{"type": "file", "file": {"file_id": file_id}}]
+                content = [{"type": "file", "file": {"file_id": file_id}}]
 
             document = ReadDocument(
                 blocks=source_blocks
@@ -508,14 +479,14 @@ async def convert_document(
                 grid_pages = []
                 detection = detection_text(source_blocks) if sheet_extension else text
                 if mime == "application/pdf" or mime.startswith("image/"):
-                    try:
-                        rendered = await render_pages(data, mime, settings.max_input_chars)
-                    except ValueError:
-                        # Keep text from documents that PDFium could not rasterize.
-                        rendered = []
-                    # OCR returns one text stream; only attach it to a page when unambiguous.
-                    tables = markdown_tables(text) if use_ocr and len(rendered) == 1 else ()
-                    for image, _, spans in rendered:
+                    if not rendered:
+                        try:
+                            rendered = await render_pages(data, mime, settings.max_input_chars)
+                        except ValueError:
+                            # Native text remains available if rasterization fails.
+                            rendered = []
+                    for index, (image, _, spans) in enumerate(rendered):
+                        tables = markdown_tables(pages[index]) if use_ocr else ()
                         layout = VisualPage(notes=[], fields=[])
                         try:
                             consumed = await asyncio.to_thread(
