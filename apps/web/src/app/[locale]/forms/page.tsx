@@ -5,7 +5,7 @@ import { useFormatter, useLocale, useTranslations } from "next-intl";
 import { Link, useRouter } from "@/i18n/navigation";
 import { Button, Heading, Table, TableCell, TableHead, TableHeader, TableRow, Throbber, Tooltip } from "@/ui/basic";
 import { useSearchParams } from "next/navigation";
-import { ArrowClockwise, CheckCircleFill, ChevronDown, ChevronExpand, ChevronUp, DashCircle, Grid, Plus } from "react-bootstrap-icons";
+import { ArrowClockwise, CheckCircleFill, ChevronDown, ChevronExpand, ChevronUp, DashCircle, FileEarmarkText, Grid, Plus } from "react-bootstrap-icons";
 import { formFormats, formExtensions } from "@/schemas/form-formats";
 import { MAX_FORM_BYTES, hasFormResult, isProcessedForm } from "@/schemas/form-upload";
 import { FILE_PAGE_SIZE, FILE_PAGE_SIZES } from "@/schemas/file-list";
@@ -111,9 +111,14 @@ export default function FormsPage() {
     } finally { setBusy(false); }
   }
 
-  return <main className="mx-auto w-full max-w-6xl space-y-6 px-4 py-8 sm:px-6">
-    <Heading level={1}>{t("title")}</Heading>
-    <TableQuery locale={locale} pathname="/forms" pending={busy || refreshing}>
+  return <div data-forms-content className="glass-shell mx-auto min-w-0 space-y-4 pb-8 pt-6 sm:pt-8">
+    <header className="glass-panel flex items-center gap-4 p-5 sm:p-6">
+      <span className="glass-icon grid size-11 shrink-0 place-items-center rounded-xl">
+        <FileEarmarkText aria-hidden="true" className="size-5" />
+      </span>
+      <Heading level={1} className="min-w-0 text-2xl leading-tight tracking-tight sm:text-3xl">{t("title")}</Heading>
+    </header>
+    <TableQuery locale={locale} pathname="/forms" pending={busy || refreshing} className="glass-panel min-w-0 p-4 sm:p-6">
       <TableFilters action={action} namespace={namespace} values={filters} preserved={preserved}
         definitions={[{ key: "type", label: t("type"), options: formFormats.map(format => ({ value: format.mime, label: format.label })) }]}
         search={<TableSearch action={action} value={search} inputId="forms-search" namespace={namespace}
@@ -191,5 +196,5 @@ export default function FormsPage() {
         setPanel(null);
         router.refresh();
       }} />}
-  </main>;
+  </div>;
 }

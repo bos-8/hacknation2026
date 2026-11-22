@@ -85,8 +85,3 @@ export function pageBreadcrumbs(pathname: string): BreadcrumbRoute[] {
   const current = path === "/admin" ? "admin" : path === "/test" ? "gallery" : path === "/access-denied" ? "accessDenied" : null;
   return current ? [{ label: "home", href: "/" }, { label: current }] : [];
 }
-
-/** Hysteresis prevents the shrinking sticky header from repeatedly crossing its own scroll threshold. */
-export function navbarAtTop(previous: boolean, scrollY: number): boolean {
-  return scrollY <= 8 ? true : scrollY >= 72 ? false : previous;
-}

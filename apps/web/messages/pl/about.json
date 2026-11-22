@@ -1,43 +1,62 @@
 {
   "about": {
-    "flow": {
-      "title": "Jak powstaje cyfrowy formularz",
-      "worker": "Pyworker · przetwarzanie formularza",
-      "validate": "Sprawdza nazwę, rozmiar, format i zawartość pliku.",
-      "extract": "Odczytuje tekst i komórki arkusza lub rozpoznaje pola na obrazie strony.",
-      "compile": "Układa pola w sekcje, przypisuje reguły i zwraca konfigurację formularza w JSON.",
-      "request": "Plik do Pyworkera",
-      "response": "JSON do panelu",
-      "workspace": "Panel urzędnika i usługi pomocnicze",
-      "web": "Przyjmuje plik, zleca konwersję i pokazuje formularz obok dokumentu.",
-      "identity": "Obsługuje logowanie użytkowników i ich role.",
-      "database": "Przechowuje metadane i powiązanie dokumentu z wynikiem.",
-      "storage": "Przechowuje plik źródłowy i wynikowy JSON w magazynie S3."
-    },
     "metadataTitle": "O projekcie | FORMIQ",
-    "eyebrow": "Wyzwanie COI · Działający PoC",
-    "title": "FORMIQ — cyfryzacja formularzy urzędowych",
-    "description": "FORMIQ pomaga urzędnikom przygotować e-usługę na podstawie formularza z BIP. Odczytuje pola z dokumentu i tworzy konfigurację JSON, którą urzędnik może sprawdzić przed importem.",
-    "scopeTitle": "Od blankietu do formularza elektronicznego",
+    "eyebrow": "O projekcie",
+    "title": "Architektura FORMIQ",
+    "description": "Aplikacja Next.js obsługuje interfejs i API. Pyworker odczytuje dokumenty i przekształca wykryte pola w strukturę formularza.",
+    "scopeTitle": "Moduły aplikacji",
     "scope": {
-      "import": {
-        "title": "Wgranie dokumentu",
-        "description": "REST API przyjmuje pojedynczy PDF, DOC, DOCX, ODS, XLSX, JPG, JPEG lub PNG. Sprawdza nazwę, rozmiar i zgodność zawartości z rozszerzeniem. W panelu można dodać do ośmiu plików naraz i śledzić postęp w kolejce."
+      "identity": {
+        "title": "Tożsamość i dostęp",
+        "description": "Keycloak dostarcza tożsamość przez OIDC, Better Auth obsługuje sesję, a serwer sprawdza role i dostęp do zasobów.",
+        "first": "Logowanie i sesje",
+        "second": "Role użytkowników",
+        "third": "Dostęp do zasobów"
       },
-      "structure": {
-        "title": "Pola, słowniki i zależności",
-        "description": "Generator układa pola w sekcje i strony tematyczne. Wiąże rozpoznane pola ze słownikami i danymi początkowymi. W formularzu nadpłaty podatku wybór zwrotu przelewem odsłania pole numeru rachunku."
+      "files": {
+        "title": "Pliki i produkty",
+        "description": "Dokumenty mają metadane, wersje i kontrolowany cykl życia. Produkty korzystają ze wspólnego katalogu plików, a ich zawartość pozostaje w prywatnym magazynie obiektowym.",
+        "first": "Katalog i wersje",
+        "second": "Przesyłanie i pobieranie",
+        "third": "Produkty i załączniki"
       },
-      "review": {
-        "title": "Podgląd i korekta",
-        "description": "Urzędnik porównuje dokument źródłowy z JSON-em lub otwiera edytowalny formularz z odczytanymi wartościami. Błędny PESEL jest wyróżniony przy polu. Po sprawdzeniu można zapisać poprawki i pobrać JSON."
+      "workspace": {
+        "title": "Spójna przestrzeń pracy",
+        "description": "Tabele, formularze, powiadomienia i nawigacja korzystają ze wspólnych komponentów. Język i preferencje wyglądu można dopasować do sposobu pracy.",
+        "first": "Polski i angielski",
+        "second": "Motywy i kontrast",
+        "third": "Wspólne komponenty UI"
       },
-      "runtime": {
-        "title": "Uruchomienie i dane",
-        "description": "Pyworker przetwarza plik na czas żądania. Panel zapisuje oryginał i wynik do późniejszego przeglądu. Konfiguracja Docker pozwala uruchomić modele lokalnie. W trybie deweloperskim analizę obrazów wykonuje Qwen przez Eden AI."
+      "tasks": {
+        "title": "Operacje w tle",
+        "description": "Kolejka przechowuje zadania i zarządza ich ponowieniami. Wykonawca Python obsługuje zdefiniowane operacje; panel administratora pokazuje kolejkę oraz dostępność usług.",
+        "first": "Kolejka i ponowienia",
+        "second": "Wykonawca Python",
+        "third": "Monitoring usług"
       }
     },
+    "workflowTitle": "Przepływ danych formularza",
+    "workflow": {
+      "storage": {
+        "title": "Zapis oryginału",
+        "description": "Serwer Web zapisuje plik w SeaweedFS przez API S3, a jego metadane w PostgreSQL."
+      },
+      "queue": {
+        "title": "Zlecenie analizy",
+        "description": "API zwraca HTTP 202 i identyfikator operacji. Zadanie form.process trafia do kolejki pg-boss."
+      },
+      "worker": {
+        "title": "Odczyt dokumentu",
+        "description": "Konsument kolejki pobiera oryginał z S3 i przekazuje go z metadanymi do Pyworkera."
+      },
+      "result": {
+        "title": "Zapis i eksport",
+        "description": "Serwer zapisuje wynik w PostgreSQL. Pole draft zawiera JSON COI. W trybie pipeline wynik obejmuje również model pośredni i współrzędne wykrytych pól."
+      }
+    },
+    "technologyTitle": "Technologie z konkretną rolą",
     "teamLink": "Poznaj zespół",
+    "homeLink": "Strona główna",
     "team": {
       "metadataTitle": "Zespół | FORMIQ",
       "eyebrow": "Ludzie za projektem",
@@ -54,15 +73,19 @@
       "midDeveloper": "Mid Developer",
       "ciCd": "CI/CD",
       "jakub": {
-        "motto": "Wielbiciel chińskich modeli"
+        "bio": "Rozwija funkcje AI w FORMIQ i łączy je z interfejsem użytkownika.",
+        "motto": "Chińskie modele są świetne"
       },
       "natalia": {
+        "bio": "Koordynuje prace nad FORMIQ, dba o komunikację i wspiera zespół w sprawach organizacyjnych.",
         "motto": "Będzie dobrze ;)"
       },
       "yurii": {
+        "bio": "Rozwija frontend FORMIQ i przekłada możliwości AI na funkcje dostępne w aplikacji.",
         "motto": "Gemini robi brrrrrrr"
       },
       "stanislaw": {
+        "bio": "Rozwija backend FORMIQ, w tym logikę serwerową i obsługę danych.",
         "motto": "Nie ma to jak dobry pipeline"
       },
       "kacper": {
@@ -75,6 +98,97 @@
       "profileLabel": "{provider}: {name} — otwiera nową kartę",
       "profilePlaceholder": "{provider}: link do uzupełnienia",
       "aboutLink": "O projekcie"
+    },
+    "intro": "Oryginały trafiają do magazynu obiektowego, wyniki do PostgreSQL, a kolejka pg-boss pozwala przetwarzać formularze w tle.",
+    "contentsLabel": "Na tej stronie",
+    "sections": {
+      "modules": "Moduły",
+      "workflow": "Przepływ danych",
+      "architecture": "Architektura",
+      "environments": "Środowiska",
+      "processing": "Odczyt dokumentów"
+    },
+    "currentLabel": "Prototyp",
+    "scopeDescription": "Serwer Web zarządza uprawnieniami i danymi, a worker wykonuje analizę dokumentów.",
+    "workflowDescription": "Przesłanie pliku i rozpoczęcie analizy to osobne operacje API.",
+    "architecture": {
+      "supportTitle": "Usługi wspierające backend",
+      "label": "Pod powierzchnią",
+      "title": "Jeden backend. Wyraźne granice odpowiedzialności.",
+      "description": "Next.js łączy interfejs z backendem. Baza danych, magazyn plików, tożsamość i wykonawcy wspierają aplikację przez określone połączenia.",
+      "browser": {
+        "title": "Przeglądarka",
+        "detail": "Interfejs i działania użytkownika"
+      },
+      "web": {
+        "title": "Backend Web",
+        "detail": "Uprawnienia i logika aplikacji"
+      },
+      "data": {
+        "title": "Dane i pliki",
+        "detail": "PostgreSQL oraz magazyn S3"
+      },
+      "identity": "Keycloak · tożsamość",
+      "queue": "pg-boss · kolejka",
+      "python": "Python · wykonanie",
+      "note": "Przeglądarka komunikuje się z aplikacją. Dostęp do prywatnych danych i usług kontroluje backend."
+    },
+    "technologies": {
+      "web": "Interfejs, renderowanie i backend aplikacji.",
+      "auth": "Tożsamość, logowanie i zarządzanie rolami.",
+      "database": "Dane aplikacji, sesje i trwały zapis zadań.",
+      "storage": "Prywatna zawartość plików przez interfejs S3.",
+      "queue": "Przekazywanie zadań, stany i kontrolowane ponowienia.",
+      "python": "Oddzielny wykonawca operacji przetwarzania."
+    },
+    "environments": {
+      "title": "Ten sam projekt, różne sposoby uruchomienia",
+      "description": "DEV i QA korzystają z tych samych lokalnych adresów, ale mają oddzielną konfigurację i dane. Środowisko produkcyjne pozostaje planowanym etapem.",
+      "available": "Zaimplementowane",
+      "planned": "Planowane",
+      "dev": {
+        "title": "Rozwój lokalny",
+        "description": "Web i workery działają na komputerze developera, a infrastruktura w Dockerze. Zmiany kodu można szybko sprawdzać."
+      },
+      "qa": {
+        "title": "Weryfikacja integracji",
+        "description": "Aplikacje uruchamiają się ze zbudowanych obrazów. To miejsce na sprawdzenie współpracy usług w pełnym stacku."
+      },
+      "prod": {
+        "title": "Wdrożenie produkcyjne",
+        "description": "Oddzielne środowisko, konfiguracja i procedury utrzymania. Wymaga osobnej walidacji przed udostępnieniem."
+      }
+    },
+    "teamCta": {
+      "title": "Za kodem stoją ludzie",
+      "description": "Poznaj osobę odpowiedzialną za architekturę i kierunek rozwoju oraz miejsce dla kolejnych współtwórców."
+    },
+    "processing": {
+      "title": "Odczyt dokumentów",
+      "description": "Konfiguracja Pyworkera określa sposób odczytu tekstu i rozpoznawania pól.",
+      "local": {
+        "title": "Przetwarzanie lokalne",
+        "description": "Docling odczytuje tekst PDF, PaddleOCR rozpoznaje skany i obrazy, a lokalny model Qwen generuje strukturę formularza przez vLLM."
+      },
+      "cloud": {
+        "title": "Przetwarzanie przez Eden AI",
+        "description": "W trybie vision Pyworker wysyła obrazy stron lub lokalnie odczytaną treść do modelu Qwen przez Eden AI. W trybie OCR wysyła skany do odczytu i generuje strukturę bez modelu językowego."
+      }
+    },
+    "services": {
+      "label": "Usługi projektu",
+      "authConsole": {
+        "title": "Konsola administracyjna Keycloak",
+        "description": "Zarządzaj użytkownikami i rolami w Keycloak."
+      },
+      "keycloak": {
+        "title": "Konfiguracja OIDC Keycloak",
+        "description": "Sprawdź adresy usług logowania i kluczy publicznych."
+      },
+      "swagger": {
+        "title": "Swagger UI pyworkera",
+        "description": "Przeglądaj i testuj endpointy API workera."
+      }
     }
   }
 }

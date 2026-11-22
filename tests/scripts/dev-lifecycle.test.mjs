@@ -161,6 +161,33 @@ test('supervisor isolates workspaces, refuses concurrent ownership and acknowled
   await ownDev(root, async () => {});
 });
 
+test('DEV can acquire the Linux control socket after its previous owner is killed', {
+  skip: process.platform !== 'linux', timeout: 10000,
+}, async t => {
+  const root = await fixture(t);
+  const manager = pathToFileURL(path.resolve('scripts/lib/dev-process.mjs')).href;
+  const owner = spawn(process.execPath, ['--input-type=module', '-e', `
+    import { ownDev } from ${JSON.stringify(manager)};
+    await ownDev(process.cwd(), () => {
+      process.send('ready');
+      return new Promise(() => {});
+    });
+  `], { cwd: root, stdio: ['ignore', 'ignore', 'inherit', 'ipc'] });
+  const exited = once(owner, 'exit');
+  t.after(async () => { owner.kill('SIGKILL'); await exited; });
+  const [status] = await Promise.race([once(owner, 'message'), exited]);
+  assert.equal(status, 'ready');
+  owner.kill('SIGKILL');
+  assert.deepEqual(await exited, [null, 'SIGKILL']);
+  await access(controlAddress(root));
+
+  assert.equal(await stopDev(root), false);
+  let calls = 0;
+  await ownDev(root, async () => { calls++; });
+  assert.equal(calls, 1);
+  await assert.rejects(access(controlAddress(root)), { code: 'ENOENT' });
+});
+
 test('stop terminates the owned fixture process tree while an unrelated listener survives', { timeout: 20000 }, async t => {
   const root = await fixture(t);
   const unrelated = net.createServer(socket => socket.end());

@@ -21,7 +21,7 @@ export async function Footer({ appName, locale, languageCookieName, className }:
   const legalLinks = footerLegalLinks[locale];
   return (
     <footer data-shell-footer className={cx(layoutStyles.footer, className)}>
-      <div className="mx-auto w-full max-w-4xl px-5 pt-8 text-center sm:px-8 sm:pt-10">
+      <div className="mx-auto w-full max-w-4xl px-5 py-8 text-center sm:px-8 sm:py-10">
         <nav aria-label={t("footer.navigation")} className="grid grid-cols-2 gap-x-5 gap-y-6 sm:gap-x-12">
           <div className="min-w-0">
             <h2 className={layoutStyles.footerHeading}>{t("footer.application")}</h2>
@@ -47,9 +47,6 @@ export async function Footer({ appName, locale, languageCookieName, className }:
             </ul>
           </div>
         </nav>
-        <p className="mx-auto mt-6 max-w-2xl border-t border-footer-border px-2 py-4 text-sm leading-relaxed text-muted-foreground">
-          {t("footer.description")}
-        </p>
       </div>
 
       <div data-footer-utility className="border-t border-footer-border">

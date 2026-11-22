@@ -3,7 +3,7 @@
 import { useMemo, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import { useFormatter, useTranslations } from "next-intl";
-import { Clipboard, Download } from "react-bootstrap-icons";
+import { ArrowLeft, Clipboard, Download } from "react-bootstrap-icons";
 import { Link } from "@/i18n/navigation";
 import { needsRuleAnalysis } from "@/schemas/answer-editor";
 import { exportForm, hasFormResult, type FormProcessingResult } from "@/schemas/form-upload";
@@ -84,7 +84,7 @@ function FormResult({ entry, result }: { entry: FormEntry; result: FormProcessin
   </div>;
 
   return <div className="grid gap-4 lg:grid-cols-2">
-    <section className="min-w-0 overflow-hidden rounded-lg border border-panel-border bg-panel">
+    <section className="glass-panel min-w-0 overflow-hidden">
       <Heading level={2} className="border-b border-panel-border p-4 text-lg">{t("original")}</Heading>
       {!!resultLocations?.length && <div className="space-y-2 p-3 text-sm">
         <label className="flex flex-wrap items-center gap-2">
@@ -117,7 +117,7 @@ function FormResult({ entry, result }: { entry: FormEntry; result: FormProcessin
           <a download={entry.file.name} href={entry.previewUrl} className="text-primary underline">{t("downloadOriginal")}</a>
         </div>}
     </section>
-    <section ref={json} className="min-w-0 rounded-lg border border-panel-border bg-panel">
+    <section ref={json} className="glass-panel min-w-0">
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-panel-border p-4">
         <Heading level={2} className="text-lg">{t(view === "form" ? "formPreview" : "json")}</Heading>
         <div className="flex flex-wrap items-center gap-2">
@@ -205,11 +205,17 @@ export default function FormDetailsPage() {
   const { id } = useParams<{ id: string }>();
   const t = useTranslations("forms");
   const entry = useForms().entries.find(item => item.id === id);
-  return <main className="w-full min-w-0 space-y-5 px-4 py-8 sm:px-6">
-    <Link href="/forms" className="text-accent underline">{t("back")}</Link>
-    <Heading level={1} className="break-words">{entry?.processingJson?.draft.title || entry?.file.name || t("detailsTitle")}</Heading>
+  return <div className="glass-shell mx-auto min-w-0 space-y-4 pb-8 pt-6 sm:pt-8">
+    <header className="glass-panel space-y-2 p-5 sm:p-6">
+      <Link href="/forms" className="glass-accent-text inline-flex items-center gap-2 text-sm font-medium hover:underline">
+        <ArrowLeft aria-hidden="true" className="size-4" />{t("back")}
+      </Link>
+      <Heading level={1} className="break-words text-2xl leading-tight tracking-tight sm:text-3xl">
+        {entry?.processingJson?.draft.title || entry?.file.name || t("detailsTitle")}
+      </Heading>
+    </header>
     {entry?.processingJson && hasFormResult(entry.processingJson)
       ? <FormResult key={entry.id} entry={entry} result={entry.processingJson} />
-      : <p>{t(entry ? "awaitingProcessing" : "missing")}</p>}
-  </main>;
+      : <p className="glass-panel p-4 text-muted-foreground sm:p-6">{t(entry ? "awaitingProcessing" : "missing")}</p>}
+  </div>;
 }

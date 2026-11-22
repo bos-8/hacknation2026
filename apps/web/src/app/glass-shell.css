@@ -70,8 +70,6 @@ body:has([data-navbar-glass]) {
   backdrop-filter: blur(14px);
 }
 
-.home-service { transition: border-color 150ms ease; }
-.home-service:hover { border-color: hsl(var(--ring)); }
 .glass-accent-text, .glass-icon { color: var(--glass-accent-text, hsl(var(--accent))); }
 
 .glass-icon { background: var(--glass-accent-tint, hsl(var(--muted))); }
@@ -185,15 +183,12 @@ body:has([data-navbar-glass]) .shell-breadcrumb {
   backdrop-filter: blur(14px);
 }
 
-body:has([data-navbar-glass]) main section[id] {
-  scroll-margin-top: calc(var(--navigation-height, 100px) + 64px);
-}
 
-[data-admin-content] [role="region"]:has(> table) {
+:is([data-admin-content], [data-forms-content]) [role="region"]:has(> table) {
   border-color: var(--glass-line, hsl(var(--table-border)));
   border-radius: 12px;
 }
 
-:root:not([data-contrast="high"]) [data-admin-content] thead {
+:root:not([data-contrast="high"]) :is([data-admin-content], [data-forms-content]) thead {
   background-color: color-mix(in srgb, var(--glass-accent-text) 10%, hsl(var(--table-heading)));
 }

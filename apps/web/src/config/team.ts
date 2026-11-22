@@ -31,7 +31,7 @@ export const teamMembers: readonly TeamMember[] = [
     initials: "JM",
     roles: ["aiLead", "uiUx"],
     profileKey: "jakub",
-    image: "/team/jakub-mielcarek.png",
+    image: "/team/jakub-mielcarek-portrait.png",
     linkedin: "https://www.linkedin.com/in/mielcarekjakub/",
     github: "https://github.com/vGiacomov",
   },

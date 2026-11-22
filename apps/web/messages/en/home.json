@@ -1,8 +1,8 @@
 {
   "home": {
-    "title": "A shared application core",
-    "description": "Sign in, upload a form and start processing. When it finishes, you can view the generated JSON alongside the source document.",
-    "eyebrow": "Working proof of concept (PoC)",
+    "title": "Turn paper forms into digital forms",
+    "description": "Upload a document or scan. FORMIQ detects form fields so you can check them against the original and prepare a file for import into COI.",
+    "eyebrow": "FORMIQ",
     "pocLogin": "Sign in to the PoC",
     "username": "Username",
     "password": "Password",
@@ -26,6 +26,46 @@
         "title": "Pyworker Swagger UI",
         "description": "Explore and test the worker API endpoints."
       }
+    },
+    "openForms": "Open Forms",
+    "workflowTitle": "From document to export",
+    "workflow": {
+      "upload": {
+        "title": "Upload a form",
+        "description": "Add a document or scan in Forms. Mark it as paid and run the analysis."
+      },
+      "review": {
+        "title": "Review the result",
+        "description": "Compare the detected fields with the original and correct the extracted values."
+      },
+      "export": {
+        "title": "Download the form",
+        "description": "Save the reviewed form as a JSON file ready to import into COI."
+      }
+    },
+    "capabilities": {
+      "title": "What you can do in FORMIQ",
+      "compare": {
+        "title": "Find a field in the original",
+        "description": "Open the result alongside the PDF or scan. When the analysis finds a field’s location, you can highlight its label and where the answer goes."
+      },
+      "edit": {
+        "title": "Correct and validate answers",
+        "description": "Change extracted values in the form preview. The editor flags errors such as an invalid PESEL number, date or bank account number. Saved changes are included in the JSON download."
+      },
+      "decisions": {
+        "title": "Review suggested fields",
+        "description": "When the analysis flags a field for review, you can see why it was suggested and decide whether to add it to the draft as an optional field."
+      },
+      "manage": {
+        "title": "Return to saved forms",
+        "description": "Search by filename, filter by format or analysis status, and reopen a saved result. You can run the analysis again on the same file if needed."
+      },
+      "availability": "Preview, editing and decision review depend on the file format and analysis result."
+    },
+    "formats": {
+      "title": "File formats you can upload",
+      "description": "Upload several forms at once, up to {mib} MiB per file. You can add scans, text documents and spreadsheets."
     }
   }
 }
