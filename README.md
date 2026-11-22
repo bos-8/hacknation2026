@@ -1,10 +1,67 @@
 # FORMIQ
 
+## Uruchomienie projektu w Dockerze
+
+Wymagany jest Docker Engine z Docker Compose 2.24.4 lub nowszym. Polecenia wykonuj z głównego katalogu repozytorium.
+
+**Wszystkie polecenia Compose wykonuj z poziomu root tego projektu**, czyli katalogu zawierającego `README.md`, `compose.yaml` i `.env.poc`. W tym samym katalogu utwórz `.env.poc.local`. Przed uruchomieniem przejdź do niego w terminalu, np. `cd formularze`.
+
+### 1. Uzupełnij dostęp do Harness API
+
+**Plik musi nazywać się dokładnie `.env.poc.local` i znajdować się w root projektu, obok `compose.yaml`.** Compose wymaga tej nazwy i lokalizacji, aby polecenie `docker compose up --build -d --wait` zadziałało. Upewnij się, że plik nie ma dodatkowego rozszerzenia, np. `.txt`.
+
+Utwórz w głównym katalogu plik `.env.poc.local` i wpisz otrzymany adres HTTPS oraz klucz API:
+
+```dotenv
+PYWORKER_HARNESS_API_URL=https://ADRES_TWOJEGO_API/
+PYWORKER_HARNESS_API_KEY=TWÓJ_KLUCZ_API
+```
+
+Plik `.env.poc.local` jest ignorowany przez Git. Compose odczytuje ten plik oraz publiczny `.env.poc`. Zmienne powłoki mają pierwszeństwo. Uwierzytelnianie klienta odbywa się kluczem Bearer do endpointu AWS.
+
+Pozostałe ustawienia są gotowe w publicznym [pliku .env.poc](.env.poc). Zawiera on porty, nazwy obrazów i wolumenów, jawne lokalne dane PoC oraz stałą datę wygaśnięcia usługi. Klucz API musi być aktywny. Po upływie `PYWORKER_HARNESS_EXPIRES_AT` kontrola startowa zgłosi wygaśnięcie dostępu. Odnowienie wymaga autoryzowanej zmiany terminu również po stronie AWS.
+
+### 2. Uruchom Docker Engine
+
+Na Windows uruchom Docker Desktop w trybie kontenerów Linux i poczekaj na gotowość silnika. Możesz sprawdzić połączenie z silnikiem poleceniem:
+
+```bash
+docker info
+```
+
+### 3. Zbuduj i uruchom cały stack
+
+```bash
+docker compose up --build -d --wait
+```
+
+Usługa startowa Compose sprawdza konfigurację API i termin dostępu. Compose buduje obrazy Web, kolejki, pyworkera i infrastruktury. Następnie uruchamia PostgreSQL, Keycloak i SeaweedFS, wykonuje migracje, seed bazy oraz kont w Keycloak i uruchamia aplikacje. Czeka na gotowość kontenerów. Pierwsze uruchomienie pobiera obrazy i zależności, więc może potrwać kilka minut.
+
+Po zakończeniu komendy otwórz **http://127.0.0.1:4100**.
+
+| Usługa PoC | Adres                                                                                               |
+| ---------- | --------------------------------------------------------------------------------------------------- |
+| Aplikacja  | [127.0.0.1:4100](http://127.0.0.1:4100)                                                             |
+| Keycloak   | [127.0.0.1:10800/admin/](http://127.0.0.1:10800/admin/)                                             |
+| OIDC       | [Konfiguracja realmu FORMIQ](http://127.0.0.1:10800/realms/FORMIQ/.well-known/openid-configuration) |
+| S3         | `http://127.0.0.1:28333`                                                                            |
+
+| Użytkownik | Hasło | Rola |
+| ---------- | ----- | ---- |
+| admin      | admin | ROOT |
+| user       | user  | USER |
+
+PoC używa HTTP pod adresem `127.0.0.1`, więc nie wymaga certyfikatów ani ich importowania do przeglądarki. Używaj tego adresu także do logowania, aby ominąć wcześniejsze HSTS zapisane dla `localhost`. Dane PoC są przechowywane w wolumenach projektu `formiqpoc`. Ponowne wykonanie komendy zachowuje dane i istniejące konta.
+
+Przetwarzanie korzysta z endpointu AWS obsługującego OCR i projektowanie formularzy. Klucz dostawcy OCR pozostaje w konfiguracji serwera AWS. Publiczny `.env.poc` zawiera jawne dane przeznaczone do lokalnego PoC. Porty aplikacji i infrastruktury są publikowane na loopbackie, a wolumeny są odrębne od DEV i zwykłego QA.
+
+Szczegółowe instrukcje opisują [Docker Compose PoC](docs/0307-docker-poc.pl.md) oraz [Harness API i termin dostępu](docs/0209-harness-api.pl.md).
+
 FORMIQ to pracownia do cyfryzacji formularzy. Wynikiem analizy dokumentu jest konfiguracja formularza JSON COI oraz odczytana treść dokumentu.
 
 Przykładowy JSON wygenerowany przez naszą aplikację znajduje się w katalogu [json-example](json-example/).
 
-[Uruchomienie](#uruchomienie-projektu-w-dockerze) · [Test krok po kroku](#jak-przetestować-aplikację-krok-po-kroku) · [Checklista kryteriów oceny](#realizacja-kryteriów-oceny-coi)
+[Uruchomienie](#uruchomienie-projektu-w-dockerze) · [Test krok po kroku](#jak-przetestować-aplikację-krok-po-kroku)
 
 ## O projekcie
 
@@ -128,60 +185,6 @@ Tabela obejmuje główne elementy aplikacji oraz opcjonalnego pipeline’u lokal
 
 Zestawienie deklaracji dla bibliotek zawiera [inwentarz zależności CSV](docs/0102-dependency-licenses.csv), a ograniczenia opisuje [audyt licencji](docs/0101-license-audit.pl.md). Inwentarz jest migawką wcześniejszego checkoutu. Pełny SBOM aktualnych obrazów, zależności przechodnich i wag pozostaje do przygotowania. Cały stos nie ma jednolitej licencji MIT lub Apache-2.0. W szczególności obecność LGPL wymaga rozstrzygnięcia przy wymaganiu COI dotyczącym dostawy bez copyleft.
 
-## Uruchomienie projektu w Dockerze
-
-Wymagany jest Docker Engine z Docker Compose 2.24.4 lub nowszym. Polecenia wykonuj z głównego katalogu repozytorium.
-
-**Wszystkie polecenia Compose wykonuj z poziomu root tego projektu**, czyli katalogu zawierającego `README.md`, `compose.yaml` i `.env.poc`. W tym samym katalogu utwórz `.env.poc.local`. Przed uruchomieniem przejdź do niego w terminalu, np. `cd formularze`.
-
-### 1. Uzupełnij dostęp do Harness API
-
-Utwórz w głównym katalogu plik `.env.poc.local` i wpisz otrzymany adres HTTPS oraz klucz API:
-
-```dotenv
-PYWORKER_HARNESS_API_URL=https://ADRES_TWOJEGO_API/
-PYWORKER_HARNESS_API_KEY=TWÓJ_KLUCZ_API
-```
-
-Plik `.env.poc.local` jest ignorowany przez Git. Compose odczytuje ten plik oraz publiczny `.env.poc`. Zmienne powłoki mają pierwszeństwo. Uwierzytelnianie klienta odbywa się kluczem Bearer do endpointu AWS.
-
-Pozostałe ustawienia są gotowe w publicznym [pliku .env.poc](.env.poc). Zawiera on porty, nazwy obrazów i wolumenów, jawne lokalne dane PoC oraz stałą datę wygaśnięcia usługi. Klucz API musi być aktywny. Po upływie `PYWORKER_HARNESS_EXPIRES_AT` kontrola startowa zgłosi wygaśnięcie dostępu. Odnowienie wymaga autoryzowanej zmiany terminu również po stronie AWS.
-
-### 2. Uruchom Docker Engine
-
-Na Windows uruchom Docker Desktop w trybie kontenerów Linux i poczekaj na gotowość silnika. Możesz sprawdzić połączenie z silnikiem poleceniem:
-
-```bash
-docker info
-```
-
-### 3. Zbuduj i uruchom cały stack
-
-```bash
-docker compose up --build -d --wait
-```
-
-Usługa startowa Compose sprawdza konfigurację API i termin dostępu. Compose buduje obrazy Web, kolejki, pyworkera i infrastruktury. Następnie uruchamia PostgreSQL, Keycloak i SeaweedFS, wykonuje migracje, seed bazy oraz kont w Keycloak i uruchamia aplikacje. Czeka na gotowość kontenerów. Pierwsze uruchomienie pobiera obrazy i zależności, więc może potrwać kilka minut.
-
-Po zakończeniu komendy otwórz **http://127.0.0.1:4100**.
-
-| Usługa PoC | Adres                                                                                               |
-| ---------- | --------------------------------------------------------------------------------------------------- |
-| Aplikacja  | [127.0.0.1:4100](http://127.0.0.1:4100)                                                             |
-| Keycloak   | [127.0.0.1:10800/admin/](http://127.0.0.1:10800/admin/)                                             |
-| OIDC       | [Konfiguracja realmu FORMIQ](http://127.0.0.1:10800/realms/FORMIQ/.well-known/openid-configuration) |
-| S3         | `http://127.0.0.1:28333`                                                                            |
-
-| Użytkownik | Hasło | Rola |
-| ---------- | ----- | ---- |
-| admin      | admin | ROOT |
-| user       | user  | USER |
-
-PoC używa HTTP pod adresem `127.0.0.1`, więc nie wymaga certyfikatów ani ich importowania do przeglądarki. Używaj tego adresu także do logowania, aby ominąć wcześniejsze HSTS zapisane dla `localhost`. Dane PoC są przechowywane w wolumenach projektu `formiqpoc`. Ponowne wykonanie komendy zachowuje dane i istniejące konta.
-
-Przetwarzanie korzysta z endpointu AWS obsługującego OCR i projektowanie formularzy. Klucz dostawcy OCR pozostaje w konfiguracji serwera AWS. Publiczny `.env.poc` zawiera jawne dane przeznaczone do lokalnego PoC. Porty aplikacji i infrastruktury są publikowane na loopbackie, a wolumeny są odrębne od DEV i zwykłego QA.
-
-Szczegółowe instrukcje opisują [Docker Compose PoC](docs/0307-docker-poc.pl.md) oraz [Harness API i termin dostępu](docs/0209-harness-api.pl.md).
 
 ## Jak przetestować aplikację krok po kroku
 
@@ -202,10 +205,6 @@ Instrukcja jest przeznaczona dla zawodnika lub osoby oceniającej projekt na now
 13. **Zakończ test.** Wyloguj się. Stos zatrzymasz poleceniem `docker compose down`. Oryginały, wyniki i konta pozostają w wolumenach. Nie dodawaj `-v`, jeśli chcesz zachować dane.
 
 Jeśli aplikacja się nie otwiera, wykonaj `docker compose ps -a`. Usługi długotrwałe powinny być zdrowe, a `preflight` i `maintenance` zakończone kodem 0. Szczegóły pokaże `docker compose logs --tail 100 preflight maintenance web queue pyworker`. [Diagnostyka PoC](docs/0307-docker-poc.pl.md)
-
-## Realizacja kryteriów oceny COI
-
-Zaznaczenie oznacza wdrożoną funkcję lub dostarczony element PoC. Ocena jakości i przyznanie punktów należą do jury. Otwarte pozycje wskazują zakres wymagający dokończenia lub potwierdzenia odbioru.
 
 ## Lokalne adresy usług
 
