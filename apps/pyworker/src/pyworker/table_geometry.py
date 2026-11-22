@@ -1,7 +1,7 @@
 """Recover empty answer areas from the printed rules of a table."""
 
 import re
-from base64 import b64decode
+from base64 import b64decode, b64encode
 from collections import Counter, defaultdict
 from io import BytesIO
 from itertools import groupby, pairwise
@@ -46,7 +46,7 @@ def markdown_tables(text):
     return tables
 
 
-def align_cells(page, encoded, spans=(), ocr_tables=()):
+def align_cells(page, encoded, spans=(), ocr_tables=(), review=None):
     tables = defaultdict(list)
     for field in page.fields:
         if field.cell:
@@ -66,7 +66,7 @@ def align_cells(page, encoded, spans=(), ocr_tables=()):
                     field.value = pair[1]
             elif printed and printed.casefold().rstrip(":") != label:
                 field.value = printed
-    return recover_empty_cells(page, ink, spans, ocr_tables)
+    return recover_empty_cells(page, ink, spans, ocr_tables, review)
 
 
 def text_in(box, spans):
@@ -122,7 +122,7 @@ def ruled_tables(ink):
             yield rows
 
 
-def recover_empty_cells(page, ink, spans, ocr_tables):
+def recover_empty_cells(page, ink, spans, ocr_tables, review=None):
     width, height = ink.size
 
     def box(x0, top, x1, bottom):
@@ -176,6 +176,7 @@ def recover_empty_cells(page, ink, spans, ocr_tables):
             None,
         )
         table = box(left, first, right, last)
+        ambiguous = []
         headers = [
             h
             for h in page.table_headers
@@ -239,6 +240,10 @@ def recover_empty_cells(page, ink, spans, ocr_tables):
                     if not printed or len(printed) > 4000:
                         continue
                 elif has_ink and not (printed and descriptive and row > 1 and known_input_column):
+                    # A dotted line or faint grid can look like printed content.
+                    # Confirm these interior cells against the actual table image.
+                    if review is not None and not printed and row > 1 and col > 1 and len(ambiguous) < 100:
+                        ambiguous.append((area, row, col))
                     continue
                 page.fields.append(
                     VisualField(
@@ -252,9 +257,30 @@ def recover_empty_cells(page, ink, spans, ocr_tables):
                 )
                 if 2 * len(page.fields) > MAX_SOURCE_BLOCKS:
                     raise ValueError("Table exceeds document evidence limit")
+        if ambiguous and not review:
+            review.append(((left, first, right + 1, last + 1), ambiguous, section or f"Tabela {index}"))
         if matrix and len(page.fields) > initial_fields:
             consumed.append(source)
     return consumed
+
+
+def table_crop(encoded, bounds, candidates):
+    with Image.open(BytesIO(b64decode(encoded))) as image:
+        width, height = image.size
+        crop = image.crop(bounds)
+    output = BytesIO()
+    crop.save(output, "JPEG", quality=95)
+    left, top = bounds[:2]
+    regions = []
+    for index, (area, row, column) in enumerate(candidates):
+        x0, y0, x1, y1 = area
+        regions.append(dict(id=index, row=row, column=column, bbox=[
+            round((x0 * width / 1000 - left) * 1000 / crop.width),
+            round((y0 * height / 1000 - top) * 1000 / crop.height),
+            round((x1 * width / 1000 - left) * 1000 / crop.width),
+            round((y1 * height / 1000 - top) * 1000 / crop.height),
+        ]))
+    return b64encode(output.getvalue()).decode("ascii"), regions
 
 
 def align_grid(ink, cells):

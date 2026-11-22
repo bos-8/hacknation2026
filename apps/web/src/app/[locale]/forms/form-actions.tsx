@@ -49,7 +49,7 @@ export function FormActions({ entry, active, info, discard }: { entry: FormEntry
     setProcessing(true);
     const startedAt = Date.now();
     const id = pushNotification({
-      id: "form-process-" + entry.id, mode: "info", message: t(reanalyze ? "reanalyzePending" : "processingPending"),
+      id: "form-process-" + entry.id, mode: "info", message: t("analysisWait", { status: t(reanalyze ? "reanalyzePending" : "processingPending") }),
       brief: true, pending: true, progress: { percent: 0, startedAt },
     });
     let operation = existing || crypto.randomUUID();
@@ -73,7 +73,7 @@ export function FormActions({ entry, active, info, discard }: { entry: FormEntry
           if (stage !== lastStage || remaining_ms != null || timeout_remaining_ms != null) {
             const now = Date.now();
             pushNotification({id, mode:"info", pending:true, brief:true,
-              message:stage === "queued" ? t("analysisStages.queued") : t("analysisProgress",{stage:t(`analysisStages.${stage}`)}),
+              message: t("analysisWait", { status: stage === "queued" ? t("analysisStages.queued") : t("analysisProgress", { stage: t(`analysisStages.${stage}`) }) }),
               progress:{startedAt,percent:formAnalysisPercent[stage],
                 estimatedEndAt:remaining_ms == null ? undefined : now + remaining_ms,
                 deadlineAt:timeout_remaining_ms == null ? undefined : now + timeout_remaining_ms}});

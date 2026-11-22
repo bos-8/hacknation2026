@@ -34,6 +34,41 @@ def cell(row):
 
 
 class VisionTests(unittest.IsolatedAsyncioTestCase):
+    async def test_recovers_dotted_answer_cell_missed_on_first_pass(self):
+        image = Image.new("RGB", (500, 360), "white")
+        draw = ImageDraw.Draw(image)
+        for x in (50, 200, 450):
+            draw.line((x, 40, x, 300), fill="black", width=2)
+        for y in (40, 120, 300):
+            draw.line((50, y, 450, y), fill="black", width=2)
+        draw.text((65, 65), "Item", fill="black")
+        draw.text((220, 65), "Quantity", fill="black")
+        draw.text((65, 170), "Row A", fill="black")
+        for x in range(220, 420, 5):
+            draw.point((x, 220), fill="black")
+        buf = BytesIO()
+        image.save(buf, "PNG")
+        responses = [{"notes": [], "fields": []},
+                     {"fields": [{"id": 0, "label": "Quantity A"}, {"id": 0, "label": "Duplicate"}]}]
+
+        async def api(request):
+            payload = json.loads(request.content)
+            if len(responses) == 1:
+                self.assertIn("Candidates:", payload["messages"][0]["content"][1]["text"])
+            return httpx2.Response(200, json={"choices": [{"finish_reason": "stop", "message": {
+                "content": json.dumps(responses.pop(0))}}]})
+
+        settings = Settings.from_environment({"PYWORKER_API_TOKEN": "x" * 40,
+            "PYWORKER_FORM_MODE": "vision", "EDENAI_API_KEY": "fixture"}).eden
+        with patch("pyworker.eden.httpx2.AsyncClient", partial(httpx2.AsyncClient, transport=httpx2.MockTransport(api))):
+            result, _ = await convert_document(settings, UploadFile(BytesIO(buf.getvalue())),
+                                               "image/png", coi_form_id=uuid4())
+        self.assertFalse(responses)
+        regions = [loc.input[0] for loc in result.field_locations]
+        self.assertEqual([(r.cell.row, r.cell.column) for r in regions], [(2, 2)])
+        self.assertAlmostEqual(regions[0].bbox[0], 0.4, places=2)
+        self.assertFalse(result.source_answers)
+
     def test_printed_answer_returned_with_its_label_is_editable(self):
         page = VisualPage(
             notes=[],

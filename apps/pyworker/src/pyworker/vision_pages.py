@@ -12,9 +12,9 @@ from PIL import Image, ImageOps
 from pyworker.ocr_image import MAX_PIXELS, ocr_image
 from pyworker.reader_loop import with_reader_pipes
 
-MAX_EDGE = 2000
+MAX_EDGE = 2800
 MAX_PAGES = 40
-MAX_PAGE_DATA = 32 * 1024 * 1024
+MAX_PAGE_DATA = 64 * 1024 * 1024
 
 
 def page_image(image):
@@ -81,7 +81,7 @@ def render(data, mime, char_limit):
                 chars += len(native)
                 if chars > char_limit:
                     raise ValueError("Document text exceeds limit")
-                bitmap = page.render(scale=min(3, MAX_EDGE / max(width, height)), draw_annots=True)
+                bitmap = page.render(scale=min(4, MAX_EDGE / max(width, height)), draw_annots=True)
                 try:
                     encoded = page_image(bitmap.to_pil())
                     spans = (

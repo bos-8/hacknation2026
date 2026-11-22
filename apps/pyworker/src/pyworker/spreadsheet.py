@@ -117,7 +117,7 @@ def xlsx_rows(sheet, strings, limit):
                 size += len(value) + 1
                 if size > limit:
                     raise ValueError("Worksheet row exceeds the read limit")
-            if value.strip() or cell.get("s") is not None:
+            if value.strip() or cell.get("s") is not None or column in table.headers:
                 cells[column] = value.strip()
         if line := table.read(cells):
             yield line
@@ -217,7 +217,7 @@ def ods_rows(sheet, limit):
                 if repeat < 1 or size > limit:
                     raise ValueError("Worksheet row exceeds the read limit")
                 cells.update((i, value) for i in range(column, column + repeat))
-            elif cell.get(TABLE + "style-name") and table.headers and repeat <= len(table.headers):
+            elif cell.tag == TABLE + "table-cell" and table.headers and repeat <= len(table.headers):
                 cells.update((i, "") for i in range(column, column + repeat) if i in table.headers)
             column += repeat
         # ODS often represents the unused tail of a sheet as a single repeated blank row.

@@ -136,6 +136,7 @@
     "workerDisconnected": "The connection to Pyworker was interrupted during analysis. Try again.",
     "workerInvalidResult": "Pyworker returned a result in an unexpected format.",
     "processingPending": "Sending form for processing…",
+    "analysisWait": "{status} Form analysis may take a few minutes.",
     "paymentPending": "Saving payment status…",
     "paymentMarked": "Form marked as paid.",
     "paymentUnmarked": "Payment status reverted.",

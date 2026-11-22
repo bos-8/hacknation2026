@@ -136,6 +136,7 @@
     "workerDisconnected": "Utracono połączenie z Pyworkerem podczas analizy. Spróbuj ponownie.",
     "workerInvalidResult": "Pyworker zwrócił wynik w nieoczekiwanym formacie.",
     "processingPending": "Wysyłanie formularza do przetworzenia…",
+    "analysisWait": "{status} Analiza formularza może potrwać kilka minut.",
     "paymentPending": "Zapisywanie statusu płatności…",
     "paymentMarked": "Formularz oznaczony jako opłacony.",
     "paymentUnmarked": "Cofnięto oznaczenie płatności.",

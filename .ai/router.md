@@ -5,6 +5,7 @@ tags: [pamiec, formularze]
 
 # Pamięć projektu
 
+- [Limity odczytu i odzyskiwanie pustych komórek](memories/2026-11-22/20261122-051718-puste-komorki.md)
 - [Wspólny model Qwen 235B dla obrazów i tekstu w trybie vision](memories/2026-11-22/20261122-043125-qwen-235b.md)
 - [Odczyt wartości, kolejka konwersji i walidacja PESEL](memories/2026-11-22/20261122-041558-odczyt-i-walidacja.md)
 - [Profil nadpłaty EXTENDED, reguły i przegląd decyzji](memories/2026-11-22/20261122-004306-nadplata-extended.md)

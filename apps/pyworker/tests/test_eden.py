@@ -38,7 +38,7 @@ class EdenTests(unittest.IsolatedAsyncioTestCase):
                 self.assertEqual(body["input"], {"file": FILE_ID})
                 return httpx2.Response(200, json={"output": {"text": "example OCR text"}})
             self.assertEqual(body["model"], "deepinfra/Qwen/Qwen3-VL-235B-A22B-Instruct")
-            self.assertEqual(body["max_tokens"], 16_384)
+            self.assertEqual(body["max_tokens"], 24_576)
             self.assertEqual(body["reasoning_effort"], "none")
             self.assertEqual(body["routing"], {"sort": "latency"})
             self.assertNotIn("response_format", body)
