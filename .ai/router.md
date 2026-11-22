@@ -5,6 +5,8 @@ tags: [pamiec, formularze]
 
 # Pamięć projektu
 
+- [Bieżący dostęp HTTPS, wygaśnięcie i geometria ramek](memories/2026-11-22/20261122-083039-https-expiry-coordinates.md)
+
 - [Aktualny pipeline AgentCore, OCR i pełna treść dokumentów](memories/2026-11-22/20261122-080323-agentcore-content.md)
 
 - [Limity odczytu i odzyskiwanie pustych komórek](memories/2026-11-22/20261122-051718-puste-komorki.md)
