@@ -7,7 +7,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from pyworker.eden import EdenSettings
-from pyworker.pipeline import PipelineSettings
+from pyworker.pipeline import EDEN_CHAT, PipelineSettings
 from pyworker.vision import MODEL as VISION_MODEL
 
 
@@ -34,7 +34,8 @@ class Settings:
             raise ValueError("PYWORKER_API_TOKEN must be configured")
         if self.forms_token and (
             not re.fullmatch(r"[A-Za-z0-9_-]{32,512}", self.forms_token)
-            or "CHANGE_ME" in self.forms_token or self.forms_token == self.token
+            or "CHANGE_ME" in self.forms_token
+            or self.forms_token == self.token
         ):
             raise ValueError("Invalid PYWORKER_FORMS_TOKEN")
         if type(self.allow_network_bind) is not bool:
@@ -74,23 +75,33 @@ class Settings:
         if network not in {"true", "false"}:
             raise ValueError("Invalid PYWORKER_ALLOW_NETWORK_BIND")
         form_mode = values.get("PYWORKER_FORM_MODE", "bypass")
-        if form_mode not in {"bypass", "eden", "ocr", "vision", "pipeline"}:
+        if form_mode not in {"bypass", "eden", "ocr", "vision", "pipeline", "hybrid", "agentcore"}:
             raise ValueError("Invalid PYWORKER_FORM_MODE")
         eden = None
         pipeline = None
-        if form_mode in {"eden", "ocr", "vision"}:
+        if form_mode in {"eden", "ocr", "vision", "agentcore"}:
+            harness = values.get("PYWORKER_HARNESS_ARN", "") if form_mode == "agentcore" else ""
+            if form_mode == "agentcore" and not re.fullmatch(
+                r"arn:aws:bedrock-agentcore:[a-z0-9-]+:[0-9]{12}:harness/[a-zA-Z][a-zA-Z0-9_]{0,39}-[a-zA-Z0-9]{10}", harness
+            ):
+                raise ValueError("Invalid PYWORKER_HARNESS_ARN")
             defaults = EdenSettings(api_key="")
             eden = EdenSettings(
+                doc_classpath=values.get("PYWORKER_DOC_CLASSPATH", ""),
                 api_key=values.get("EDENAI_API_KEY", "").strip(),
+                harness_arn=harness,
+                harness_profile=values.get("PYWORKER_HARNESS_PROFILE", ""),
                 ocr_only=form_mode == "ocr",
                 transcription_model=values.get("EDENAI_VISION_MODEL") or VISION_MODEL,
                 vision_model=(values.get("EDENAI_VISION_MODEL") or VISION_MODEL)
-                if form_mode == "vision"
+                if form_mode in {"vision", "agentcore"}
                 else "",
                 upload_url=values.get("EDENAI_UPLOAD_URL") or defaults.upload_url,
                 llm_url=values.get("EDENAI_LLM_URL") or defaults.llm_url,
                 llm_model=values.get("EDENAI_LLM_MODEL") or defaults.llm_model,
-                local_llm_url="" if form_mode == "vision" else values.get("PYWORKER_LOCAL_LLM_URL", "").strip(),
+                local_llm_url=""
+                if form_mode in {"vision", "agentcore"}
+                else values.get("PYWORKER_LOCAL_LLM_URL", "").strip(),
                 local_llm_model=values.get("PYWORKER_LOCAL_LLM_MODEL") or defaults.local_llm_model,
                 timeout_seconds=integer("EDENAI_TIMEOUT_SECONDS", defaults.timeout_seconds, 1, 300),
                 max_input_chars=integer(
@@ -100,11 +111,20 @@ class Settings:
                     "EDENAI_MAX_OUTPUT_TOKENS", defaults.max_output_tokens, 1, 32_768
                 ),
             )
-        if form_mode == "pipeline":
+        if form_mode in {"pipeline", "hybrid"}:
             defaults = PipelineSettings()
+            hosted = form_mode == "hybrid"
+            key = values.get("EDENAI_API_KEY", "").strip() if hosted else ""
+            if hosted and key in {"", "CHANGE_ME"}:
+                raise ValueError("Hybrid mode requires EDENAI_API_KEY")
             pipeline = PipelineSettings(
-                qwen_url=values.get("PYWORKER_LOCAL_LLM_URL") or defaults.qwen_url,
-                qwen_model=values.get("PYWORKER_LOCAL_LLM_MODEL") or defaults.qwen_model,
+                eden_key=key,
+                qwen_url=EDEN_CHAT
+                if hosted
+                else values.get("PYWORKER_LOCAL_LLM_URL") or defaults.qwen_url,
+                qwen_model=(values.get("EDENAI_LLM_MODEL") or VISION_MODEL)
+                if hosted
+                else (values.get("PYWORKER_LOCAL_LLM_MODEL") or defaults.qwen_model),
                 timeout_seconds=integer("PYWORKER_PIPELINE_TIMEOUT_SECONDS", 300, 1, 300),
                 document_python=values.get("PYWORKER_DOCUMENT_PYTHON") or defaults.document_python,
                 assets=Path(values.get("PYWORKER_PIPELINE_ASSETS") or defaults.assets),

@@ -170,9 +170,9 @@
       }
     ]
   },
-  "ssoSessionIdleTimeout": "${AUTH_SESSION_IDLE_SECONDS:1800}",
+  "ssoSessionIdleTimeout": "${AUTH_SESSION_IDLE_SECONDS:2700}",
   "ssoSessionMaxLifespan": "${AUTH_SESSION_MAX_SECONDS:28800}",
-  "clientSessionIdleTimeout": "${AUTH_SESSION_IDLE_SECONDS:1800}",
+  "clientSessionIdleTimeout": "${AUTH_SESSION_IDLE_SECONDS:2700}",
   "clientSessionMaxLifespan": "${AUTH_SESSION_MAX_SECONDS:28800}",
   "clientScopeMappings": {
     "realm-management": [

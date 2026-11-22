@@ -3,6 +3,7 @@ import { ArrowRight, ArrowUpRight, Braces, Key, ShieldLock } from "react-bootstr
 import { Badge, Heading, Text } from "@/ui/basic";
 import { Link } from "@/i18n/navigation";
 import { ProjectIllustration } from "@/ui/components/project-illustration";
+import { PocCredentials } from "./poc-credentials";
 
 export default async function Home() {
   const t = await getTranslations("home");
@@ -25,6 +26,10 @@ export default async function Home() {
             {t("title")}
           </Heading>
           <Text className="max-w-md text-base text-muted-foreground sm:text-lg">{t("description")}</Text>
+          <section className="glass-inset p-4" aria-labelledby="poc-login-title">
+            <Heading level={2} id="poc-login-title" className="text-base">{t("pocLogin")}</Heading>
+            <PocCredentials />
+          </section>
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2 pt-2 text-sm font-semibold">
             <Link href="/about" className="inline-flex min-h-11 items-center gap-3 rounded-xl bg-accent px-5 py-3 text-accent-foreground hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent">
               {t("about")} <ArrowRight aria-hidden="true" />

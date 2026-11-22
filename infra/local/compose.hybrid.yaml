@@ -1,0 +1,6 @@
+services:
+  pyworker:
+    environment:
+      PYWORKER_FORM_MODE: hybrid
+      EDENAI_API_KEY: ${EDENAI_API_KEY:?Set the private Eden AI key}
+      EDENAI_LLM_MODEL: ${EDENAI_LLM_MODEL:-qwen3.8-27b}

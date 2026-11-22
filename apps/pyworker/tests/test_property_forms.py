@@ -55,6 +55,16 @@ class WordReaderTests(unittest.TestCase):
         document.seek(0)
         self.assertEqual(docx_text(document).splitlines(), ["Urząd", "Adresat", "Ulica", "Podpis"])
 
+    def test_content_control_cells_preserve_order_in_word_tables(self):
+        document = BytesIO()
+        with ZipFile(document, "w") as archive:
+            archive.writestr("word/document.xml", f"""
+                <w:document xmlns:w="{WORD[1:-1]}"><w:body><w:tbl><w:tr>
+                <w:tc><w:p><w:t>PESEL</w:t></w:p></w:tc>
+                <w:sdt><w:sdtContent><w:tc><w:p><w:t>123</w:t></w:p></w:tc>
+                </w:sdtContent></w:sdt></w:tr></w:tbl></w:body></w:document>""")
+        self.assertEqual(docx_text(document), "PESEL | 123")
+
     def test_option_names_survive_reordering_and_polish_transliteration(self):
         options = ["Łaska", "Laska", "Inna"]
 

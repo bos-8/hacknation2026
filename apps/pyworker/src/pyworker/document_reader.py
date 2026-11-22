@@ -71,6 +71,8 @@ def paddle_structure():
     from paddleocr import PPStructureV3
 
     return PPStructureV3(
+        layout_detection_model_name="PP-DocLayout_plus-L",
+        text_detection_model_name="PP-OCRv5_server_det",
         device=os.getenv("PYWORKER_DOCUMENT_DEVICE", "cpu"),
         # The static PP-StructureV3 CPU graph has operations unsupported by oneDNN.
         enable_mkldnn=False,
@@ -237,6 +239,89 @@ def append_native_page(document, page_number: int, blocks: list[Block]) -> bool:
     return False
 
 
+def read_embedded_images(page, number, blocks, report):
+    """Read image regions on native-text pages and map crop evidence back to page space."""
+    import pypdfium2.raw as raw
+
+    bounds = []
+    for obj in page.get_objects(filter=[raw.FPDF_PAGEOBJ_IMAGE]):
+        rect = obj.get_bounds()
+        parent = obj.container
+        while parent is not None:
+            rect = parent.get_matrix().on_rect(*rect)
+            parent = parent.container
+        bounds.append(rect)
+    if not bounds:
+        return False
+    with closing(page.render(scale=min(3, MAX_EDGE / max(page.get_size())))) as bitmap:
+        convert = bitmap.get_posconv(page)
+        image = bitmap.to_pil()
+        width, height = image.size
+        seen = set()
+        for left, bottom, right, top in bounds:
+            a, b = convert.to_bitmap(left, top), convert.to_bitmap(right, bottom)
+            x0, x1 = sorted(max(0, min(width, x)) for x in (a[0], b[0]))
+            y0, y1 = sorted(max(0, min(height, y)) for y in (a[1], b[1]))
+            region = (x0, y0, x1, y1)
+            if min(x1 - x0, y1 - y0) < 32 or region in seen:
+                continue
+            seen.add(region)
+            report("ocr")
+            extracted = []
+            read_image(image.crop(region), number, extracted)
+            for block in extracted:
+                xmin, ymin, xmax, ymax = block.bbox or (0, 0, 1, 1)
+                bbox = normalized_box(
+                    (
+                        x0 + xmin * (x1 - x0),
+                        y0 + ymin * (y1 - y0),
+                        x0 + xmax * (x1 - x0),
+                        y0 + ymax * (y1 - y0),
+                    ),
+                    width,
+                    height,
+                )
+                append_block(
+                    blocks,
+                    number,
+                    block.text,
+                    kind=block.kind,
+                    bbox=bbox,
+                    ocr_confidence=block.ocr_confidence,
+                )
+    return bool(seen)
+
+
+def read_native_layout(page, data, page_number, native_text, blocks):
+    import pypdfium2.raw as raw
+
+    if (
+        not page.get_rotation()
+        and next(page.get_objects(filter=[raw.FPDF_PAGEOBJ_PATH]), None) is None
+    ):
+        left, bottom, right, top = page.get_bbox()
+        with closing(page.get_textpage()) as tp:
+            start = len(blocks)
+            for i in range(tp.count_rects()):
+                x0, y0, x1, y1 = tp.get_rect(i)
+                rect = normalized_box(
+                    (x0 - left, top - y1, x1 - left, top - y0),
+                    right - left,
+                    top - bottom,
+                )
+                append_block(
+                    blocks,
+                    page_number,
+                    tp.get_text_bounded(x0, y0, x1, y1),
+                    bbox=rect,
+                )
+            if len(blocks) == start:
+                append_block(blocks, page_number, native_text)
+        return True
+    page_document = read_docling(data, ".pdf", page_number)
+    return append_native_page(page_document, page_number, blocks)
+
+
 def read_pdf(data: bytes, blocks: list[Block], report) -> bool:
     import pypdfium2 as pdfium
 
@@ -251,8 +336,9 @@ def read_pdf(data: bytes, blocks: list[Block], report) -> bool:
                     native_text = text_page.get_text_bounded()
                 if sum(char.isalnum() for char in native_text) >= 35:
                     report("extracting")
-                    page_document = read_docling(data, ".pdf", page_number)
-                    if append_native_page(page_document, page_number, blocks):
+                    if read_native_layout(page, data, page_number, native_text, blocks):
+                        if read_embedded_images(page, page_number, blocks, report):
+                            used_ocr = True
                         continue
                 report("ocr")
                 with closing(

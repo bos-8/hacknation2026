@@ -1,4 +1,6 @@
 {
+  "documentContent": "Treść całego dokumentu (JSON)",
+  "downloadContent": "Pobierz JSON treści",
   "forms": {
     "referenceDocument": "Ten DOCX zawiera materiały do projektowania e-usługi. Wgraj blankiet wniosku.",
     "answers": {
@@ -19,6 +21,9 @@
       "choose": "Wybierz", "chooseCountryFirst": "Najpierw wybierz kraj", "required": "Uzupełnij wymagane pole.", "option": "Wybierz wartość z listy.",
       "invalid": "Popraw wartość. Nie przeszła kontroli: {rule}.", "unverified": "Kontrola wymaga weryfikacji ({rule}).",
       "pesel": "Nieprawidłowy numer PESEL. Sprawdź 11 cyfr, datę urodzenia i cyfrę kontrolną.",
+      "regon": "Sprawdź numer REGON. Powinien mieć 9 lub 14 cyfr i poprawną sumę kontrolną.",
+      "krs": "Wpisz 10 cyfr numeru KRS, uwzględniając początkowe zera.",
+      "phone": "Wpisz telefon w formacie międzynarodowym, np. +48500100200.",
       "nip": "Sprawdź 10 cyfr NIP i cyfrę kontrolną.", "email": "Wpisz adres e-mail, np. anna@example.org.",
       "postal": "Sprawdź format kodu pocztowego dla wybranego kraju.", "amount": "Wpisz dodatnią kwotę z najwyżej dwoma miejscami po przecinku.",
       "date": "Wpisz poprawną datę w formacie RRRR-MM-DD.", "account": "Sprawdź zapis numeru rachunku i cyfry kontrolne.",
@@ -171,6 +176,8 @@
     "documentTextFailed": "Pyworker nie mógł odczytać treści dokumentu.",
     "pipelineUnavailable": "Brakuje lokalnego silnika przetwarzania.",
     "pipelineReadFailed": "Nie udało się odczytać dokumentu lokalnie.",
+    "agentcoreFailed": "Nie udało się zakończyć analizy strony przez AWS AgentCore.",
+    "agentcoreInvalidJson": "Odpowiedź AWS AgentCore ma nieprawidłową strukturę JSON.",
     "pipelineLlmFailed": "Qwen nie wygenerował wyniku.",
     "pipelineInvalidJson": "Wynik modelu nie przeszedł walidacji.",
     "pipelineTimeout": "Przekroczono czas przetwarzania formularza.",

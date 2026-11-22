@@ -56,6 +56,25 @@ class SpreadsheetTests(unittest.TestCase):
                     self.assertTrue(tabs[title]["questions"])
                 self.assertEqual(len(result["draft"]["flow"]["links"]), len(tabs) - 1)
 
+    def test_vision_mode_compiles_all_sample_spreadsheets_without_provider(self):
+        samples = Path(__file__).resolve().parents[3] / "materials/formularze"
+        paths = [path for path in samples.rglob("*")
+                 if path.suffix.lower() in {".ods", ".xlsx"} and not path.name.startswith(("~$", ".~lock."))]
+        self.assertEqual({path.suffix.lower() for path in paths}, {".ods", ".xlsx"})
+        token = "fixture-" + "x" * 40
+        settings = Settings.from_environment(
+            {"PYWORKER_API_TOKEN": token, "PYWORKER_FORM_MODE": "vision"}
+        )
+        with TestClient(create_app(settings), headers={"Authorization": f"Bearer {token}"}) as client:
+            for path in paths:
+                with self.subTest(sample=path.name):
+                    response = client.post(PROCESS_PATH, data={"metadata": self.metadata},
+                                           files={"file": (path.name, path.read_bytes(), FORMATS[path.suffix.lower()][0])})
+                    self.assertEqual(response.status_code, 200, response.text[:300])
+                    result = response.json()
+                    self.assertEqual(result["ocr"], "not_required")
+                    self.assertTrue(result["draft"]["tabs"][0]["questions"])
+
     def test_unindexed_workbook_reads_final_sheet_and_rejects_oversize_repeats(self):
         def workbook(repeats):
             content = f"""<o:document-content xmlns:o="{OFFICE[1:-1]}"

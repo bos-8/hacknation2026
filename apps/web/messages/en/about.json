@@ -1,65 +1,43 @@
 {
   "about": {
+    "flow": {
+      "title": "How a document becomes a digital form",
+      "worker": "Pyworker · form processing",
+      "validate": "Checks the filename, size, format and contents.",
+      "extract": "Reads text and spreadsheet cells or detects fields on a page image.",
+      "compile": "Groups fields into sections, applies rules and returns the form configuration as JSON.",
+      "request": "File to Pyworker",
+      "response": "JSON to the workspace",
+      "workspace": "Staff workspace and supporting services",
+      "web": "Accepts the upload, requests conversion and displays the form alongside the document.",
+      "identity": "Handles sign-in and user roles.",
+      "database": "Stores metadata and links each document to its result.",
+      "storage": "Stores the source file and resulting JSON in S3-compatible storage."
+    },
     "metadataTitle": "About | FORMIQ",
-    "eyebrow": "Meet FORMIQ",
-    "title": "One foundation. Many applications.",
-    "description": "FORMIQ brings user access, files and tasks together as a foundation for business applications.",
-    "scopeTitle": "From user identity to task results",
+    "eyebrow": "COI challenge · Working proof of concept",
+    "title": "FORMIQ — digitising public service forms",
+    "description": "FORMIQ helps public officials build an online service from a form published in a public information bulletin. It reads the fields and generates a JSON configuration that an official can review before import.",
+    "scopeTitle": "From source document to electronic form",
     "scope": {
-      "identity": {
-        "title": "Identity and access",
-        "description": "Keycloak provides identity while the application manages sessions and checks operation permissions. A visible button is never a replacement for server-side access control.",
-        "first": "Sign-in and sessions",
-        "second": "User roles",
-        "third": "Resource access"
+      "import": {
+        "title": "Upload a document",
+        "description": "The REST API accepts one PDF, DOC, DOCX, ODS, XLSX, JPG, JPEG or PNG file per request. It checks the filename, size and whether the contents match the extension. In the web interface, officials can upload up to eight files at once and track their progress in the queue."
       },
-      "files": {
-        "title": "Files and products",
-        "description": "Documents have metadata, versions and a controlled lifecycle. Products use a shared file catalogue while file contents remain in private object storage.",
-        "first": "Catalogue and versions",
-        "second": "Uploads and downloads",
-        "third": "Products and attachments"
+      "structure": {
+        "title": "Fields, dictionaries and conditions",
+        "description": "The generator groups fields into sections and pages by topic and links recognised fields to dictionaries and initial values. On the tax overpayment form, selecting a bank transfer reveals the account number field."
       },
-      "workspace": {
-        "title": "A consistent workspace",
-        "description": "Tables, forms, notifications and navigation use shared components. Language and appearance preferences adapt the interface to the way you work.",
-        "first": "Polish and English",
-        "second": "Themes and contrast",
-        "third": "Shared UI components"
+      "review": {
+        "title": "Review and correct",
+        "description": "Officials can compare the source document with the JSON or open an editable form containing the extracted values. An invalid PESEL number is highlighted in place. Officials can save corrections and download the JSON."
       },
-      "tasks": {
-        "title": "Background operations",
-        "description": "The queue stores tasks and manages retries. The Python executor handles defined operations; administrators can inspect the queue and service availability.",
-        "first": "Queue and retries",
-        "second": "Python executor",
-        "third": "Service monitoring"
+      "runtime": {
+        "title": "Deployment and storage",
+        "description": "Pyworker processes the file for the duration of the request. The web interface stores the original and its result for later review. Docker supports running models locally. In development mode, Qwen processes images through Eden AI."
       }
     },
-    "workflowTitle": "How it works",
-    "workflow": {
-      "access": {
-        "title": "Sign in",
-        "description": "The application identifies the user and checks their session. Roles determine which operations are available."
-      },
-      "work": {
-        "title": "Work with data",
-        "description": "Add files, browse catalogues and update data within your access rights."
-      },
-      "process": {
-        "title": "Start a task",
-        "description": "A background operation receives its own identifier. The queue delegates it to the appropriate executor and records its state."
-      },
-      "result": {
-        "title": "Review the result",
-        "description": "Inspect task progress and its result. Failures and retries have explicit states rather than leaving you waiting without explanation."
-      }
-    },
-    "technologyTitle": "Technologies with a purpose",
-    "directionLabel": "Planned development",
-    "directionTitle": "Local models and AI through APIs",
-    "directionDescription": "The next direction combines local CPU processing with external language models. Each execution path has a clear owner and explicit rules for transferring data.",
     "teamLink": "Meet the team",
-    "homeLink": "Home",
     "team": {
       "metadataTitle": "Team | FORMIQ",
       "eyebrow": "People behind the project",
@@ -97,97 +75,6 @@
       "profileLabel": "{provider}: {name} — opens a new tab",
       "profilePlaceholder": "{provider}: link to be added",
       "aboutLink": "About the project"
-    },
-    "intro": "The project brings together elements that recur across many systems: users, permissions, documents, data and background operations. A shared core lets new features grow without rebuilding those foundations.",
-    "contentsLabel": "On this page",
-    "sections": {
-      "idea": "The idea",
-      "modules": "Capabilities",
-      "workflow": "How it works",
-      "architecture": "Architecture",
-      "development": "Future direction"
-    },
-    "currentLabel": "Implemented PoC foundation",
-    "idea": {
-      "label": "Why FORMIQ",
-      "title": "Less repetition. More room for the actual product.",
-      "description": "Sign-in, file handling and access control are foundations of everyday application use. FORMIQ brings them into one project with clear responsibilities.",
-      "detail": "This is an evolving proof of concept: a foundation for testing ideas and integrations. Existing modules can grow into further business processes; production readiness requires separate validation.",
-      "reuse": {
-        "title": "Shared building blocks",
-        "description": "Common components and behaviour across different parts of the application."
-      },
-      "access": {
-        "title": "Clear access rules",
-        "description": "Roles and resource ownership determine who can perform an operation."
-      },
-      "visibility": {
-        "title": "Visible progress",
-        "description": "Task and service states can be reviewed in the administration panel."
-      }
-    },
-    "scopeDescription": "Four areas work together. Each has its own responsibility while users work through one consistent interface.",
-    "workflowDescription": "Ordinary operations pass through the Web backend. Work that needs background processing can use the queue and an independent executor.",
-    "architecture": {
-      "supportTitle": "Services supporting the backend",
-      "label": "Under the surface",
-      "title": "One backend. Clear responsibilities.",
-      "description": "Next.js combines the interface and backend. The database, file storage, identity provider and executors support the application through defined connections.",
-      "browser": {
-        "title": "Browser",
-        "detail": "Interface and user actions"
-      },
-      "web": {
-        "title": "Web backend",
-        "detail": "Permissions and application logic"
-      },
-      "data": {
-        "title": "Data and files",
-        "detail": "PostgreSQL and S3 storage"
-      },
-      "identity": "Keycloak · identity",
-      "queue": "pg-boss · queue",
-      "python": "Python · execution",
-      "note": "The browser communicates with the application. The backend controls access to private data and services."
-    },
-    "technologies": {
-      "web": "Application interface, rendering and backend.",
-      "auth": "Identity, sign-in and role management.",
-      "database": "Application data, sessions and durable task storage.",
-      "storage": "Private file contents through the S3 interface.",
-      "queue": "Task delivery, states and controlled retries.",
-      "python": "An independent executor for processing operations."
-    },
-    "environments": {
-      "title": "One project, different ways to run it",
-      "description": "DEV and QA share local addresses while keeping configuration and data separate. Production remains a planned stage.",
-      "available": "Implemented",
-      "planned": "Planned",
-      "dev": {
-        "title": "Local development",
-        "description": "Web and workers run on the developer workstation, with infrastructure in Docker, enabling quick feedback on code changes."
-      },
-      "qa": {
-        "title": "Integration verification",
-        "description": "Applications run from built images. This environment verifies how services work together as a complete stack."
-      },
-      "prod": {
-        "title": "Production deployment",
-        "description": "A separate environment, configuration and operating procedures. It requires its own validation before release."
-      }
-    },
-    "ai": {
-      "localTitle": "Small models locally",
-      "localDescription": "The Python worker is intended to handle tasks such as sensitive-data detection and text classification, with bounded memory and concurrency.",
-      "localPath": "PYWORKER → CPU",
-      "cloudTitle": "LLMs through the Web backend",
-      "cloudDescription": "The Web backend is intended to call OpenAI API for conversations, summaries and analysis. Longer operations can use the queue.",
-      "cloudPath": "WEB → OPENAI API",
-      "note": "Model execution, PII masking and the OpenAI integration are not implemented yet. When masking is required, a failure must prevent sending data to the API."
-    },
-    "teamCta": {
-      "title": "People behind the code",
-      "description": "Meet the person responsible for architecture and development direction, with space for future contributors."
     }
   }
 }

@@ -28,30 +28,31 @@ USER worker
 EXPOSE 8010
 CMD ["python", "-m", "pyworker"]
 
-FROM worker-base AS runtime
-COPY apps/pyworker/src ./src
-
 FROM maven:3.9.11-eclipse-temurin-21 AS word-reader
 WORKDIR /build
 COPY apps/pyworker/legacy-word ./
 RUN mvn --batch-mode --no-transfer-progress package
 
-FROM worker-base AS pipeline
-USER root
-RUN apt-get update && apt-get install -y --no-install-recommends libgl1 libglib2.0-0 \
-    && rm -rf /var/lib/apt/lists/*
+FROM worker-base AS word-base
 COPY --from=word-reader /opt/java/openjdk /opt/java/openjdk
 COPY --from=word-reader /build/target/classes /opt/word/classes
 COPY --from=word-reader /build/target/dependency /opt/word/lib
+ENV PATH=/opt/java/openjdk/bin:$PATH PYWORKER_DOC_CLASSPATH=/opt/word/classes:/opt/word/lib/*
+
+FROM word-base AS runtime
+COPY apps/pyworker/src ./src
+
+FROM word-base AS pipeline
+USER root
+RUN apt-get update && apt-get install -y --no-install-recommends libgl1 libglib2.0-0 \
+    && rm -rf /var/lib/apt/lists/*
 COPY apps/pyworker/requirements.pipeline.txt /tmp/requirements.pipeline.txt
 RUN --mount=type=cache,target=/root/.cache/pip,id=formiq-pipeline,sharing=locked \
     python -m pip install --no-deps --index-url https://download.pytorch.org/whl/cpu \
     'torch==2.15.0+cpu' 'torchvision==0.29.2+cpu' \
     && python -m pip install -r /tmp/requirements.pipeline.txt \
     && python -m pip check
-ENV PATH=/opt/java/openjdk/bin:$PATH \
-    PYWORKER_DOC_CLASSPATH=/opt/word/classes:/opt/word/lib/* \
-    PYWORKER_PIPELINE_ASSETS=/models \
+ENV PYWORKER_PIPELINE_ASSETS=/models \
     PYWORKER_FORM_MODE=pipeline \
     HOME=/tmp
 COPY apps/pyworker/src ./src

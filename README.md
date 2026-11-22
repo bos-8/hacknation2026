@@ -26,6 +26,14 @@ Katalog plików przechowuje dokumenty w SeaweedFS. Na stronie **Formularze** uru
 
 ### Lokalny pipeline formularzy
 
+W trybie `pipeline` czytnik i Qwen działają lokalnie. Wariant `hybrid` używa tego samego czytnika, a ostatnią analizę zleca modelowi `EDENAI_LLM_MODEL` przez Eden AI. Do dostawcy trafiają odczytane treści i współrzędne. Oba warianty kompilują XLSX i ODS lokalnie, bez wywołania Qwena.
+
+Po przygotowaniu modeli czytnika według instrukcji poniżej można uruchomić sam Pyworker z hostowanym Qwenem. Polecenie wymaga `EDENAI_API_KEY` w prywatnym pliku środowiska:
+
+```sh
+docker compose --env-file apps/pyworker/.env -f infra/local/compose.pipeline.yaml -f infra/local/compose.hybrid.yaml up --build -d pyworker
+```
+
 Pyworker odczytuje komórki XLSX i ODS w kolejności widocznych arkuszy. Docling obsługuje strony PDF z tekstem oraz awaryjny odczyt DOCX. Apache POI obsługuje binarny DOC. PaddleOCR‑VL‑1.6 odczytuje obrazy i skany, a PP‑StructureV3 pomaga przy tabelach i stronach bez wyniku pierwszego odczytu. Qwen3.5‑27B działa na prywatnym endpointcie vLLM. Pliki są przetwarzane w obrębie żądania.
 
 Zbuduj obraz z opcjonalnym środowiskiem odczytu na Pythonie 3.13. Qwen z konfiguracji Compose wymaga hosta z NVIDIA Container Toolkit i GPU mieszczącym wybraną wersję modelu.
@@ -43,6 +51,10 @@ Umieść pliki modelu `Qwen/Qwen3.5-27B` w `apps/pyworker/.models/qwen`. Pobrani
 docker compose --env-file apps/pyworker/.env -f infra/local/compose.pipeline.yaml up -d
 ```
 
+Wariant AWS dla PDF, JPG i PNG włącza `PYWORKER_FORM_MODE=agentcore`. Ustaw `PYWORKER_HARNESS_ARN` oraz opcjonalny profil SSO `PYWORKER_HARNESS_PROFILE` w konfiguracji pyworkera. Etap wizyjny wymaga dotychczasowego klucza Eden. Każda strona trafia osobno do AgentCore jako tekst i obserwacje OCR. Harness przypisuje pola do sekcji i zwraca bloki tekstowe. Worker sprawdza indeksy pól i zachowuje ich położenie, wartości oraz tekst źródłowy w JSON COI. Uprawnienia do wywołania harnessu są potrzebne procesowi workera. Środowisko AWS powinno korzystać z roli wykonawczej zamiast profilu SSO.
+
+Starsze pliki Word (`.doc`) pyworker odczytuje lokalnie za pomocą Apache POI. Obraz Docker zawiera czytnik. Przy uruchomieniu poza Dockerem wykonaj jednorazowo z katalogu repozytorium `mvn -f apps/pyworker/legacy-word/pom.xml package` (JDK 21+). Worker automatycznie odnajduje zbudowany czytnik.
+
 Alternatywnie uruchom hostowego Pyworkera z `PYWORKER_FORM_MODE=pipeline`. `PYWORKER_DOCUMENT_PYTHON` wskazuje interpreter z `requirements.pipeline.txt`, `PYWORKER_DOC_CLASSPATH` wskazuje klasy i zależności z `mvn -f apps/pyworker/legacy-word/pom.xml package`, a `PYWORKER_LOCAL_LLM_URL` wskazuje lokalne `/v1/chat/completions`. `PYWORKER_PIPELINE_TIMEOUT_SECONDS` obejmuje odczyt i generowanie. Domyślnie obowiązuje 300 sekund.
 
 W [Swagger UI](http://localhost:8010/docs) wywołaj `POST /v1/forms/process` z tokenem Bearer i multipartem `file` oraz `metadata`. **`draft` to JSON do importu COI**, a `field_locations` zawiera dodatkowe ramki etykiet i miejsc do wypełnienia. Każda ramka ma numer strony od 1 i cztery współrzędne `[x0, y0, x1, y1]` w zakresie od 0 do 1, liczone od lewego górnego rogu.
@@ -57,7 +69,7 @@ Własny system prompt zapisz jako plik UTF‑8 i ustaw `PYWORKER_PIPELINE_PROMPT
 
 W DEV z Eden AI ustaw `EDENAI_MAX_INPUT_CHARS` i `EDENAI_MAX_OUTPUT_TOKENS`, by zmienić limity odczytanego tekstu i generowania. Domyślne wartości wynoszą 200 000 znaków i 24 576 tokenów. Odpowiedź HTTP z Chat Completions może mieć do 2 MiB. Next.js zapisuje poprawny wynik w PostgreSQL przy UUID formularza. Podgląd i pobranie JSON są dostępne obok oryginału.
 
-Domyślny tryb DEV `PYWORKER_FORM_MODE=vision` wysyła JPG, PNG oraz obraz każdej strony PDF do Qwen3-VL-235B-A22B-Instruct przez Eden AI. Model wskazuje linie do wpisania odpowiedzi, kratki wyboru i komórki tabel. Pyworker zapisuje w odpowiedzi numer strony i prostokąt pola, a dla komórek także numer wiersza i kolumny. Strony PDF z warstwą tekstową zachowują ją jako kontekst dla etykiet. Dla XLSX, ODS, DOCX, TXT i JSON Pyworker odczytuje treść lokalnie i wysyła ją do tego samego Qwena do analizy pól. Model dla stron ustawia `EDENAI_VISION_MODEL`, a dla treści dokumentów `EDENAI_LLM_MODEL`. Oba domyślnie wskazują model 235B z `reasoning_effort=none`. Apache 2.0 obejmuje wagi modelu. Wywołania w DEV korzystają z zewnętrznego API. [Karta Qwen3-VL](https://huggingface.co/Qwen/Qwen3-VL-235B-A22B-Instruct)
+Domyślny tryb DEV `PYWORKER_FORM_MODE=vision` wysyła JPG, PNG oraz obraz każdej strony PDF do Qwen3.8 27B przez Eden AI. Model wskazuje linie do wpisania odpowiedzi, kratki wyboru i komórki tabel. Pyworker zapisuje w odpowiedzi numer strony i prostokąt pola, a dla komórek także numer wiersza i kolumny. Wynik zawiera również bloki „Informacje ze strony N” z tekstem instrukcji i klauzul. Pyworker wykorzystuje warstwę tekstową PDF i odczyt obrazu. Aby zaktualizować zapisany JSON, uruchom ponowną analizę pliku. Z XLSX i ODS Pyworker tworzy JSON COI lokalnie na podstawie komórek arkusza. Dla DOCX, TXT i JSON Pyworker odczytuje treść lokalnie i wysyła ją do tego samego Qwena do analizy pól. Model dla stron ustawia `EDENAI_VISION_MODEL`, a dla treści dokumentów `EDENAI_LLM_MODEL`. Oba domyślnie wskazują model 27B z `reasoning_effort=none`. Wywołania w DEV korzystają z zewnętrznego API. [Qwen3.8 27B w Eden AI](https://www.edenai.co/models/qwen3-8-27b)
 
 `PYWORKER_FORM_MODE=ocr` tworzy JSON COI bez LLM. Pyworker odczytuje lokalnie XLSX, ODS, DOCX, TXT, JSON oraz PDF z czytelnym tekstem na każdej stronie. Obrazy i PDF wymagający OCR trafiają w tym trybie do Eden AI. W trybie `pipeline` wybór między tekstem PDF a OCR odbywa się osobno dla każdej strony.
 

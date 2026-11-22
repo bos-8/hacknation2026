@@ -15,6 +15,7 @@ export function PdfPreview({ src, name, page, onPage, children }: {
   const t = useTranslations("forms");
   const canvas = useRef<HTMLCanvasElement>(null);
   const [document, setDocument] = useState<PDFDocumentProxy>();
+  const [ratio, setRatio] = useState(1);
   const [rendered, setRendered] = useState(0);
   const [loadFailed, setLoadFailed] = useState(false);
   const [failedPage, setFailedPage] = useState(0);
@@ -58,7 +59,7 @@ export function PdfPreview({ src, name, page, onPage, children }: {
         surface.height = Math.ceil(viewport.height);
         task = source.render({ canvas: surface, viewport });
         await task.promise;
-        if (!stopped) setRendered(current);
+        if (!stopped) { setRatio(viewport.width / viewport.height); setRendered(current); }
       } catch {
         if (!stopped) setFailedPage(current);
       }
@@ -82,9 +83,9 @@ export function PdfPreview({ src, name, page, onPage, children }: {
     </div>}
     {(!document || rendered !== current) && <div className="flex min-h-24 items-center justify-center"><Throbber /></div>}
     <div className="flex justify-center">
-      <div className="relative max-w-full">
+      <div className="relative" style={{width: `min(100%, ${70 * ratio}vh)`}}>
         <canvas ref={canvas} key={current} role="img"
-          aria-label={`${name} · ${current}`} className={`block max-h-[70vh] max-w-full ${rendered === current ? "" : "hidden"}`} />
+          aria-label={`${name} · ${current}`} className={`block h-auto w-full ${rendered === current ? "" : "hidden"}`} />
         {rendered === current && children}
       </div>
     </div>

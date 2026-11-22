@@ -17,7 +17,7 @@ from pyworker.eden import convert_document
 from pyworker.form_compiler import convert_to_coi
 from pyworker.form_ir import form_validator
 from pyworker.ocr_form import detect_items
-from pyworker.table_geometry import align_cells, markdown_tables
+from pyworker.table_geometry import align_cells, markdown_tables, review_batches
 from pyworker.vision import VisualPage, compile_pages
 from pyworker.vision_pages import page_image, render
 
@@ -47,9 +47,13 @@ class VisionTests(unittest.IsolatedAsyncioTestCase):
         for x in range(220, 420, 5):
             draw.point((x, 220), fill="black")
         buf = BytesIO()
-        image.save(buf, "PNG")
+        sheet = Image.new("RGB", (550, 720), "white")
+        sheet.paste(image, (0, 0))
+        sheet.paste(image, (40, 360))
+        sheet.save(buf, "PNG")
         responses = [{"notes": [], "fields": []},
-                     {"fields": [{"id": 0, "label": "Quantity A"}, {"id": 0, "label": "Duplicate"}]}]
+                     {"fields": [{"id": 0, "label": "Quantity A"}, {"id": 0, "label": "Duplicate"},
+                                 {"id": 1, "label": "Quantity B"}]}]
 
         async def api(request):
             payload = json.loads(request.content)
@@ -65,9 +69,39 @@ class VisionTests(unittest.IsolatedAsyncioTestCase):
                                                "image/png", coi_form_id=uuid4())
         self.assertFalse(responses)
         regions = [loc.input[0] for loc in result.field_locations]
-        self.assertEqual([(r.cell.row, r.cell.column) for r in regions], [(2, 2)])
-        self.assertAlmostEqual(regions[0].bbox[0], 0.4, places=2)
+        self.assertEqual([(r.cell.row, r.cell.column) for r in regions], [(2, 2), (2, 2)])
+        self.assertAlmostEqual(regions[0].bbox[0], 200 / 550, places=2)
         self.assertFalse(result.source_answers)
+
+    def test_review_batch_keeps_overflow_cells_and_table_identity(self):
+        area = (10, 10, 40, 20)
+        groups = [(area, [(area, row, 1) for row in range(99)], "A"),
+                  (area, [(area, row, 2) for row in range(3)], "B")]
+        first, second = [cells for _, cells in review_batches(groups)]
+        self.assertEqual([len(first), len(second)], [100, 2])
+        self.assertEqual([c[1:] for c in first[-1:] + second],
+                         [(0, 2, "B"), (1, 2, "B"), (2, 2, "B")])
+
+    async def test_invalid_first_page_response_is_retried_once(self):
+        from asyncio import get_running_loop
+        from unittest.mock import AsyncMock
+
+        from pyworker.eden import EdenSettings, read_visual_pages
+
+        def response(content):
+            return {"choices": [{"finish_reason": "stop", "message": {"content": content}}]}
+
+        image = page_image(Image.new("RGB", (64, 64), "white"))
+        with patch("pyworker.eden.request_json", new_callable=AsyncMock,
+                   side_effect=[response("{}"), response(json.dumps({
+                       "notes": ["Informacja."], "fields": [],
+                   }))]) as provider:
+            pages = await read_visual_pages(
+                None, EdenSettings(api_key=""), {}, [(image, "", [])],
+                get_running_loop().time() + 30,
+            )
+        self.assertEqual(provider.await_count, 2)
+        self.assertEqual(pages[0][0].notes, ["Informacja."])
 
     def test_printed_answer_returned_with_its_label_is_editable(self):
         page = VisualPage(
@@ -81,6 +115,15 @@ class VisionTests(unittest.IsolatedAsyncioTestCase):
             (field.title, field.readOnly, result.source_answers[field.id]),
             ("Nazwisko", False, "Nowak"),
         )
+
+    def test_information_page_keeps_native_text_when_model_returns_no_notes(self):
+        page = VisualPage(notes=[], fields=[cell(1)])
+        info = VisualPage(notes=[], fields=[])
+        extraction, doc = compile_pages([(page, ""), (info, "Załącz odpis dokumentu.")],
+                                        "a" * 64, 20_000)
+        field = extraction.tabs[0].sections[-1].fields[0]
+        self.assertIn("Załącz odpis dokumentu.", field.description)
+        self.assertEqual(doc.blocks[field.label_blocks[0] - 1].page, 2)
 
     def test_ocr_markdown_binds_headers_and_values_to_ruled_cells(self):
         image = Image.new("RGB", (400, 240), "white")
@@ -259,6 +302,42 @@ class VisionTests(unittest.IsolatedAsyncioTestCase):
             self.assertTrue(form_validator().is_valid(result.form_ir.model_dump(mode="json")))
             self.assertEqual(sum(bool(loc.input) for loc in result.field_locations), 1)
             self.assertEqual(result.draft.tabs[-1].type, "FINISH")
+
+    async def test_empty_scan_observation_gets_a_transcription(self):
+        from asyncio import get_running_loop
+        from unittest.mock import AsyncMock
+
+        from pyworker.eden import EdenSettings, read_visual_pages
+
+        image = page_image(Image.new("RGB", (64, 64), "white"))
+        reply = {"choices": [{"finish_reason": "stop", "message": {
+            "content": '{"fields": [], "notes": []}'}}]}
+        with (
+            patch("pyworker.eden.request_json", return_value=reply),
+            patch("pyworker.eden.transcribe_image", new_callable=AsyncMock,
+                  return_value="Informacja końcowa.") as transcription,
+        ):
+            pages = await read_visual_pages(None, EdenSettings(api_key=""), {},
+                                            [(image, "Tekst PDF", []), (image, "", [])],
+                                            get_running_loop().time() + 30)
+        transcription.assert_awaited_once()
+        self.assertEqual(pages[1][0].notes, ["Informacja końcowa."])
+
+    def test_final_profile_export_retains_text_from_later_pages(self):
+        root = Path(__file__).resolve().parents[3] / "materials/formularze"
+        pdf = next((root / "05-nadplata-podatku").glob("*.pdf"))
+        pages = [
+            (VisualPage(notes=[], fields=[cell(1)]), ""),
+            (VisualPage(notes=["Instrukcja druga."], fields=[cell(2)]),
+             "Instrukcja druga.\nWyjaśnienie dodatkowe."),
+            (VisualPage(notes=["Treść ze skanu."], fields=[]), ""),
+        ]
+        extraction, doc = compile_pages(pages, hashlib.sha256(pdf.read_bytes()).hexdigest(), 200_000)
+        result = convert_to_coi(extraction, doc, uuid4(), visual=True)
+        exported = result.draft.model_dump_json()
+        for text in ("Instrukcja druga.", "Wyjaśnienie dodatkowe.", "Treść ze skanu."):
+            self.assertIn(text, exported)
+        self.assertTrue(any(e.pages == [3] for e in result.form_ir.evidence))
 
     def test_empty_and_inverted_regions_rejected(self):
         for box in ([20, 30, 20, 90], [300, 100, 200, 200], [0, 0, 1001, 100]):

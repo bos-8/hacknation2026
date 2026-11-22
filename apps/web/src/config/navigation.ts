@@ -12,7 +12,7 @@ const chat: NavigationItem = { href: "/chat", label: "chat", icon: "chat" };
 
 /** Visibility is supplied by the server's role decision; destinations still enforce authorization. */
 export function primaryNavigation(allowAdmin: boolean, signedIn: boolean): NavigationItem[] {
-  return [home, about, ...(signedIn ? [forms, chat] : []), ...(allowAdmin ? [ocr, admin] : [])];
+  return [home, about, ...(signedIn ? [forms] : []), ...(allowAdmin ? [admin] : [])];
 }
 
 export function normalizeNavigationPath(pathname: string): string {
@@ -30,7 +30,6 @@ export function secondaryNavigation(pathname: string, allowAdmin: boolean): { la
   const path = normalizeNavigationPath(pathname);
   if (allowAdmin && navigationActive(path, chat)) return {
     label: "chatNavigation", items: [
-      { ...chat, exact: true },
       { href: "/chat/settings", label: "llm", icon: "settings", exact: true },
     ],
   };

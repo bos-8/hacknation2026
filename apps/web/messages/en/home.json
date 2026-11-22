@@ -1,8 +1,15 @@
 {
   "home": {
     "title": "A shared application core",
-    "description": "Sign-in, files and tasks in one place.",
-    "eyebrow": "Proof of concept",
+    "description": "Sign in, upload a form and start processing. When it finishes, you can view the generated JSON alongside the source document.",
+    "eyebrow": "Working proof of concept (PoC)",
+    "pocLogin": "Sign in to the PoC",
+    "username": "Username",
+    "password": "Password",
+    "copyUsername": "Copy username",
+    "copyPassword": "Copy password",
+    "copied": "Copied to clipboard.",
+    "copyFailed": "Could not copy. Select the value and copy it manually.",
     "about": "About the project",
     "team": "Meet the team",
     "services": {

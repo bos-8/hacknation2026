@@ -33,7 +33,7 @@ class EdenTests(unittest.IsolatedAsyncioTestCase):
                 self.assertIn(b"example input", await request.aread())
                 return httpx2.Response(200, json={"file_id": FILE_ID})
             body = json.loads(request.content)
-            self.assertEqual(body["model"], "deepinfra/Qwen/Qwen3-VL-235B-A22B-Instruct")
+            self.assertEqual(body["model"], "qwen3.8-27b")
             if body["messages"][0]["role"] == "user":
                 image = body["messages"][0]["content"][1]["image_url"]["url"]
                 self.assertTrue(image.startswith("data:image/jpeg;base64,"))
@@ -47,7 +47,7 @@ class EdenTests(unittest.IsolatedAsyncioTestCase):
             content = body["messages"][-1]["content"]
             if mime.startswith("image/") or mime == "application/pdf":
                 self.assertEqual(content, [{"type": "text", "text": "example OCR text"}])
-            elif mime == "text/plain":
+            elif mime in {"text/plain", "application/msword"}:
                 self.assertEqual(content, [{"type": "text", "text": "example input"}])
             else:
                 self.assertEqual(content, [{"type": "file", "file": {"file_id": FILE_ID}}])
@@ -253,6 +253,33 @@ class EdenTests(unittest.IsolatedAsyncioTestCase):
             self.assertEqual(draft.model_dump(), DRAFT)
         finally:
             await source.close()
+
+    async def test_doc_sends_only_extracted_text_to_chat(self):
+        with patch("pyworker.eden.read_word_text", return_value="example input") as reader:
+            draft, ocr = await self.convert("application/msword", ["/v3/chat/completions"])
+        reader.assert_awaited_once_with(b"example input", "")
+        self.assertEqual(draft.model_dump(), DRAFT)
+        self.assertFalse(ocr)
+
+    async def test_doc_compiles_coi_without_provider(self):
+        source = UploadFile(io.BytesIO(b"binary word"), filename="Blankiet.DOC")
+        with patch("pyworker.eden.read_word_text", return_value="WNIOSEK\nImię: ........\nNazwisko: ........"):
+            _, ocr = await convert_document(
+                EdenSettings(api_key=""), source, "application/msword", coi_form_id=UUID(FILE_ID)
+            )
+        self.assertFalse(ocr)
+
+    async def test_doc_keeps_fields_after_page_breaks(self):
+        source = UploadFile(io.BytesIO(b"binary word"), filename="Wniosek.doc")
+        text = "WNIOSEK\nImię: Anna\f\fAdres: Kraków"
+        with patch("pyworker.eden.read_word_text", return_value=text):
+            result, _ = await convert_document(
+                EdenSettings(api_key=""), source, "application/msword", coi_form_id=UUID(FILE_ID)
+            )
+        exported = result.model_dump_json()
+        self.assertIn("Anna", exported)
+        self.assertIn("Kraków", exported)
+        self.assertTrue(any(entry.pages == [3] for entry in result.form_ir.evidence))
 
     async def test_docx_with_spaces_uses_text_input_and_never_uploads_to_eden(self):
         document = io.BytesIO()

@@ -74,6 +74,16 @@ def builtin(check):
         valid = pesel(v)
     elif name == "pl.nip.v1":
         valid = valid_tax_identifier("nip", v)
+    elif name == "pl.regon.v1":
+        valid = bool(re.fullmatch(r"[0-9]{9}(?:[0-9]{5})?", v))
+        if valid:
+            def checksum(weights):
+                total = sum(int(digit) * weight for digit, weight in zip(v, weights))
+                return total % 11 % 10 == int(v[len(weights)])
+
+            valid = checksum((8, 9, 2, 3, 4, 5, 6, 7)) and (
+                len(v) == 9 or checksum((2, 4, 8, 5, 0, 9, 7, 3, 6, 1, 2, 4, 8))
+            )
     elif name == "pl.krs_format.v1":
         valid = re.fullmatch(r"[0-9]{10}", v)
     elif name == "internet.email_basic.v1":

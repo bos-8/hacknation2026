@@ -24,31 +24,27 @@ def page_image(image):
     return base64.b64encode(output.getvalue()).decode("ascii")
 
 
-def positioned_text(page, bitmap, limit):
+def positioned_text(page, bitmap, textpage, limit):
     """Native PDF text boxes in the same coordinate system as the rendered page."""
     spans = []
     converter = bitmap.get_posconv(page)
-    textpage = page.get_textpage()
-    try:
-        count = textpage.count_rects()
-        if count > 2500:
+    count = textpage.count_rects()
+    if count > 2500:
+        return []
+    size = 0
+    for index in range(count):
+        left, bottom, right, top = textpage.get_rect(index)
+        text = textpage.get_text_bounded(left, bottom, right, top).strip()
+        if not text:
+            continue
+        size += len(text)
+        if size > limit:
             return []
-        size = 0
-        for index in range(count):
-            left, bottom, right, top = textpage.get_rect(index)
-            text = textpage.get_text_bounded(left, bottom, right, top).strip()
-            if not text:
-                continue
-            size += len(text)
-            if size > limit:
-                return []
-            a, b = converter.to_bitmap(left, top), converter.to_bitmap(right, bottom)
-            xs = sorted(max(0, min(1000, round(x * 1000 / bitmap.width))) for x in (a[0], b[0]))
-            ys = sorted(max(0, min(1000, round(y * 1000 / bitmap.height))) for y in (a[1], b[1]))
-            if xs[0] < xs[1] and ys[0] < ys[1]:
-                spans.append((text, (xs[0], ys[0], xs[1], ys[1])))
-    finally:
-        textpage.close()
+        a, b = converter.to_bitmap(left, top), converter.to_bitmap(right, bottom)
+        xs = sorted(max(0, min(1000, round(x * 1000 / bitmap.width))) for x in (a[0], b[0]))
+        ys = sorted(max(0, min(1000, round(y * 1000 / bitmap.height))) for y in (a[1], b[1]))
+        if xs[0] < xs[1] and ys[0] < ys[1]:
+            spans.append((text, (xs[0], ys[0], xs[1], ys[1])))
     return spans
 
 
@@ -76,21 +72,21 @@ def render(data, mime, char_limit):
                 textpage = page.get_textpage()
                 try:
                     native = textpage.get_text_bounded()
+                    chars += len(native)
+                    if chars > char_limit:
+                        raise ValueError("Document text exceeds limit")
+                    bitmap = page.render(scale=min(4, MAX_EDGE / max(width, height)), draw_annots=True)
+                    try:
+                        encoded = page_image(bitmap.to_pil())
+                        spans = (
+                            positioned_text(page, bitmap, textpage, min(2 * len(native), char_limit))
+                            if native
+                            else []
+                        )
+                    finally:
+                        bitmap.close()
                 finally:
                     textpage.close()
-                chars += len(native)
-                if chars > char_limit:
-                    raise ValueError("Document text exceeds limit")
-                bitmap = page.render(scale=min(4, MAX_EDGE / max(width, height)), draw_annots=True)
-                try:
-                    encoded = page_image(bitmap.to_pil())
-                    spans = (
-                        positioned_text(page, bitmap, min(2 * len(native), char_limit))
-                        if native
-                        else []
-                    )
-                finally:
-                    bitmap.close()
                 size += len(encoded)
                 if size > MAX_PAGE_DATA:
                     raise ValueError("Rendered document exceeds limit")

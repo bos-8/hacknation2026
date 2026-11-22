@@ -1,8 +1,15 @@
 {
   "home": {
     "title": "Wspólny rdzeń aplikacji",
-    "description": "Logowanie, pliki i zadania w jednym miejscu.",
-    "eyebrow": "Proof of concept",
+    "description": "Zaloguj się, wgraj formularz i uruchom przetwarzanie. Po zakończeniu zobaczysz wygenerowany JSON obok dokumentu źródłowego.",
+    "eyebrow": "Działający prototyp (PoC)",
+    "pocLogin": "Logowanie w trybie PoC",
+    "username": "Użytkownik",
+    "password": "Hasło",
+    "copyUsername": "Kopiuj nazwę użytkownika",
+    "copyPassword": "Kopiuj hasło",
+    "copied": "Skopiowano do schowka.",
+    "copyFailed": "Nie udało się skopiować. Zaznacz wartość i skopiuj ją ręcznie.",
     "about": "O projekcie",
     "team": "Poznaj zespół",
     "services": {

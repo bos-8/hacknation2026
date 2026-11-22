@@ -169,13 +169,24 @@ const validators: Record<string, string> = {
   ZIP_CODE:"international.postal_format.v1", POSTCODE:"international.postal_format.v1", POSTAL_CODE:"international.postal_format.v1",
   ACCOUNT_PL:"pl.nrb_bank.nbp.v1", BANK_ACCOUNT:"pl.nrb_bank.nbp.v1",
 };
+const validatorIds = new Set([...Object.values(validators), "international.iban.v1", "pl.nrb.v1"]);
+const captionRules: [RegExp, string][] = [
+  [/\bpesel\b/, "PESEL"], [/\bnip\b/, "NIP"], [/\bregon\b/, "REGON"], [/\bkrs\b/, "KRS"],
+  [/\b(?:e ?mail|emailowy|poczty elektronicznej)\b/, "EMAIL"],
+  [/\b(?:telefon|telefonu|tel)\b/, "PHONE"], [/\bkod pocztowy\b/, "POSTAL_CODE"],
+  [/\b(?:iban|nrb|numer konta|(?:nr|numer) rachunku)\b/, "BANK_ACCOUNT"],
+];
+
 export function validatorFor(item: ReturnType<typeof editorFields>[number], value: string) {
   const {field, semantic} = item;
-  // OCR fields may have only a printed caption and a generic text/number type.
-  const peselCaption = ["TEXT_FIELD", "NUMBER"].includes(field.type) &&
-    /^(?:(?:nr|numer) )?pesel(?: (?:wnioskodawcy|podatnika|dziecka|osoby|pelnomocnika|reprezentanta))?$/.test(folded(field.title));
-  const id = field.validation.map(v => v === validators.PESEL ? v : validators[v]).find(Boolean) ||
-    (peselCaption ? validators.PESEL : validators[semantic]) ||
+  const explicit = field.validation.map(v => validatorIds.has(v) ? v : validators[v]).find(Boolean);
+  const caption = folded(field.title || field.techName);
+  const matches = ["TEXT_FIELD", "NUMBER"].includes(field.type)
+    ? captionRules.filter(([pattern]) => pattern.test(caption)) : [];
+  // A combined caption such as “Telefon / e-mail” does not specify a single format.
+  const inferred = matches.length === 1 ? validators[matches[0][1]] : undefined;
+  const specific = ["NUMBER", "INTEGER", "DECIMAL"].includes(semantic) ? undefined : validators[semantic];
+  const id = explicit || specific || inferred || validators[semantic] ||
     (field.type === "DATEPICKER" ? validators.DATE : validators[field.type]);
   if (id === "pl.nrb_bank.nbp.v1" && /^[A-Z]{2}/i.test(value)) return "international.iban.v1";
   return id;

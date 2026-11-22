@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const APP_ROLES = ["ROOT", "SADMIN", "ADMIN", "SYSTEM", "AUDITOR", "VIEWER", "USER", "GUEST", "LOGED"] as const;
 export const sessionPolicySchema = z.object({
-  SESSION_TTL: z.coerce.number().int().min(300).max(28800).default(900),
+  SESSION_TTL: z.coerce.number().int().min(300).max(28800).default(2700),
   SESSION_WARNING: z.coerce.number().int().min(10).max(28799).default(120),
   SESSION_AUTO_REFRESH: z.enum(["true", "false"]).default("false").transform(value => value === "true"),
   SESSION_MAX_REFRESHES: z.coerce.number().int().min(0).max(1000).default(3),

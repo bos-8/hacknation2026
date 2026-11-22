@@ -283,7 +283,11 @@ class EdenProcessingResult(BaseModel):
     draft: GeneratedDraft
 
 
+from pyworker.coi import DocumentContent
+
+
 class PipelineProcessingResult(BaseModel):
+    document_content: DocumentContent | None = None
     source_answers: dict[UUID, str] = Field(default_factory=dict)
     schema_version: Literal[3] = 3
     status: Literal["processed"] = "processed"
@@ -491,6 +495,7 @@ async def handle_form(
                         llm="bypassed"
                         if pipeline is None and settings.ocr_only and not settings.uses_vision(mime)
                         else "completed",
+                        document_content=coi.document_content,
                         field_locations=coi.field_locations,
                         source_answers=coi.source_answers,
                         field_confidences=coi.field_confidences,

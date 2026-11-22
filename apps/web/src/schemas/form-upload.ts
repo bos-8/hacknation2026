@@ -129,6 +129,17 @@ export const formProcessingResult = z.discriminatedUnion("mode", [
   processingBase.extend({
     mode: z.literal("pipeline"), schema_version: z.literal(3),
     ocr: z.enum(["completed", "not_required"]), llm: z.enum(["completed", "bypassed"]),
+    document_content: z.object({
+      schema_version: z.literal(1),
+      pages: z.array(z.object({page: z.number().int().min(1).max(40), text: z.string(),
+        blocks: z.array(z.object({id: z.number().int(), page: z.number().int(),
+          kind: z.enum(["text","table","input"]), text: z.string(),
+          bbox: z.tuple([z.number(),z.number(),z.number(),z.number()]).nullable().optional(),
+          cell: z.object({row:z.number().int(),column:z.number().int()}).nullable().optional(),
+          ocr_confidence:z.number().nullable().optional(),
+        })),
+      })),
+    }).nullable().optional(),
     draft: coiForm, field_locations: locations, field_confidences: confidences.optional(),
     source_answers: answerValues.optional(), reviewed_answers: answerValues.optional(), answer_revision:z.uuid().optional(),
     form_ir: formIr.optional(),

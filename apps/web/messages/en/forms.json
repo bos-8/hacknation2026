@@ -1,4 +1,6 @@
 {
+  "documentContent": "Full document content (JSON)",
+  "downloadContent": "Download content JSON",
   "forms": {
     "referenceDocument": "This DOCX contains form design instructions. Upload the application form.",
     "answers": {
@@ -19,6 +21,9 @@
       "choose": "Select", "chooseCountryFirst": "Select a country first", "required": "Complete this required field.", "option": "Choose a listed value.",
       "invalid": "Correct the value. Failed check: {rule}.", "unverified": "This check needs verification ({rule}).",
       "pesel": "Invalid PESEL number. Check the 11 digits, date of birth and check digit.",
+      "regon": "Check the REGON number. It must have 9 or 14 digits and a valid checksum.",
+      "krs": "Enter all 10 digits of the KRS number, including leading zeros.",
+      "phone": "Enter an international phone number, for example +48500100200.",
       "nip": "Check the 10 NIP digits and check digit.", "email": "Enter an email address, e.g. anna@example.org.",
       "postal": "Check the postal code format for the selected country.", "amount": "Enter a positive amount with up to two decimal places.",
       "date": "Enter a valid date in YYYY-MM-DD format.", "account": "Check the account number format and check digits.",
@@ -171,6 +176,8 @@
     "documentTextFailed": "Pyworker could not read the document content.",
     "pipelineUnavailable": "A required local processing engine is unavailable.",
     "pipelineReadFailed": "The document could not be read locally.",
+    "agentcoreFailed": "AWS AgentCore could not complete the page analysis.",
+    "agentcoreInvalidJson": "AWS AgentCore returned an invalid JSON structure.",
     "pipelineLlmFailed": "Qwen could not generate a result.",
     "pipelineInvalidJson": "The model output did not pass validation.",
     "pipelineTimeout": "Form processing timed out.",

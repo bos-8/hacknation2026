@@ -1,5 +1,6 @@
 import json
 import unittest
+from io import BytesIO
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from unittest.mock import patch
@@ -10,12 +11,131 @@ from test_forms import png_fixture
 
 from pyworker.coi import Block, ReadDocument
 from pyworker.config import Settings
-from pyworker.document_reader import normalized_box
+from pyworker.document_reader import append_block, normalized_box, read_document
 from pyworker.main import create_app
 from pyworker.pipeline import EXAMPLE, PipelineSettings
 
 
 class PipelineTests(unittest.TestCase):
+    def test_mixed_pdf_keeps_native_labels_and_crop_coordinates(self):
+        from PIL import Image
+        from pypdf import PdfReader, PdfWriter, Transformation
+        from pypdf.generic import DecodedStreamObject, DictionaryObject, NameObject
+
+        picture = BytesIO()
+        Image.new("RGB", (100, 100), "white").save(picture, "PDF", resolution=72)
+        writer = PdfWriter()
+        page = writer.add_blank_page(400, 400)
+        font = DictionaryObject(
+            {
+                NameObject("/Type"): NameObject("/Font"),
+                NameObject("/Subtype"): NameObject("/Type1"),
+                NameObject("/BaseFont"): NameObject("/Helvetica"),
+            }
+        )
+        page["/Resources"][NameObject("/Font")] = DictionaryObject(
+            {NameObject("/F1"): writer._add_object(font)}
+        )
+        text = DecodedStreamObject()
+        text.set_data(
+            b"BT /F1 12 Tf 10 360 Td (Printed application form with a native applicant label) Tj ET"
+        )
+        page[NameObject("/Contents")] = writer._add_object(text)
+        page.merge_transformed_page(
+            PdfReader(picture).pages[0], Transformation().translate(100, 100)
+        )
+        data = BytesIO()
+        writer.write(data)
+
+        def ocr(image, number, blocks):
+            append_block(blocks, number, "PESEL", bbox=(0, 0, 1, 1))
+
+        # pypdf wraps merged pages in a clipping path; use a native Docling result for that route.
+        def native(_document, number, blocks):
+            append_block(blocks, number, "Printed application form with a native applicant label")
+            return True
+
+        with (
+            patch("pyworker.document_reader.read_image", side_effect=ocr) as cropped,
+            patch("pyworker.document_reader.read_docling"),
+            patch("pyworker.document_reader.append_native_page", side_effect=native),
+        ):
+            doc = read_document(data.getvalue(), ".pdf", lambda _: None)
+        cropped.assert_called_once()
+        self.assertTrue(doc.ocr)
+        self.assertIn("native applicant label", doc.blocks[0].text)
+        self.assertEqual(doc.blocks[-1].bbox, (0.25, 0.5, 0.5, 0.75))
+
+    def test_pipeline_spreadsheet_skips_qwen(self):
+        samples = (
+            Path(__file__).resolve().parents[3] / "materials/formularze/09-swiadczenia-sportowe"
+        )
+        for ext, mime in (
+            (".xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"),
+            (".ods", "application/vnd.oasis.opendocument.spreadsheet"),
+        ):
+            files = [
+                p
+                for p in samples.iterdir()
+                if p.suffix.lower() == ext and not p.name.startswith("~")
+            ]
+            self.assertTrue(files, ext)
+            with self.subTest(ext=ext), patch("pyworker.pipeline.request_json") as qwen:
+                response = self.submit(files[0].name, files[0].read_bytes(), mime)
+                self.assertEqual(response.status_code, 200, response.text[:300])
+                self.assertTrue(response.json()["draft"]["tabs"][0]["questions"])
+                qwen.assert_not_called()
+
+    def test_hybrid_pins_hosted_model_and_keeps_key_out_of_reader(self):
+        from pyworker.pipeline import EDEN_CHAT, reader_environment
+
+        settings = Settings.from_environment(
+            {
+                "PYWORKER_API_TOKEN": "x" * 48,
+                "PYWORKER_FORM_MODE": "hybrid",
+                "EDENAI_API_KEY": "fixture",
+                "EDENAI_LLM_MODEL": "qwen3.8-27b",
+            }
+        ).pipeline
+        self.assertEqual((settings.qwen_url, settings.qwen_model), (EDEN_CHAT, "qwen3.8-27b"))
+        self.assertNotIn("EDENAI_API_KEY", reader_environment(settings))
+        with self.assertRaises(ValueError):
+            PipelineSettings(eden_key="fixture", qwen_url="https://example.com/v3/chat/completions")
+
+    def test_hybrid_retries_invalid_model_output_without_repeating_extraction(self):
+        settings = Settings.from_environment(
+            {
+                "PYWORKER_API_TOKEN": self.headers["Authorization"].removeprefix("Bearer "),
+                "PYWORKER_FORM_MODE": "hybrid",
+                "EDENAI_API_KEY": "fixture",
+            }
+        )
+        doc = ReadDocument(
+            blocks=[
+                Block(id=1, page=1, kind="text", text="Imię"),
+                Block(id=2, page=1, kind="input", text="", bbox=(0, 0, 1, 1)),
+            ],
+            ocr=True,
+        )
+        responses = [
+            {"choices": [{"finish_reason": "stop", "message": {"content": body}}]}
+            for body in ("{}", json.dumps(EXAMPLE))
+        ]
+        with (
+            TestClient(create_app(settings)) as client,
+            patch("pyworker.pipeline.read_local_document", return_value=doc) as reader,
+            patch("pyworker.pipeline.request_json", side_effect=responses) as qwen,
+        ):
+            response = client.post(
+                "/v1/forms/process",
+                headers=self.headers,
+                data={"metadata": json.dumps(self.meta)},
+                files={"file": ("test.png", png_fixture(), "image/png")},
+            )
+        self.assertEqual(response.status_code, 200, response.text[:300])
+        reader.assert_awaited_once()
+        self.assertEqual(qwen.await_count, 2)
+
     def setUp(self):
         token = "fixture-" + "a" * 40
         prompt_dir = self.enterContext(TemporaryDirectory())

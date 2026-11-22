@@ -15,6 +15,9 @@ function plainText(html: string) {
 function errorMessage(rule: string) {
   if (rule.includes("pesel")) return "pesel";
   if (rule.includes("nip")) return "nip";
+  if (rule === "pl.regon.v1") return "regon";
+  if (rule === "pl.krs_format.v1") return "krs";
+  if (rule === "international.e164_format.v1") return "phone";
   if (rule.includes("email")) return "email";
   if (rule.includes("postal_format")) return "postal";
   if (rule === "pl.address.prg.v1") return "address";

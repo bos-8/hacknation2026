@@ -84,12 +84,10 @@ body:has([data-navbar-glass]) {
 }
 
 [data-navbar-glass] {
-  top: 12px;
   align-self: center;
   width: var(--glass-width);
-  margin-top: 12px;
   border: 1px solid var(--glass-line, hsl(var(--navbar-border)));
-  border-radius: 14px;
+  border-radius: 0 0 14px 14px;
   background: var(--glass-bar, hsl(var(--navbar-background)));
   box-shadow: var(--glass-shadow, var(--navbar-shadow));
 }
@@ -174,7 +172,7 @@ body:has([data-navbar-glass]) [data-shell-footer] {
 }
 
 body:has([data-navbar-glass]) .shell-breadcrumb {
-  top: calc(var(--navigation-height, 48px) + 12px);
+  top: var(--navigation-height, 48px);
   width: var(--glass-width);
   margin-top: 8px;
   padding: 6px 14px;

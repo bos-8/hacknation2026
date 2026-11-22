@@ -105,6 +105,17 @@ def docx_blocks(source: BinaryIO) -> list[tuple[str, str]]:
         visit(paragraph)
         return "".join(pieces).strip()
 
+    def row_cells(row):
+        for child in row:
+            if child.tag == prefix + "tc":
+                yield child
+            elif child.tag in {prefix + "sdt", prefix + "sdtContent", prefix + "customXml"}:
+                yield from row_cells(child)
+            elif child.tag == MC + "AlternateContent":
+                selected = alternate(child)
+                if selected is not None:
+                    yield from row_cells(selected)
+
     def blocks(element: ET.Element):
         for child in element:
             if child.tag == MC + "AlternateContent":
@@ -116,7 +127,7 @@ def docx_blocks(source: BinaryIO) -> list[tuple[str, str]]:
             elif child.tag == prefix + "tr":
                 cells = (
                     " / ".join(text for _, text in blocks(cell) if text)
-                    for cell in child.findall(prefix + "tc")
+                    for cell in row_cells(child)
                 )
                 yield "table", " | ".join(cells)
             else:

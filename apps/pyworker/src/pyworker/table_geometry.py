@@ -83,12 +83,18 @@ def text_in(box, spans):
 def horizontal_edges(ink):
     """Group horizontal rules with matching endpoints, collapsing thick strokes."""
     width, height = ink.size
-    pattern = re.compile(b"\xff{%d,}" % max(22, width // 14))
+    rule = b"\xff" * max(22, width // 14)
     pixels = ink.tobytes()
     spans = {}
     for y in range(height):
-        for run in pattern.finditer(pixels, y * width, (y + 1) * width):
-            x0, x1 = run.start() - y * width, run.end() - y * width - 1
+        start = y * width
+        end = start + width
+        cursor = start
+        while (left := pixels.find(rule, cursor, end)) >= 0:
+            # The ink mask contains only 0 and 255. Skip the whole matching run.
+            right = pixels.find(b"\x00", left + len(rule), end)
+            cursor = end if right < 0 else right
+            x0, x1 = left - start, cursor - start - 1
             key = (round(x0 / 4), round(x1 / 4))
             spans.setdefault(key, []).append((y, x0, x1))
     for lines in spans.values():
@@ -242,7 +248,7 @@ def recover_empty_cells(page, ink, spans, ocr_tables, review=None):
                 elif has_ink and not (printed and descriptive and row > 1 and known_input_column):
                     # A dotted line or faint grid can look like printed content.
                     # Confirm these interior cells against the actual table image.
-                    if review is not None and not printed and row > 1 and col > 1 and len(ambiguous) < 100:
+                    if review is not None and not printed and row > 1 and col > 1:
                         ambiguous.append((area, row, col))
                     continue
                 page.fields.append(
@@ -257,11 +263,34 @@ def recover_empty_cells(page, ink, spans, ocr_tables, review=None):
                 )
                 if 2 * len(page.fields) > MAX_SOURCE_BLOCKS:
                     raise ValueError("Table exceeds document evidence limit")
-        if ambiguous and not review:
-            review.append(((left, first, right + 1, last + 1), ambiguous, section or f"Tabela {index}"))
+        if review is not None:
+            for offset in range(0, len(ambiguous), 100):
+                review.append(((left, first, right + 1, last + 1), ambiguous[offset:offset + 100], section or f"Tabela {index}"))
         if matrix and len(page.fields) > initial_fields:
             consumed.append(source)
     return consumed
+
+
+def review_batches(tables):
+    """Keep every candidate and its source table in bounded page-local requests."""
+    candidates = []
+    bounds = None
+    for (left, top, right, bottom), cells, section in tables:
+        for area, row, column in cells:
+            if bounds is None:
+                bounds = (left, top, right, bottom)
+            else:
+                bounds = (
+                    min(bounds[0], left), min(bounds[1], top),
+                    max(bounds[2], right), max(bounds[3], bottom),
+                )
+            candidates.append((area, row, column, section))
+            if len(candidates) == 100:
+                yield bounds, candidates
+                candidates = []
+                bounds = None
+    if candidates:
+        yield bounds, candidates
 
 
 def table_crop(encoded, bounds, candidates):
@@ -272,7 +301,7 @@ def table_crop(encoded, bounds, candidates):
     crop.save(output, "JPEG", quality=95)
     left, top = bounds[:2]
     regions = []
-    for index, (area, row, column) in enumerate(candidates):
+    for index, (area, row, column, _section) in enumerate(candidates):
         x0, y0, x1, y1 = area
         regions.append(dict(id=index, row=row, column=column, bbox=[
             round((x0 * width / 1000 - left) * 1000 / crop.width),

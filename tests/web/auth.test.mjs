@@ -29,11 +29,11 @@ test('admin access uses the verified Keycloak UUID and only ROOT, SADMIN or ADMI
 });
 
 test('session policy validates seconds, strict booleans and warning before expiry', () => {
-  assert.equal(getAuthConfig(fixture).SESSION_TTL, 900);
+  assert.equal(getAuthConfig(fixture).SESSION_TTL, 2700);
   assert.equal(getAuthConfig(fixture).SESSION_AUTO_REFRESH, false);
   assert.equal(getAuthConfig({ ...fixture, SESSION_AUTO_REFRESH: 'true' }).SESSION_AUTO_REFRESH, true);
   for (const input of [{ SESSION_AUTO_REFRESH: 'yes' }, { SESSION_MAX_REFRESHES: -1 },
-    { SESSION_TTL: 299 }, { SESSION_WARNING: 900 }, { SESSION_TTL: 300, SESSION_WARNING: 301 }]) {
+    { SESSION_TTL: 299 }, { SESSION_WARNING: 2700 }, { SESSION_TTL: 300, SESSION_WARNING: 301 }]) {
     assert.throws(() => getAuthConfig({ ...fixture, ...input }));
   }
 });
@@ -52,7 +52,7 @@ test('renewal is warning-only manually, excludes home navigation and enforces ex
   assert.equal(renewableNavigation('/pl/test'), true);
   const enabled = getAuthConfig({ ...fixture, SESSION_AUTO_REFRESH: 'true' });
   assert.equal(renewalDecision(row, enabled, { reason: 'navigation', pathname: '/en/test' }, now), 'renew');
-  assert.equal(renewalDecision({ ...row, expiresAt: new Date(now + 899000) }, enabled, { reason: 'navigation', pathname: '/en/test' }, now), 'unchanged');
+  assert.equal(renewalDecision({ ...row, expiresAt: new Date(now + (enabled.SESSION_TTL - 1) * 1000) }, enabled, { reason: 'navigation', pathname: '/en/test' }, now), 'unchanged');
 });
 
 const fixture = { AUTH_BASE_URL: 'https://app.example.invalid', AUTH_SECRET: 'x'.repeat(48),

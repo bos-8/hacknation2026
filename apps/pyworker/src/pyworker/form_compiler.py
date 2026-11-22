@@ -4,6 +4,7 @@ from collections import Counter
 from dataclasses import replace
 from uuid import UUID, uuid5
 
+from pyworker.coi import DocumentContent, DocumentPage
 from pyworker.coi import (
     CoiField,
     CoiFlow,
@@ -53,6 +54,7 @@ def convert_to_coi(
     semantic_mode="EXTENDED",
     as_of=None,
     visual=False,
+    preserve_notes=False,
 ) -> CoiResult:
     assessment = assess(" ".join(b.text for b in document.blocks), document.sha256)
     plan = None
@@ -73,7 +75,7 @@ def convert_to_coi(
             plan.ir.review.append(
                 ReviewItem(nodeId=plan.ir.form["id"], reason="no_applicable_legal_profile")
             )
-    if visual and any(item.name for items in plan.sections.values() for item in items):
+    if (visual or preserve_notes) and any(item.name for items in plan.sections.values() for item in items):
         merge_profile_observations(plan, result, document, form_id)
     return render_plan(plan, document, form_id)
 
@@ -100,6 +102,9 @@ def merge_profile_observations(plan, observed, document, form_id):
         for section in tab.sections:
             additional = []
             for field in section.fields:
+                if field.type == "TEXT_BLOCK" and field.description and field.label_blocks:
+                    additional.append(field)
+                    continue
                 if not field.input_blocks or seen_inputs.intersection(field.input_blocks):
                     continue
                 label = normalized(field.label)
@@ -280,6 +285,15 @@ def render_plan(plan, document, form_id):
         for source, target in zip(tabs[:-1], tabs[1:], strict=True)
     ]
     return CoiResult(
+        document_content=DocumentContent(pages=[
+            DocumentPage(
+                page=number,
+                text="\n\n".join(dict.fromkeys(b.text for b in document.blocks
+                                               if b.page == number and b.text.strip())),
+                blocks=[b for b in document.blocks if b.page == number],
+            )
+            for number in (sorted({b.page for b in document.blocks}) if document else [])
+        ]),
         source_answers=source_answers,
         form_ir=plan.ir,
         draft=CoiForm(title=result.title, tabs=tabs, flow=CoiFlow(links=links)),

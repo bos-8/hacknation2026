@@ -397,13 +397,39 @@ def form_from_text(
     *,
     document: ReadDocument | None = None,
     grid_pages=(),
+    word_pages=(),
     char_limit=200_000,
     semantic_mode="EXTENDED",
     as_of=None,
 ) -> CoiResult:
-    title, items = detect_items(text)
     doc = document or ReadDocument(blocks=[Block(id=1, page=1, kind="text", text=text)], ocr=ocr)
-    extracted = group_fields(title, items) if items else None
+    if word_pages:
+        groups = {}
+        title = "Formularz"
+        for block in word_pages:
+            page_title, items = detect_items(block.text)
+            if title == "Formularz":
+                title = page_title
+            page = group_fields(page_title, items)
+            if page:
+                for tab in page.tabs:
+                    for section in tab.sections:
+                        for control in section.fields:
+                            control.label_blocks = [block.id]
+                    groups.setdefault(tab.title, []).extend(tab.sections)
+        extracted = (
+            Extraction(
+                title=title,
+                tabs=[
+                    ExtractedTab(title=name, sections=sections) for name, sections in groups.items()
+                ],
+            )
+            if groups
+            else None
+        )
+    else:
+        title, items = detect_items(text)
+        extracted = group_fields(title, items) if items else None
     if grid_pages:
         grids, doc = compile_pages(grid_pages, doc.sha256, char_limit, base_blocks=doc.blocks)
         for n, tab in enumerate(grids.tabs, 1):
@@ -420,4 +446,5 @@ def form_from_text(
         semantic_mode=semantic_mode,
         as_of=as_of,
         visual=bool(grid_pages),
+        preserve_notes=bool(word_pages),
     )

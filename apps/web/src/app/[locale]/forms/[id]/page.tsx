@@ -20,6 +20,8 @@ function FormResult({ entry, result }: { entry: FormEntry; result: FormProcessin
   const [copyStatus, setCopyStatus] = useState<"jsonCopied" | "jsonCopyFailed">();
   const [hovered, setHovered] = useState<string>();
   const [selected, setSelected] = useState<string>();
+  const [imageRatio, setImageRatio] = useState(1);
+  const [showContent, setShowContent] = useState(false);
   const [page, setPage] = useState(1);
   const [showIr, setShowIr] = useState(false);
   const [view, setView] = useState<"json" | "form">("json");
@@ -104,9 +106,9 @@ function FormResult({ entry, result }: { entry: FormEntry; result: FormProcessin
       {mime === "application/pdf" ? <PdfPreview src={entry.previewUrl} name={entry.file.name} page={page} onPage={setPage}>
         {regions}
       </PdfPreview> : mime.startsWith("image/") ? <div className="flex justify-center">
-        <div className="relative max-w-full">
+        <div className="relative" style={{width: `min(100%, ${70 * imageRatio}vh)`}}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={entry.previewUrl} alt={entry.file.name} className="block max-h-[70vh] max-w-full" />
+          <img src={entry.previewUrl} alt={entry.file.name} className="block h-auto w-full" onLoad={event => setImageRatio(event.currentTarget.naturalWidth / event.currentTarget.naturalHeight)} />
           {regions}
         </div>
       </div> : ["text/plain", "application/json"].includes(mime)
@@ -152,6 +154,17 @@ function FormResult({ entry, result }: { entry: FormEntry; result: FormProcessin
           {score ? t("qwenConfidence", { score: percentage(score.confidence) }) : t("confidenceHint")}
           {score?.ocr_confidence != null && <> · {t("ocrConfidence", { score: percentage(score.ocr_confidence) })}</>}
         </p>}
+        {result.mode === "pipeline" && result.document_content && <details className="border-t border-panel-border p-4"
+          onToggle={event => setShowContent(event.currentTarget.open)}>
+          <summary className="cursor-pointer">{t("documentContent")}</summary>
+          <Button size="sm" type="button" tone="main-outline" onClick={() => {
+            const url = URL.createObjectURL(new Blob([JSON.stringify(result.document_content, null, 2)], {type:"application/json"}));
+            const link = document.createElement("a");
+            link.href = url; link.download = entry.file.name + ".content.json"; link.click();
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
+          }}>{t("downloadContent")}</Button>
+          {showContent && <CodeJson value={result.document_content} className="mt-2 max-h-80 p-2" />}
+        </details>}
         <CodeJson value={displayed} fields={fields} activeId={active}
           onActive={id => { setHovered(id); showField(id); }} className="max-h-[65vh] p-4" />
         {resultLocations && resultLocations.length > 0 && <details className="border-t border-panel-border p-4">

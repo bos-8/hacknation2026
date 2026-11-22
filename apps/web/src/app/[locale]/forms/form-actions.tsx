@@ -110,6 +110,7 @@ export function FormActions({ entry, active, info, discard }: { entry: FormEntry
         ["worker_invalid_result", "workerInvalidResult"],
         ["ocr_only_format_unsupported", "ocrOnlyFormatUnsupported"], ["ocr_only_no_fields", "ocrOnlyNoFields"],
         ["pipeline_unavailable", "pipelineUnavailable"], ["pipeline_read_failed", "pipelineReadFailed"],
+        ["agentcore_failed", "agentcoreFailed"], ["agentcore_invalid_json", "agentcoreInvalidJson"],
         ["pipeline_llm_failed", "pipelineLlmFailed"], ["pipeline_invalid_json", "pipelineInvalidJson"],
         ["pipeline_timeout", "pipelineTimeout"],
       ]);

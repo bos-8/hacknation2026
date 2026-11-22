@@ -275,7 +275,19 @@ class FieldConfidence(Contract):
     ocr_confidence: Unit | None = None
 
 
+class DocumentPage(Contract):
+    page: int = Field(ge=1, le=40)
+    text: str
+    blocks: list[Block]
+
+
+class DocumentContent(Contract):
+    schema_version: Literal[1] = 1
+    pages: list[DocumentPage]
+
+
 class CoiResult(Contract):
+    document_content: DocumentContent | None = None
     draft: CoiForm
     source_answers: dict[UUID, str] = Field(default_factory=dict)
     field_locations: list[FieldLocation]
