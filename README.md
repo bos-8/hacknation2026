@@ -39,6 +39,8 @@ Usługa startowa Compose sprawdza konfigurację API i termin dostępu. Compose b
 
 Po zakończeniu komendy otwórz **http://127.0.0.1:4100**.
 
+(PoC — użytkownik: `admin`, hasło: `admin`; konto zwykłego użytkownika: `user`, hasło: `user`.)
+
 | Usługa PoC | Adres                                                                                               |
 | ---------- | --------------------------------------------------------------------------------------------------- |
 | Aplikacja  | [127.0.0.1:4100](http://127.0.0.1:4100)                                                             |
@@ -68,6 +70,10 @@ Przykładowy JSON wygenerowany przez naszą aplikację znajduje się w katalogu 
 FORMIQ pomaga urzędnikom zamieniać papierowe formularze, skany i dokumenty biurowe w formularze elektroniczne. Rozpoznaje pola, tabele, wpisane wartości i teksty informacyjne, a następnie buduje konfigurację JSON z sekcjami, zależnościami i odniesieniami do źródła. Użytkownik porównuje wynik z oryginałem, poprawia odczytane dane i eksportuje JSON.
 
 To działający PoC przygotowany dla wyzwania COI „Cyfryzacja formularzy”. Obsługuje PDF, DOC, DOCX, XLSX, ODS, JPG, JPEG i PNG. Wariant uruchamiany domyślnie przez Compose korzysta z API w AWS. Dostępny jest również osobny wariant lokalnego przetwarzania. Potwierdzenie importu do rzeczywistego systemu COI i odbiór wariantu offline pozostają otwarte.
+
+## Prezentacja
+
+[Otwórz prezentację projektu — presentacja.pdf](presentacja.pdf)
 
 ## Zespół
 
