@@ -1,24 +1,48 @@
 {
   "home": {
-    "title": "Wspólny rdzeń aplikacji",
-    "description": "Logowanie, pliki i zadania w jednym miejscu.",
-    "eyebrow": "Proof of concept",
+    "title": "Z papierowego blankietu do cyfrowego formularza",
+    "description": "Wgraj dokument lub skan. FORMIQ rozpozna pola formularza, a Ty sprawdzisz wynik na oryginale i przygotujesz plik do importu w COI.",
+    "eyebrow": "FORMIQ",
+    "openForms": "Przejdź do formularzy",
     "about": "O projekcie",
-    "team": "Poznaj zespół",
-    "services": {
-      "label": "Usługi projektu",
-      "authConsole": {
-        "title": "Konsola administracyjna Keycloak",
-        "description": "Zarządzaj użytkownikami i rolami w Keycloak."
+    "workflowTitle": "Od dokumentu do gotowego pliku",
+    "workflow": {
+      "upload": {
+        "title": "Wgraj blankiet",
+        "description": "Dodaj dokument lub skan w zakładce „Formularze”. Oznacz go jako opłacony i uruchom analizę."
       },
-      "keycloak": {
-        "title": "Konfiguracja OIDC Keycloak",
-        "description": "Sprawdź adresy usług logowania i kluczy publicznych."
+      "review": {
+        "title": "Sprawdź wynik",
+        "description": "Porównaj wykryte pola z oryginałem i popraw odczytane wartości."
       },
-      "swagger": {
-        "title": "Swagger UI pyworkera",
-        "description": "Przeglądaj i testuj endpointy API workera."
+      "export": {
+        "title": "Pobierz formularz",
+        "description": "Zapisz zweryfikowany formularz jako plik JSON gotowy do importu w COI."
       }
+    },
+    "capabilities": {
+      "title": "Co możesz zrobić w FORMIQ",
+      "compare": {
+        "title": "Znajdź pole na oryginale",
+        "description": "Otwórz wynik obok PDF-u lub skanu. Jeśli analiza ustaliła położenie pola, możesz podświetlić jego etykietę i miejsce na odpowiedź."
+      },
+      "edit": {
+        "title": "Popraw i sprawdź odpowiedzi",
+        "description": "W podglądzie formularza możesz zmienić odczytane wartości. Edytor wskazuje błędy, np. w numerze PESEL, dacie lub numerze rachunku. Zapisane poprawki trafią do pobranego JSON-a."
+      },
+      "decisions": {
+        "title": "Rozpatrz proponowane pola",
+        "description": "Gdy analiza oznaczy pole do przeglądu, zobaczysz uzasadnienie propozycji. Możesz zdecydować, czy dodać pole opcjonalne do roboczego formularza."
+      },
+      "manage": {
+        "title": "Wróć do zapisanych formularzy",
+        "description": "Wyszukaj dokument po nazwie, zawęź listę według formatu lub stanu analizy i otwórz zapisany wynik. W razie potrzeby możesz ponowić analizę tego samego pliku."
+      },
+      "availability": "Dostępność podglądu, edycji i przeglądu decyzji zależy od formatu pliku i wyniku analizy."
+    },
+    "formats": {
+      "title": "Jakie pliki możesz wgrać",
+      "description": "Dodaj kilka blankietów naraz, do {mib} MiB na plik. Możesz wgrać skany, dokumenty tekstowe i arkusze."
     }
   }
 }

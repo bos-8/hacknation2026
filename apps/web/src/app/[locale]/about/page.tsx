@@ -1,5 +1,5 @@
 import { getTranslations } from "next-intl/server";
-import { ArrowDown, ArrowRight, BoxSeam, Check2, Check2Circle, Cloud, Cpu, Database, FileEarmarkText, HddStack, Laptop, Layers, ListTask, People, ShieldLock, Window } from "react-bootstrap-icons";
+import { ArrowDown, ArrowRight, ArrowUpRight, BoxSeam, Braces, Check2, Cloud, Cpu, Database, FileEarmarkText, HddStack, Key, Laptop, Layers, ListTask, People, ShieldLock, Window } from "react-bootstrap-icons";
 import { Link } from "@/i18n/navigation";
 import { Badge, Heading, Text } from "@/ui/basic";
 import { ProjectIllustration } from "@/ui/components/project-illustration";
@@ -10,8 +10,7 @@ const features = [
   { key: "workspace", icon: Window },
   { key: "tasks", icon: ListTask },
 ] as const;
-const principles = [{ key: "reuse", icon: Layers }, { key: "access", icon: ShieldLock }, { key: "visibility", icon: Check2Circle }] as const;
-const workflow = [{ key: "access", icon: ShieldLock }, { key: "work", icon: FileEarmarkText }, { key: "process", icon: ListTask }, { key: "result", icon: Check2Circle }] as const;
+const workflow = [{ key: "storage", icon: HddStack }, { key: "queue", icon: ListTask }, { key: "worker", icon: Cpu }, { key: "result", icon: Braces }] as const;
 const flow = [{ key: "browser", icon: Laptop }, { key: "web", icon: BoxSeam }, { key: "data", icon: Database }] as const;
 const technologies = [
   { key: "web", name: "Next.js", icon: Window },
@@ -22,7 +21,7 @@ const technologies = [
   { key: "python", name: "Python", icon: Cpu },
 ] as const;
 const environments = [{ key: "dev", icon: Laptop }, { key: "qa", icon: BoxSeam }, { key: "prod", icon: Cloud }] as const;
-const chapters = [{ key: "idea", href: "#about-idea" }, { key: "modules", href: "#about-modules" }, { key: "workflow", href: "#about-workflow" }, { key: "architecture", href: "#about-architecture" }, { key: "development", href: "#about-development" }] as const;
+const chapters = [{ key: "modules", href: "#about-modules" }, { key: "workflow", href: "#about-workflow" }, { key: "architecture", href: "#about-architecture" }, { key: "environments", href: "#about-environments" }, { key: "processing", href: "#about-processing" }] as const;
 
 function SectionHeading({ id, label, title, description }: { id: string; label?: string; title: string; description?: string }) {
   return <div className="max-w-3xl space-y-3">
@@ -39,6 +38,17 @@ export async function generateMetadata() {
 
 export default async function AboutPage() {
   const t = await getTranslations("about");
+  const issuer = process.env.AUTH_ISSUER;
+  const adminBase = process.env.AUTH_DIRECTORY_URL || issuer;
+  const worker = process.env.PYWORKER_URL ? new URL(process.env.PYWORKER_URL) : null;
+  const swagger = worker && ["localhost", "127.0.0.1", "[::1]"].includes(worker.hostname)
+    ? new URL("/docs", worker).href : null;
+  const services = [
+    { key: "authConsole", href: adminBase && new URL("/admin/", adminBase).href, icon: ShieldLock },
+    { key: "keycloak", href: issuer && `${issuer.replace(/\/$/, "")}/.well-known/openid-configuration`, icon: Key },
+    { key: "swagger", href: swagger, icon: Braces },
+  ] as const;
+
   return (
     <div data-about-page className="glass-shell mx-auto pb-8 pt-6 sm:pt-8">
       <header className="grid gap-4 lg:grid-cols-[1.12fr_1fr]" aria-labelledby="about-title">
@@ -55,31 +65,17 @@ export default async function AboutPage() {
           </div>
         </div>
         <div className="glass-panel grid place-items-center p-4 sm:p-6">
-          <div className="w-full max-w-sm"><ProjectIllustration /></div>
+          <div className="w-full max-w-sm"><ProjectIllustration engine /></div>
         </div>
       </header>
 
-      <nav aria-label={t("contentsLabel")} className="glass-panel mt-4 flex flex-wrap gap-1 p-2 sm:px-4">
+      <nav aria-label={t("contentsLabel")} className="glass-panel mt-4 flex flex-wrap justify-center gap-1 p-2 sm:px-4">
         {chapters.map(({ key, href }) => <a key={key} href={href} className="inline-flex min-h-10 items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium hover:bg-accent/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
           {t(`sections.${key}`)}
         </a>)}
       </nav>
 
       <div className="mt-4 space-y-4">
-        <section className="glass-panel p-6 sm:p-8" id="about-idea" aria-labelledby="about-idea-title">
-          <div className="grid gap-8 lg:grid-cols-[1.2fr_1fr] lg:gap-16">
-            <SectionHeading id="about-idea-title" label={t("idea.label")} title={t("idea.title")} description={t("idea.description")} />
-            <Text className="self-end border-l-2 border-accent/30 pl-5 text-sm text-muted-foreground">{t("idea.detail")}</Text>
-          </div>
-          <div className="mt-8 grid gap-6 sm:grid-cols-3">
-            {principles.map(({ key, icon: Icon }) => <div key={key} className="glass-inset min-w-0 p-5">
-              <Icon aria-hidden="true" className="glass-accent-text mb-4 size-7" />
-              <Heading level={3} className="text-base">{t(`idea.${key}.title`)}</Heading>
-              <Text className="mt-2 text-sm text-muted-foreground">{t(`idea.${key}.description`)}</Text>
-            </div>)}
-          </div>
-        </section>
-
         <section className="glass-panel p-6 sm:p-8" id="about-modules" aria-labelledby="about-scope">
           <SectionHeading id="about-scope" title={t("scopeTitle")} description={t("scopeDescription")} />
           <div className="mt-7 grid gap-5 sm:grid-cols-2">
@@ -99,8 +95,8 @@ export default async function AboutPage() {
         <section className="glass-panel p-6 sm:p-8" id="about-workflow" aria-labelledby="about-workflow-title">
           <SectionHeading id="about-workflow-title" title={t("workflowTitle")} description={t("workflowDescription")} />
           <ol className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {workflow.map(({ key, icon: Icon }, index) => <li key={key} className="glass-inset min-w-0 p-5">
-              <div className="mb-5 flex items-center gap-3"><span className="inline-flex size-11 items-center justify-center glass-icon rounded-xl"><Icon aria-hidden="true" className="size-5" /></span><span aria-hidden="true" className="font-mono text-xs font-semibold glass-accent-text">0{index + 1}</span></div>
+            {workflow.map(({ key, icon: Icon }) => <li key={key} className="glass-inset min-w-0 p-5">
+              <span className="mb-5 inline-flex size-11 items-center justify-center glass-icon rounded-xl"><Icon aria-hidden="true" className="size-5" /></span>
               <Heading level={3} className="text-base">{t(`workflow.${key}.title`)}</Heading>
               <Text className="mt-3 text-sm text-muted-foreground">{t(`workflow.${key}.description`)}</Text>
             </li>)}
@@ -130,7 +126,7 @@ export default async function AboutPage() {
           </ul>
         </section>
 
-        <section className="glass-panel p-6 sm:p-8" aria-labelledby="about-environments-title">
+        <section className="glass-panel p-6 sm:p-8" id="about-environments" aria-labelledby="about-environments-title">
           <SectionHeading id="about-environments-title" title={t("environments.title")} description={t("environments.description")} />
           <div className="mt-7 grid gap-4 lg:grid-cols-3">
             {environments.map(({ key, icon: Icon }) => <article key={key} className={`glass-inset min-w-0 p-5 ${key === "prod" ? "border-dashed" : ""}`}>
@@ -140,20 +136,37 @@ export default async function AboutPage() {
               <Text className="mt-2 text-sm text-muted-foreground">{t(`environments.${key}.description`)}</Text>
             </article>)}
           </div>
+          {services.some(service => service.href) && (
+            <nav aria-labelledby="about-services-title" className="mt-7">
+              <Heading level={3} id="about-services-title" className="mb-4 text-lg">{t("services.label")}</Heading>
+              <ul className="grid gap-4 sm:grid-cols-[repeat(auto-fit,minmax(14rem,1fr))]">
+                {services.map(({ key, href, icon: Icon }) => href && (
+                  <li key={key} className="min-w-0">
+                    <a href={href} className="glass-inset group flex h-full gap-3 p-4 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent">
+                      <Icon aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-accent" />
+                      <div>
+                        <span className="text-sm font-semibold underline-offset-4 group-hover:underline">{t(`services.${key}.title`)}</span>
+                        <Text className="mt-1 text-xs text-muted-foreground">{t(`services.${key}.description`)}</Text>
+                      </div>
+                      <ArrowUpRight aria-hidden="true" className="ml-auto size-4 shrink-0 text-accent" />
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          )}
         </section>
 
-        <section className="glass-panel p-6 sm:p-8" id="about-development" aria-labelledby="about-direction">
-          <SectionHeading id="about-direction" label={t("directionLabel")} title={t("directionTitle")} description={t("directionDescription")} />
+        <section className="glass-panel p-6 sm:p-8" id="about-processing" aria-labelledby="about-processing-title">
+          <SectionHeading id="about-processing-title" title={t("processing.title")} description={t("processing.description")} />
           <div className="mt-7 grid gap-5 sm:grid-cols-2">
             {[{ key: "local", icon: Cpu }, { key: "cloud", icon: Cloud }].map(({ key, icon: Icon }) => <article key={key} className="glass-inset relative min-w-0 overflow-hidden border-dashed p-5 sm:p-6">
               <Icon aria-hidden="true" className="absolute -right-4 -top-4 size-32 text-accent opacity-5" />
               <Icon aria-hidden="true" className="mb-5 size-8 text-accent" />
-              <span className="font-mono text-xs font-semibold glass-accent-text">{t(`ai.${key}Path`)}</span>
-              <Heading level={3} className="mt-3 text-lg">{t(`ai.${key}Title`)}</Heading>
-              <Text className="mt-3 text-sm text-muted-foreground">{t(`ai.${key}Description`)}</Text>
+              <Heading level={3} className="text-lg">{t(`processing.${key}.title`)}</Heading>
+              <Text className="mt-3 text-sm text-muted-foreground">{t(`processing.${key}.description`)}</Text>
             </article>)}
           </div>
-          <div className="mt-5 flex items-start gap-3 rounded-md bg-accent/10 p-4"><ShieldLock aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-accent" /><Text className="text-sm text-muted-foreground">{t("ai.note")}</Text></div>
         </section>
 
         <section aria-labelledby="about-team-cta" className="glass-panel flex flex-col gap-6 p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8">

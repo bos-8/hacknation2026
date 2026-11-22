@@ -4,6 +4,7 @@ import { useMemo, type ReactNode, type MouseEvent, type FormEvent } from "react"
 import { useSearchParams } from "next/navigation";
 import { getPathname } from "@/i18n/navigation";
 import type { AppLocale } from "@/schemas/i18n";
+import { cx } from "@/ui/basic/styles";
 
 export function useTableQuery<Q>(initial: Q, parse: (params: Record<string, string | string[] | undefined>) => Q): Q {
   const searchParams = useSearchParams();
@@ -21,8 +22,8 @@ export function useTableQuery<Q>(initial: Q, parse: (params: Record<string, stri
 }
 
 /** Keep table queries in browser history without navigating the surrounding page. */
-export function TableQuery({ locale, pathname, children, pending }: {
-  locale: AppLocale; pathname: "/forms" | "/admin/users" | "/admin/files" | "/admin/files/ocr" | "/admin/products" | "/admin/tags" | "/admin/queue" | "/admin/settings"; children: ReactNode; pending: boolean;
+export function TableQuery({ locale, pathname, children, pending, className }: {
+  locale: AppLocale; pathname: "/forms" | "/admin/users" | "/admin/files" | "/admin/files/ocr" | "/admin/products" | "/admin/tags" | "/admin/queue" | "/admin/settings"; children: ReactNode; pending: boolean; className?: string;
 }) {
   const path = getPathname({ locale, href: pathname });
   function click(event: MouseEvent<HTMLDivElement>) {
@@ -43,5 +44,5 @@ export function TableQuery({ locale, pathname, children, pending }: {
     for (const [name, value] of form) if (typeof value === "string" && value !== "") url.searchParams.append(name, value);
     if (url.href !== window.location.href) window.history.pushState(null, "", url);
   }
-  return <div aria-busy={pending} className="space-y-1" onClickCapture={click} onSubmitCapture={submit}>{children}</div>;
+  return <div aria-busy={pending} className={cx("space-y-1", className)} onClickCapture={click} onSubmitCapture={submit}>{children}</div>;
 }

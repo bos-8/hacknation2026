@@ -73,7 +73,7 @@ test('navbar server output exposes translated icon labels and the current page b
   const html = renderToString(h(NextIntlClientProvider, { locale: 'pl', timeZone: 'Europe/Warsaw',
     messages: { common: { navigation: { home: 'Start', admin: 'Administracja', ocr: 'OCR', about: 'O projekcie', team: 'Zespół' } } } },
   h(NavbarFrame, null, h(NavigationGroup, { items: primaryNavigation(true), pathname: '/admin', label: 'Nawigacja' }))));
-  assert.match(html, /data-at-top="true"/);
+  assert.match(html, /data-navbar="true"/);
   assert.match(html, /href="\/pl\/admin"/);
   assert.match(html, /href="\/pl\/admin\/files\/ocr"/);
   assert.match(html, /aria-current="page"/);

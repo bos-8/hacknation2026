@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { navbarAtTop, navigationActive, pageBreadcrumbs, primaryNavigation, secondaryNavigation } from '../../apps/web/src/config/navigation.ts';
+import { navigationActive, pageBreadcrumbs, primaryNavigation, secondaryNavigation } from '../../apps/web/src/config/navigation.ts';
 
 test('navigation visibility keeps administration behind the server role decision', () => {
   assert.deepEqual(primaryNavigation(false, false).map(item => item.href), ['/', '/about']);
@@ -61,12 +61,4 @@ test('contextual gallery links point to existing sections and breadcrumbs use kn
   ]);
   assert.deepEqual(pageBreadcrumbs('/test#gallery-buttons'), [{ label: 'home', href: '/' }, { label: 'gallery' }]);
   assert.deepEqual(pageBreadcrumbs('/unknown/private-identifier'), []);
-});
-
-test('navbar scroll thresholds resist oscillation when the sticky header changes height', () => {
-  assert.equal(navbarAtTop(true, 0), true);
-  assert.equal(navbarAtTop(true, 72), false);
-  assert.equal(navbarAtTop(false, 52), false);
-  assert.equal(navbarAtTop(false, 8), true);
-  assert.equal(navbarAtTop(true, 28), true);
 });

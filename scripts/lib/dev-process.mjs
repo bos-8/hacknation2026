@@ -1,6 +1,7 @@
 import net from 'node:net';
 import path from 'node:path';
-import { mkdir, realpath } from 'node:fs/promises';
+import { lstat, mkdir, realpath, unlink } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
 import { spawn, execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import { safePath } from './runtime.mjs';
@@ -11,7 +12,8 @@ export { controlAddress } from './control-address.mjs';
 const execute = promisify(execFile);
 
 /** Ask the owning supervisor to stop; never discover or kill a PID by port/name. */
-export function stopDev(root) {
+export async function stopDev(root) {
+  root = await realpath(root);
   return new Promise((resolve, reject) => {
     const socket = net.createConnection(controlAddress(root));
     let response = '';
@@ -21,6 +23,51 @@ export function stopDev(root) {
     socket.once('error', error => ['ENOENT', 'ECONNREFUSED'].includes(error.code) ? resolve(false) : reject(error));
     socket.once('end', () => response === 'stopped\n' ? resolve(true) : reject(new Error('DEV shutdown did not finish.')));
   });
+}
+
+function listen(server, address) {
+  return new Promise((resolve, reject) => {
+    const ready = () => { server.removeListener('error', failed); resolve(); };
+    const failed = error => { server.removeListener('listening', ready); reject(error); };
+    server.once('error', failed);
+    server.listen(address, ready);
+  });
+}
+
+function connectionError(address) {
+  return new Promise((resolve, reject) => {
+    const socket = net.createConnection(address);
+    socket.setTimeout(1000, () => socket.destroy(new Error('DEV control channel probe timed out.')));
+    socket.once('connect', () => { socket.destroy(); resolve(); });
+    socket.once('error', error => error.code ? resolve(error.code) : reject(error));
+  });
+}
+
+async function socketStats(address) {
+  try { return await lstat(address, { bigint: true }); }
+  catch (error) { if (error.code !== 'ENOENT') throw error; }
+}
+
+async function listenDev(server, address) {
+  try { await listen(server, address); return; }
+  catch (error) { if (error.code !== 'EADDRINUSE' || process.platform !== 'linux') throw error; }
+
+  // Linux releases abstract sockets on exit, even if a recovery process is killed.
+  const digest = createHash('sha256').update(address).digest('hex');
+  const recovery = net.createServer(socket => socket.destroy());
+  await listen(recovery, `\0formiq-dev-recovery-${digest}`);
+  try {
+    const existing = await socketStats(address);
+    if (existing?.isSocket() && await connectionError(address) === 'ECONNREFUSED') {
+      const current = await socketStats(address);
+      if (current?.isSocket() && current.dev === existing.dev && current.ino === existing.ino) {
+        await unlink(address);
+      }
+    }
+    await listen(server, address);
+  } finally {
+    await new Promise(resolve => recovery.close(resolve));
+  }
 }
 
 /** A workspace-scoped lock and stop channel, held throughout setup and runtime. */
@@ -44,12 +91,14 @@ export async function ownDev(root, action) {
       else if (request.length > 5 || !'stop\n'.startsWith(request)) socket.destroy();
     });
   });
-  await new Promise((resolve, reject) => {
-    server.once('error', error => reject(new Error(error.code === 'EADDRINUSE'
-      ? 'DEV is already running or another lifecycle command is active. Use pnpm dev:stop first.'
-      : `Cannot open DEV control channel (${error.code}).`)));
-    server.listen(controlAddress(root), resolve);
-  });
+  try { await listenDev(server, controlAddress(root)); }
+  catch (error) {
+    if (error.code === 'EADDRINUSE') {
+      throw new Error('DEV is already running or another lifecycle command is active. Check the original DEV terminal.');
+    }
+    if (!error.code) throw error;
+    throw new Error(`Cannot open DEV control channel (${error.code}).`);
+  }
   const interrupt = () => controller.abort();
   process.once('SIGINT', interrupt);
   process.once('SIGTERM', interrupt);

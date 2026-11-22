@@ -1,14 +1,14 @@
 {
   "about": {
     "metadataTitle": "O projekcie | FORMIQ",
-    "eyebrow": "Poznaj FORMIQ",
-    "title": "Jedna baza. Wiele zastosowań.",
-    "description": "FORMIQ łączy dostęp użytkowników, pliki i zadania w jeden fundament aplikacji biznesowej.",
-    "scopeTitle": "Od tożsamości użytkownika po wynik zadania",
+    "eyebrow": "O projekcie",
+    "title": "Architektura FORMIQ",
+    "description": "Aplikacja Next.js obsługuje interfejs i API. Pyworker odczytuje dokumenty i przekształca wykryte pola w strukturę formularza.",
+    "scopeTitle": "Moduły aplikacji",
     "scope": {
       "identity": {
         "title": "Tożsamość i dostęp",
-        "description": "Keycloak odpowiada za tożsamość, a aplikacja obsługuje sesję i sprawdza uprawnienia do operacji. Sam widoczny przycisk nie zastępuje kontroli dostępu po stronie serwera.",
+        "description": "Keycloak dostarcza tożsamość przez OIDC, Better Auth obsługuje sesję, a serwer sprawdza role i dostęp do zasobów.",
         "first": "Logowanie i sesje",
         "second": "Role użytkowników",
         "third": "Dostęp do zasobów"
@@ -35,29 +35,26 @@
         "third": "Monitoring usług"
       }
     },
-    "workflowTitle": "Jak to działa",
+    "workflowTitle": "Przepływ danych formularza",
     "workflow": {
-      "access": {
-        "title": "Zaloguj się",
-        "description": "Aplikacja rozpoznaje użytkownika i sprawdza jego sesję. Role określają zakres dostępnych operacji."
+      "storage": {
+        "title": "Zapis oryginału",
+        "description": "Serwer Web zapisuje plik w SeaweedFS przez API S3, a jego metadane w PostgreSQL."
       },
-      "work": {
-        "title": "Pracuj na danych",
-        "description": "Dodajesz pliki, przeglądasz katalogi i aktualizujesz dane w granicach swojego dostępu."
+      "queue": {
+        "title": "Zlecenie analizy",
+        "description": "API zwraca HTTP 202 i identyfikator operacji. Zadanie form.process trafia do kolejki pg-boss."
       },
-      "process": {
-        "title": "Uruchom zadanie",
-        "description": "Operacja w tle otrzymuje własny identyfikator. Kolejka przekazuje ją do odpowiedniego wykonawcy i zapisuje stan."
+      "worker": {
+        "title": "Odczyt dokumentu",
+        "description": "Konsument kolejki pobiera oryginał z S3 i przekazuje go z metadanymi do Pyworkera."
       },
       "result": {
-        "title": "Sprawdź rezultat",
-        "description": "Odczytujesz postęp i wynik zadania. Błąd lub ponowienie są osobnymi stanami, a nie ukrytym oczekiwaniem."
+        "title": "Zapis i eksport",
+        "description": "Serwer zapisuje wynik w PostgreSQL. Pole draft zawiera JSON COI. W trybie pipeline wynik obejmuje również model pośredni i współrzędne wykrytych pól."
       }
     },
     "technologyTitle": "Technologie z konkretną rolą",
-    "directionLabel": "Planowany rozwój",
-    "directionTitle": "Lokalne modele i AI przez API",
-    "directionDescription": "Kolejny kierunek to połączenie lokalnego przetwarzania na CPU z możliwościami zewnętrznych modeli językowych. Każda ścieżka ma wyraźnego właściciela i określone zasady przekazywania danych.",
     "teamLink": "Poznaj zespół",
     "homeLink": "Strona główna",
     "team": {
@@ -76,15 +73,19 @@
       "midDeveloper": "Mid Developer",
       "ciCd": "CI/CD",
       "jakub": {
-        "motto": "Wielbiciel chińskich modeli"
+        "bio": "Rozwija funkcje AI w FORMIQ i łączy je z interfejsem użytkownika.",
+        "motto": "Chińskie modele są świetne"
       },
       "natalia": {
+        "bio": "Koordynuje prace nad FORMIQ, dba o komunikację i wspiera zespół w sprawach organizacyjnych.",
         "motto": "Będzie dobrze ;)"
       },
       "yurii": {
+        "bio": "Rozwija frontend FORMIQ i przekłada możliwości AI na funkcje dostępne w aplikacji.",
         "motto": "Gemini robi brrrrrrr"
       },
       "stanislaw": {
+        "bio": "Rozwija backend FORMIQ, w tym logikę serwerową i obsługę danych.",
         "motto": "Nie ma to jak dobry pipeline"
       },
       "kacper": {
@@ -98,36 +99,18 @@
       "profilePlaceholder": "{provider}: link do uzupełnienia",
       "aboutLink": "O projekcie"
     },
-    "intro": "Projekt porządkuje elementy, które powracają w wielu systemach: użytkowników, uprawnienia, dokumenty, dane i operacje w tle. Wspólny rdzeń pozwala rozwijać kolejne funkcje bez budowania tych podstaw od początku.",
+    "intro": "Oryginały trafiają do magazynu obiektowego, wyniki do PostgreSQL, a kolejka pg-boss pozwala przetwarzać formularze w tle.",
     "contentsLabel": "Na tej stronie",
     "sections": {
-      "idea": "Idea projektu",
-      "modules": "Możliwości",
-      "workflow": "Sposób działania",
+      "modules": "Moduły",
+      "workflow": "Przepływ danych",
       "architecture": "Architektura",
-      "development": "Kierunek rozwoju"
+      "environments": "Środowiska",
+      "processing": "Odczyt dokumentów"
     },
-    "currentLabel": "Dostępna podstawa PoC",
-    "idea": {
-      "label": "Dlaczego FORMIQ",
-      "title": "Mniej powtarzania. Więcej miejsca na właściwy produkt.",
-      "description": "Logowanie, obsługa plików czy kontrola dostępu to nie osobne dodatki. To fundament codziennej pracy z aplikacją. FORMIQ zbiera je w jednym projekcie, z jasnym podziałem odpowiedzialności.",
-      "detail": "To rozwijany proof of concept: baza do sprawdzania pomysłów i integracji. Działające moduły można rozszerzać o kolejne procesy biznesowe; gotowość produkcyjna wymaga osobnej weryfikacji.",
-      "reuse": {
-        "title": "Wspólne elementy",
-        "description": "Jedne komponenty i zasady działania w kolejnych częściach aplikacji."
-      },
-      "access": {
-        "title": "Jasny dostęp",
-        "description": "Role i własność zasobów określają, kto może wykonać daną operację."
-      },
-      "visibility": {
-        "title": "Widoczny postęp",
-        "description": "Stan zadań i usług można sprawdzić w panelu administracyjnym."
-      }
-    },
-    "scopeDescription": "Cztery obszary współpracują ze sobą. Każdy ma własną odpowiedzialność, a użytkownik korzysta ze wspólnego interfejsu.",
-    "workflowDescription": "Zwykłe operacje przechodzą przez backend Web. Prace wymagające przetwarzania w tle mogą korzystać z kolejki i niezależnego wykonawcy.",
+    "currentLabel": "Prototyp",
+    "scopeDescription": "Serwer Web zarządza uprawnieniami i danymi, a worker wykonuje analizę dokumentów.",
+    "workflowDescription": "Przesłanie pliku i rozpoczęcie analizy to osobne operacje API.",
     "architecture": {
       "supportTitle": "Usługi wspierające backend",
       "label": "Pod powierzchnią",
@@ -176,18 +159,36 @@
         "description": "Oddzielne środowisko, konfiguracja i procedury utrzymania. Wymaga osobnej walidacji przed udostępnieniem."
       }
     },
-    "ai": {
-      "localTitle": "Małe modele lokalnie",
-      "localDescription": "Pyworker ma wykonywać zadania takie jak wykrywanie danych wrażliwych i klasyfikacja tekstu, z ograniczeniami pamięci oraz współbieżności.",
-      "localPath": "PYWORKER → CPU",
-      "cloudTitle": "LLM przez backend Web",
-      "cloudDescription": "Backend Web ma wywoływać OpenAI API dla rozmów, podsumowań i analiz. Długie operacje będą mogły korzystać z kolejki.",
-      "cloudPath": "WEB → OPENAI API",
-      "note": "Obsługa modeli, maskowanie PII i integracja OpenAI nie są jeszcze wdrożone. Gdy maskowanie będzie wymagane, jego niepowodzenie ma blokować wysyłkę danych do API."
-    },
     "teamCta": {
       "title": "Za kodem stoją ludzie",
       "description": "Poznaj osobę odpowiedzialną za architekturę i kierunek rozwoju oraz miejsce dla kolejnych współtwórców."
+    },
+    "processing": {
+      "title": "Odczyt dokumentów",
+      "description": "Konfiguracja Pyworkera określa sposób odczytu tekstu i rozpoznawania pól.",
+      "local": {
+        "title": "Przetwarzanie lokalne",
+        "description": "Docling odczytuje tekst PDF, PaddleOCR rozpoznaje skany i obrazy, a lokalny model Qwen generuje strukturę formularza przez vLLM."
+      },
+      "cloud": {
+        "title": "Przetwarzanie przez Eden AI",
+        "description": "W trybie vision Pyworker wysyła obrazy stron lub lokalnie odczytaną treść do modelu Qwen przez Eden AI. W trybie OCR wysyła skany do odczytu i generuje strukturę bez modelu językowego."
+      }
+    },
+    "services": {
+      "label": "Usługi projektu",
+      "authConsole": {
+        "title": "Konsola administracyjna Keycloak",
+        "description": "Zarządzaj użytkownikami i rolami w Keycloak."
+      },
+      "keycloak": {
+        "title": "Konfiguracja OIDC Keycloak",
+        "description": "Sprawdź adresy usług logowania i kluczy publicznych."
+      },
+      "swagger": {
+        "title": "Swagger UI pyworkera",
+        "description": "Przeglądaj i testuj endpointy API workera."
+      }
     }
   }
 }
