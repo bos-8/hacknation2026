@@ -33,7 +33,7 @@ as the label. Preserve every paragraph and footnote on every page in notes. Give
 Count printed header rows and columns when numbering. Exclude the header itself from the
 answer bbox. If a response area has no section heading use null for section.
 Include table_headers, an array of printed headers with text, bbox and axis ("row" or
-"column"). Keep answers out of labels. For example a box labelled "Nazwisko" containing
+"column"). Keep answers out of labels. Omit long sequences of dots used as writing guides from all returned text, notes, labels and values. Preserve punctuation, decimal numbers and actual answers. For example a box labelled "Nazwisko" containing
 "Nowak" has label "Nazwisko" and value "Nowak". Preserve leading zeros. If adjacent rows
 share a label, assign each observed value only to its own answer area.
 For a combined name field such as "Imię i nazwisko", keep one control and transcribe the

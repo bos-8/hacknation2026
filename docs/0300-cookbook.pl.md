@@ -5,6 +5,9 @@ tags: [rozwój, konfiguracja, dev, qa]
 
 # Przewodnik deweloperski FORMIQ
 
+Na nowym komputerze zacznij od [całego PoC w Docker Compose](0307-docker-poc.pl.md). Wystarczą Docker Engine, Compose oraz aktywny adres i klucz Harness API.
+
+
 | Zadanie | Gdzie zacząć |
 | --- | --- |
 | Uruchomić projekt na nowym komputerze | [Pierwszy start i adresy usług](../README.md), [Compose, środowiska i TLS](0302-local-docker.pl.md) |

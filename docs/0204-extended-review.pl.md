@@ -5,6 +5,9 @@ tags: [formularze, formir, pyworker, coi]
 
 # Profil EXTENDED i przegląd wniosku o nadpłatę
 
+Model `form_ir` i decyzje profilu pozostają osobne od eksportu `draft`. Odczyt całej treści jest dostępny dodatkowo w `document_content`. Wzbogacenie domenowe wymaga źródła i przeglądu, a działający eksport nie potwierdza samodzielnie aktualności prawnej profilu ani zgodności z rzeczywistym importerem. [Kontrakt wyniku](0208-document-redaction.pl.md)
+
+
 FORMIQ rozpoznaje wersję blankietu Urzędu Gminy Ulan-Majorat oznaczoną w katalogu jako `D03`. Dla tej wersji buduje interaktywny wniosek na podstawie odczytanego dokumentu i profilu procedury. Urzędnik może prześledzić pochodzenie pola, rozstrzygnąć propozycje i pobrać konfigurację COI. Szkic ma status `DRAFT_NOT_FOR_SUBMISSION`.
 
 ## Jak Pyworker wybiera profil

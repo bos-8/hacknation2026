@@ -5,6 +5,13 @@ tags: [operacje, diagnostyka, testy]
 
 # Instrukcje operacyjne
 
+## Diagnostyka startu Compose PoC
+
+Użyj `docker compose ps -a` i `docker compose logs --tail 100 preflight maintenance web queue pyworker`. Poprawne zakończenie usług jednorazowych oznacza kod 0. Brak klucza lub niepoprawny adres zatrzymuje start. Wygaśnięcie dostępu wymaga autoryzowanej aktualizacji po obu stronach API, a nie restartu. HTTP 429 oznacza zajęte cztery miejsca analiz po stronie serwera. [Procedura PoC](0307-docker-poc.pl.md) · [Kody API](0209-harness-api.pl.md)
+
+Przy brakujących stronach sprawdź liczbę stron `document_content`, źródłowy format i komunikat etapu. Przy niezgodnych ramkach wykonaj ponowną analizę po aktualizacji workera. Geometria skanu wymaga kontroli wizualnej. Nie umieszczaj kluczy ani całych dokumentów w zgłoszeniu diagnostycznym.
+
+
 | Objaw | Co sprawdzić |
 | --- | --- |
 | Przeglądarka nie otwiera aplikacji | W DEV sprawdź, czy działa proces Web uruchamiany przez `pnpm dev` i czy port 3000 jest wolny przed startem. W QA sprawdź usługę `web` poleceniami `pnpm qa:status` i `pnpm qa:logs`. Nie ma Nginx ani zastępczej strony 502. |

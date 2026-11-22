@@ -2,7 +2,7 @@ import { readFile } from 'node:fs/promises';
 import { synchronizeRealmRoles } from './realm-roles.mjs';
 
 const env = process.env;
-const base = 'http://127.0.0.1:8080';
+const base = `http://127.0.0.1:${env.KC_HTTP_PORT || '8080'}`;
 const encode = encodeURIComponent;
 const resolve = value => {
   if (typeof value === 'string') return value.replace(/\$\{([A-Z0-9_]+)(?::([^}]*))?\}/g, (_, name, fallback) => {
@@ -28,6 +28,14 @@ async function main() {
   }
   if (!ready) throw new Error('Keycloak did not become ready for realm bootstrap');
   const realm = resolve(JSON.parse(await readFile('/opt/keycloak/data/import/formiq-realm.json', 'utf8')));
+  const localHttp = env.FORMIQ_LOCAL_HTTP === 'true';
+  if (localHttp) {
+    for (const value of [env.KC_HOSTNAME, env.APP_PUBLIC_URL]) {
+      const url = new URL(value);
+      if (url.protocol !== 'http:' || url.hostname !== '127.0.0.1') throw new Error('PoC HTTP requires loopback public URLs');
+    }
+    realm.sslRequired = 'none';
+  }
   for (const key of ['ssoSessionIdleTimeout', 'ssoSessionMaxLifespan', 'clientSessionIdleTimeout', 'clientSessionMaxLifespan']) {
     realm[key] = Number(realm[key]);
     if (!Number.isInteger(realm[key]) || realm[key] < 60) throw new Error(`Invalid ${key}`);
@@ -89,6 +97,7 @@ async function main() {
   }
   await api('PUT', `${route}/users/profile`, profile);
   await api('PUT', '/realms/master', { displayName: realm.displayName, displayNameHtml: realm.displayNameHtml,
+    ...(localHttp ? { sslRequired: 'none' } : {}),
     loginTheme: realm.loginTheme, accountTheme: realm.accountTheme,
     internationalizationEnabled: true, supportedLocales: ['pl', 'en'], defaultLocale: 'pl' });
 

@@ -5,6 +5,11 @@ tags: [postgresql, prisma, migracje]
 
 # Bazy PostgreSQL i Prisma
 
+## Baza w PoC
+
+W projekcie `formiqpoc` migracje i seed wykonuje jednorazowy kontener `maintenance` przed startem aplikacji. Skrypt `scripts/poc-seed-users.mjs` zakłada brakujące konta admin i user w Keycloak oraz wiąże je z bazą aplikacji przez UUID Keycloak. Zachowuje istniejące konta i hasła oraz tworzy brakujące powiązanie OIDC `provider/subject` dla zweryfikowanego UUID. [Przygotowanie całego stosu](0307-docker-poc.pl.md)
+
+
 | Baza | Właściciel schematu | Co przechowuje |
 | --- | --- | --- |
 | `app_db` | Prisma w `packages/database` | Konta powiązane z dostawcą, sesje Better Auth, katalogi, wersje plików, analizy OCR, zatwierdzenia, ustawienia i historię zmian. |

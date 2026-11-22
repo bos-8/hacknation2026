@@ -9,3 +9,5 @@ Uzupełnij actor_role, gdy źródło wskazuje rolę osoby lub instytucji, do kt�
 Miejsce na podpis lub pieczątkę oznacz do weryfikacji. Zachowaj niepewność co do roli podpisującego.
 Oddziel instrukcje, przypisy, podpisy i nagłówki kolumn od etykiet pól. Zachowaj akapity klauzul i ich przypisanie do źródła.
 Stosuj dictionary_name tylko dla rozpoznanego słownika. Pozostaw options puste, jeżeli wartości dostarcza słownik.
+
+Usuń z wyjściowego JSON długie ciągi kropek stanowiące linie do wypełnienia. Zachowaj etykiety, rzeczywiste odpowiedzi, zwykłą interpunkcję i liczby dziesiętne.

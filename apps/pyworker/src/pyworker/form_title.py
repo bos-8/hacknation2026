@@ -30,3 +30,17 @@ def visual_title(model_title, native):
             if not model_title or printed.casefold().startswith(model_title.casefold()):
                 return printed[:255]
     return model_title
+
+
+WRITING_GUIDE = re.compile(r"(?:[.·…][ \t]*){4,}")
+
+
+def clean_writing_guides(value):
+    """Remove printed writing guides from exported JSON string values."""
+    if isinstance(value, str):
+        return WRITING_GUIDE.sub("", value).strip()
+    if isinstance(value, list):
+        return [clean_writing_guides(item) for item in value]
+    if isinstance(value, dict):
+        return {key: clean_writing_guides(item) for key, item in value.items()}
+    return value

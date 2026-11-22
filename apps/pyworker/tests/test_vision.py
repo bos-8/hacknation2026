@@ -103,6 +103,31 @@ class VisionTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(provider.await_count, 2)
         self.assertEqual(pages[0][0].notes, ["Informacja."])
 
+    def test_writing_guides_are_removed_without_altering_numbers(self):
+        from pyworker.form_title import clean_writing_guides
+
+        self.assertEqual(
+            clean_writing_guides({"notes": ["Imię ........", "Kwota 12.50 zł.", "Adres . . . . ."]}),
+            {"notes": ["Imię", "Kwota 12.50 zł.", "Adres"]},
+        )
+
+    def test_printed_value_and_label_use_source_rectangles(self):
+        from pyworker.table_geometry import align_printed_text
+
+        page = VisualPage(notes=[], fields=[{
+            "label": "Nazwisko", "kind": "text", "value": "Nowak",
+            "bbox": [100, 100, 500, 200], "label_bbox": [100, 200, 300, 250],
+        }])
+        align_printed_text(page, [("Nazwisko:", (50, 300, 200, 325)),
+                                  ("Nowak", (220, 300, 400, 325))])
+        self.assertEqual(page.fields[0].label_bbox, (50, 300, 200, 325))
+        self.assertEqual(page.fields[0].bbox, (220, 300, 400, 325))
+        repeated = page.model_copy(deep=True)
+        repeated.fields[0].bbox = (100, 100, 500, 200)
+        align_printed_text(repeated, [("Nowak", (0, 0, 10, 10)),
+                                      ("Nowak", (20, 20, 30, 30))])
+        self.assertEqual(repeated.fields[0].bbox, (100, 100, 500, 200))
+
     def test_printed_answer_returned_with_its_label_is_editable(self):
         page = VisualPage(
             notes=[],

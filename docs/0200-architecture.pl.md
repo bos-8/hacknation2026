@@ -5,11 +5,14 @@ tags: [architektura, nextjs, prisma, keycloak, ocr]
 
 # Architektura FORMIQ
 
+Aktualny start całego stosu opisuje [Docker Compose PoC](0307-docker-poc.pl.md), a modele, kontrakty, limity i stały termin dostępu opisuje [Harness API](0209-harness-api.pl.md). Dodatkowy wynik treści i geometria są opisane w [kontrakcie dokumentu](0208-document-redaction.pl.md).
+
+
 [Wymagania aplikacji i kryteria COI](0203-application-requirements.pl.md) · [Profil EXTENDED i przegląd wniosku o nadpłatę](0204-extended-review.pl.md) · [Dokumenty i API panelu administracyjnego](0208-document-redaction.pl.md)
 
 ## Działający stos
 
-FORMIQ działa bez Nginx. Przeglądarka łączy się przez HTTPS bezpośrednio z Next.js, a podczas logowania z Keycloak. Web przechowuje sesje Better Auth i dane aplikacji w PostgreSQL przez Prisma. Keycloak odpowiada za poświadczenia i własną bazę. W DEV Web i oba workery działają na hoście, w QA w kontenerach. [Porty, środowiska i certyfikaty](0302-local-docker.pl.md)
+FORMIQ działa bez Nginx. PoC łączy przeglądarkę z Next.js i Keycloak przez HTTP na 127.0.0.1. DEV i klasyczne QA zachowują HTTPS. Web przechowuje sesje Better Auth i dane aplikacji w PostgreSQL przez Prisma. Keycloak odpowiada za poświadczenia i własną bazę. W DEV Web i oba workery działają na hoście, w QA w kontenerach. [Porty, środowiska i certyfikaty](0302-local-docker.pl.md)
 
 ```text
 Przeglądarka → Next.js (HTTPS) ↔ Keycloak (OIDC) → keycloak_db
@@ -31,7 +34,7 @@ W panelu Formularze przycisk **Wgraj formularz** wysyła oryginał do Next.js (`
 
 Przycisk **Wyślij do przetworzenia** dodaje zadanie do kolejki pg-boss (`form.process`). Powiadomienie uprzedza, że analiza może potrwać kilka minut. Po pobraniu zadania worker Next.js pobiera oryginalne bajty z S3 i wysyła multipart z plikiem oraz metadanymi JSON pochodzącymi z sesji i bazy. Pyworker sprawdza kolejno płatność, metadane nadawcy i zgodność typu dokumentu z rozszerzeniem. Brak płatności zwraca HTTP 402 `payment_required`.
 
-W trybie integracyjnym `PYWORKER_FORM_MODE=eden` Pyworker korzysta z Eden AI. Prywatny `EDENAI_API_KEY` uwierzytelnia upload, OCR i Chat Completions. Domyślny model LLM dla DEV to `qwen3.8-27b`. Pyworker wywołuje go przez Eden AI Chat Completions. Adresy uploadu i Chat Completions oraz modele są w `apps/pyworker/.env.example`. `EDENAI_TIMEOUT_SECONDS` ustala wspólny limit uploadu, OCR i LLM. Wartość domyślna to 300 sekund, a dopuszczalny zakres to 1–300 sekund. Po zmianie prywatnego `.env` uruchom ponownie proces DEV. Przekroczenie limitu kończy żądanie kodem HTTP 504 i komunikatem w panelu. JPG, PNG i strony skanowanego PDF są renderowane jako obrazy i transkrybowane przez Qwen-VL przez Chat Completions (model z `EDENAI_VISION_MODEL`). PDF z kompletną warstwą tekstową może być odczytany lokalnie. TXT i JSON trafiają do modelu jako tekst. Z DOCX Pyworker odczytuje lokalnie akapity i wiersze tabel, a do modelu przekazuje uzyskany tekst. Pozostałe pliki są przekazywane do modelu jako załączniki, których obsługa zależy od wybranego modelu. Eden AI otrzymuje dokument lub odczytany tekst i może przechowywać wgrane pliki zgodnie ze swoją polityką retencji. [Upload Eden AI](https://www.edenai.co/docs/v3/llms/file-upload)
+W trybie integracyjnym `PYWORKER_FORM_MODE=eden` Pyworker korzysta z Eden AI. Prywatny `EDENAI_API_KEY` uwierzytelnia upload, OCR i Chat Completions. Domyślny model LLM dla DEV to `qwen3.8-27b`. Pyworker wywołuje go przez Eden AI Chat Completions. Adresy uploadu i Chat Completions oraz modele są w `apps/pyworker/.env.example`. `EDENAI_TIMEOUT_SECONDS` ustala wspólny limit uploadu, OCR i LLM. Wartość domyślna to 300 sekund, a dopuszczalny zakres to 1–300 sekund. Po zmianie prywatnego `.env` uruchom ponownie proces DEV. Przekroczenie limitu kończy żądanie kodem HTTP 504 i komunikatem w panelu. JPG, PNG i strony skanowanego PDF są renderowane jako obrazy i transkrybowane przez Qwen-VL przez Chat Completions (model z `EDENAI_VISION_MODEL`). PDF z kompletną warstwą tekstową może być odczytany lokalnie. TXT i JSON trafiają do modelu jako tekst. Z DOCX Pyworker odczytuje lokalnie akapity i wiersze tabel, a do modelu przekazuje uzyskany tekst. Binarny DOC odczytuje lokalnie Apache POI. XLSX i ODS są kompilowane z komórek arkusza. Eden AI otrzymuje dokument lub odczytany tekst i może przechowywać wgrane pliki zgodnie ze swoją polityką retencji. [Upload Eden AI](https://www.edenai.co/docs/v3/llms/file-upload)
 
 Tryb `pipeline` używa Docling, Apache POI, PaddleOCR‑VL‑1.6 i pomocniczego PP‑StructureV3. Klasyfikuje strony PDF indywidualnie, a wyniki odczytu wiąże z numerami stron i współrzędnymi, gdy źródło ma stały układ. Qwen zwraca pola i identyfikatory fragmentów w odpowiedzi zgodnej ze schematem ekstrakcji. Pyworker sprawdza odwołania, tworzy JSON COI i dołącza `field_locations`. Instrukcja uruchomienia jest w [README](../README.md#lokalny-pipeline-formularzy).
 
@@ -54,13 +57,13 @@ Po pierwszym odczycie Pyworker porównuje położenie pól z liniami tabeli. Gdy
 
 ### Projektowanie stron przez AWS AgentCore
 
-W trybie `agentcore` pyworker analizuje PDF i obrazy dotychczasową ścieżką wizyjną. Po odczycie układu i tekstu wysyła obserwacje każdej strony w osobnej sesji `InvokeHarness`. Harness dostaje schemat JSON odpowiedzi i identyfikatory pól. Nadaje sekcjom tytuły i grupuje pola. Po stronie workera pozostają współrzędne, przypisanie do stron, wartości, tekst źródłowy i kompilacja do pełnego schematu COI. Jeżeli model pominie identyfikator, pole pozostaje w sekcji z pierwszego odczytu. Błąd lub urwany strumień AWS przerywa konwersję.
+W trybie `agentcore` pyworker analizuje PDF i obrazy dotychczasową ścieżką wizyjną. Po odczycie układu i tekstu wysyła obserwacje każdej strony przez HTTPS API, które uruchamia osobną sesję `InvokeHarness`. Harness dostaje schemat JSON odpowiedzi i identyfikatory pól. Nadaje sekcjom tytuły i grupuje pola. Po stronie workera pozostają współrzędne, przypisanie do stron, wartości, tekst źródłowy i kompilacja do pełnego schematu COI. Jeżeli model pominie identyfikator, pole pozostaje w sekcji z pierwszego odczytu. Błąd lub urwany strumień AWS przerywa konwersję.
 
-W lokalnym DEV `harness_fermiq` w regionie Frankfurt używa modelu `qwen.qwen3-vl-235b-a22b-instruct` przez Bedrock Mantle z protokołem `chat_completions`. Połączenie wymaga dostępu do AWS oraz Eden AI. Model etapu wizyjnego wybiera osobno `EDENAI_VISION_MODEL`. Tryb lokalny `pipeline` jest dostępny do działania bez dostawców zewnętrznych.
+W konfiguracji serwera `harness_fermiq` w regionie Frankfurt używa modelu `qwen.qwen3-vl-235b-a22b-instruct` przez Bedrock Mantle z protokołem `chat_completions`. Klient korzysta z chronionego HTTPS API bez profilu AWS. Serwer obsługuje również proxy OCR do Eden AI. Przy bezpośrednim połączeniu z Eden model etapu wizyjnego wybiera `EDENAI_VISION_MODEL`. Proxy API ustala model OCR po stronie serwera. Tryb lokalny `pipeline` jest dostępny do działania bez dostawców zewnętrznych.
 
 ## Projekt konwertera COI
 
-Poniższy schemat, ścieżki HTTP i limity opisują zaprojektowany wariant plik → JSON. Jego odbiór wymaga m.in. próby importu w systemie COI. [Kryteria odbioru](9999-backlog.pl.md)
+Poniższy schemat, ścieżki HTTP i limity zachowują projekt samodzielnego wariantu plik → JSON. Aktualny panel korzysta z kolejki `form.process` i prywatnego `POST /v1/forms/process`. Jego odbiór wymaga m.in. próby importu w systemie COI. [Kryteria odbioru](9999-backlog.pl.md)
 
 ```text
 Przeglądarka ──HTTPS──► apps/web (Node + Next.js)
@@ -100,3 +103,25 @@ Czytnik lokalnego pipeline używa PaddleOCR-VL 1.6 oraz PP-StructureV3 z jawnym 
 Pierwsza niepoprawna odpowiedź JSON etapu wizyjnego może zostać ponowiona raz, o ile w budżecie konwersji zostało co najmniej 10 sekund. Limit odpowiedzi i błędy dostawcy są przekazywane do aplikacji.
 
 Wynik konwersji zawiera dodatkowo `document_content` z numerowanymi stronami, odczytanym tekstem oraz blokami źródłowymi, ich rodzajem i dostępnymi współrzędnymi. Next.js zachowuje go w wyniku analizy i udostępnia jako osobny plik `.content.json`. Stare wyniki wymagają ponownej analizy, aby otrzymać ten element. Dla skanów zawartość obejmuje tekst faktycznie rozpoznany przez OCR.
+
+### Okno dostępu do Harness
+
+`PYWORKER_HARNESS_EXPIRES_AT` wymaga stałego terminu ISO 8601 ze strefą czasową. Pyworker odrzuca nowe konwersje przed OCR oraz przed wysłaniem strony do AWS po upływie tego terminu. Restart procesu zachowuje datę wygaśnięcia.
+
+W AWS hook `beforeInvocation` o nazwie `fixed_expiry` wywołuje funkcję Lambda sprawdzającą tę samą datę. Po terminie zwraca `deny`, a stream kończy się `hook_stopped`. `failureMode=deny` blokuje pracę modelu także przy awarii hooka. Wcześniej rozpoczęte wywołanie może dokończyć pracę. Administrator może zmienić konfigurację lub usunąć hook.
+
+Źródło i instalator są w `infra/aws/harness/`. Instalator przyjmuje jawny `--expires-at` i nie liczy kolejnych 12 godzin od restartu. Rola funkcji nie ma uprawnień do zasobów, a rola wykonawcza harnessu uzyskuje tylko `lambda:InvokeFunction` na tę konkretną funkcję.
+
+### HTTPS API dla uruchomień na innych komputerach
+
+Pyworker korzysta z `PYWORKER_HARNESS_API_URL` i `PYWORKER_HARNESS_API_KEY`. Wysyła POST z Bearer oraz obiektem `text/observations`. Endpoint Lambda ma rolę pozwalającą wywołać wyłącznie wskazany Harness. Klient nie otrzymuje uprawnień ani poświadczeń AWS. Funkcja wymaga poprawnego klucza, ogranicza rozmiar wejścia oraz równoległość do 4 i sprawdza stałą datę wygaśnięcia. Dodatkowy hook chroni bezpośrednie wywołania Harnessu. Prompt i docelowy ARN są ustalone po stronie API i nie mogą być nadpisane przez klienta.
+
+Instalator HTTPS jest w `infra/aws/harness/install_api.py` i przyjmuje `--profile`, `--region` oraz `--harness-id`. Wykonuje go administrator przy wdrażaniu. Do zwykłej pracy pyworkera wystarczają adres HTTPS, klucz Bearer i data wygaśnięcia w jego prywatnym .env. Limit czterech równoległych analiz wymuszają atomowe blokady DynamoDB wygasające po pięciu minutach. Tabela zawiera jedynie właściciela i termin blokady, bez treści dokumentów.
+
+### Docker QA PoC w jednym poleceniu
+
+`docker compose up --build -d --wait` z katalogu repozytorium ładuje główny `compose.yaml`. Sekcja include scala bazowy Compose, QA i nakładki PoC oraz wczytuje publiczny `.env.poc` i ignorowany `.env.poc.local`. W prywatnym pliku klient uzupełnia `PYWORKER_HARNESS_API_URL` i `PYWORKER_HARNESS_API_KEY`. Pozostałe ustawienia pochodzą z publicznego pliku. Połączenia z bazą są interpolowane bezpośrednio przez Compose.
+
+Usługa `preflight` sprawdza konfigurację HTTPS zewnętrznego API, klucz i stałą datę wygaśnięcia. Lokalny PoC używa HTTP i nie tworzy certyfikatów. Usługa `maintenance` czeka na gotowość bazy i Keycloak, wykonuje migracje i seed oraz zakłada brakujące konta `admin/admin` (ROOT) i `user/user` (USER) w Keycloak i bazie aplikacji. Web, kolejka oraz pyworker zależą od poprawnego zakończenia maintenance.
+
+Całe budowanie i uruchamianie odbywa się w Dockerze. Powtórne wykonanie komendy zachowuje wolumeny i istniejące konta. Aplikacja działa pod `http://127.0.0.1:4100`; porty są publikowane na loopbackie. Endpoint AWS obsługuje zarówno OCR przez Eden, jak i projektowanie strony przez Harness; klucz Eden pozostaje po stronie serwera.

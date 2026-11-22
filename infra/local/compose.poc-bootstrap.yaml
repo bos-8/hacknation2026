@@ -1,0 +1,69 @@
+services:
+  preflight:
+    image: ${PYTHON_IMAGE}
+    restart: "no"
+    network_mode: none
+    environment:
+      APP_PUBLIC_URL: "${APP_PUBLIC_URL}"
+      AUTH_PUBLIC_URL: "${AUTH_PUBLIC_URL}"
+      PYWORKER_HARNESS_API_URL: "${PYWORKER_HARNESS_API_URL:?Set Harness API URL}"
+      PYWORKER_HARNESS_API_KEY: "${PYWORKER_HARNESS_API_KEY:?Set Harness API key}"
+      PYWORKER_HARNESS_EXPIRES_AT: "${PYWORKER_HARNESS_EXPIRES_AT}"
+    command:
+      - python
+      - -c
+      - |
+        import os
+        from urllib.parse import urlsplit
+        from datetime import datetime, timezone
+        for name in ("APP_PUBLIC_URL", "AUTH_PUBLIC_URL"):
+            local = urlsplit(os.environ[name])
+            assert local.scheme == "http" and local.hostname == "127.0.0.1" and not local.username and not local.password and local.path in ("", "/") and not local.query and not local.fragment, "PoC requires HTTP loopback public URLs"
+        url = urlsplit(os.environ["PYWORKER_HARNESS_API_URL"])
+        assert url.scheme == "https" and url.hostname and not url.username and not url.password, "Invalid API HTTPS URL"
+        assert len(os.environ["PYWORKER_HARNESS_API_KEY"]) >= 32, "Invalid API key"
+        expiry = datetime.fromisoformat(os.environ["PYWORKER_HARNESS_EXPIRES_AT"])
+        assert expiry.tzinfo and datetime.now(timezone.utc) < expiry, "Harness access expired"
+        print("PoC API configuration valid.")
+  db:
+    depends_on:
+      preflight: {condition: service_completed_successfully}
+  auth:
+    environment:
+      KC_HTTP_PORT: "${AUTH_LOCAL_PORT}"
+      KC_HTTPS_CERTIFICATE_FILE: !reset null
+      KC_HTTPS_CERTIFICATE_KEY_FILE: !reset null
+      KC_HTTPS_PORT: !reset null
+      FORMIQ_LOCAL_HTTP: "true"
+    depends_on:
+      preflight: {condition: service_completed_successfully}
+    volumes: !override
+      - ./keycloak/realms/formiq-realm.json:/opt/keycloak/data/import/formiq-realm.json:ro
+  maintenance:
+    profiles: !reset []
+    restart: "no"
+    environment:
+      NODE_EXTRA_CA_CERTS: !reset null
+      POC_ADMIN_PASSWORD: "${POC_ADMIN_PASSWORD}"
+      POC_USER_PASSWORD: "${POC_USER_PASSWORD}"
+    volumes: !override []
+    depends_on:
+      db: {condition: service_healthy}
+      auth: {condition: service_healthy}
+      preflight: {condition: service_completed_successfully}
+    command: [sh, -ec, "node scripts/qa-maintenance.mjs deploy && node scripts/poc-seed-users.mjs"]
+  web:
+    environment:
+      NODE_EXTRA_CA_CERTS: !reset null
+    volumes: !override []
+    depends_on:
+      maintenance: {condition: service_completed_successfully}
+  queue:
+    environment:
+      NODE_EXTRA_CA_CERTS: !reset null
+    volumes: !override []
+    depends_on:
+      maintenance: {condition: service_completed_successfully}
+  pyworker:
+    depends_on:
+      maintenance: {condition: service_completed_successfully}

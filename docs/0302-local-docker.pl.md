@@ -5,6 +5,13 @@ tags: [compose, tls, dev, qa]
 
 # Compose i HTTPS bez Nginx
 
+## Zalecany start PoC
+
+Z głównego katalogu użyj `docker compose up --build -d --wait` po uzupełnieniu `.env.poc.local`. Projekt `formiqpoc` działa na porcie Web 4100, Keycloak 10800, PostgreSQL 25433 i S3 28333. Konta zakłada Compose. PoC używa HTTP na 127.0.0.1. [Pełna instrukcja PoC](0307-docker-poc.pl.md)
+
+Poniższe instrukcje dotyczą osobnych środowisk DEV i klasycznego QA `formiqqa`. Ich polecenia pnpm oraz ręczne przygotowanie TLS nie są wymagane do startu PoC.
+
+
 **W FORMIQ nie ma Nginx.** Przeglądarka zestawia osobne połączenia TLS z serwerem Next.js i z Keycloak. SeaweedFS, jego konsola i PostgreSQL mają własne porty na interfejsie pętli zwrotnej. Adresy zawierają `localhost`; do uruchomienia stosu nie potrzeba wpisów w pliku `hosts`. Po zatrzymaniu Next.js przeglądarka zgłasza błąd połączenia z portem aplikacji. Keycloak i konsola S3 mogą w tym czasie nadal odpowiadać. [Adresy DEV i QA](../README.md#lokalne-adresy-usług)
 
 | Element | DEV | QA |
@@ -23,9 +30,9 @@ tags: [compose, tls, dev, qa]
 
 ## Certyfikat z WSL i zaufanie Windows
 
-Po sklonowaniu projektu Next.js ma w `infra/local/certs` publiczne pliki `localhost.pem` i `rootCA.pem`. Dostarcz pasujący klucz serwera jako lokalny `localhost-key.pem` i sprawdź komplet przez `pnpm validate:certs`. Zarówno `pnpm dev:web`, jak i `node apps/web/https.mjs dev` rozpoznają katalog certyfikatów względem repozytorium. W QA Compose montuje pliki w kontenerze w trybie tylko do odczytu.
+DEV i klasyczne QA wymagają lokalnego kompletu `localhost.pem`, `localhost-key.pem` i `rootCA.pem` w skonfigurowanym katalogu certyfikatów. Przygotuj pasujący komplet i sprawdź go przez `pnpm validate:certs`. Zarówno `pnpm dev:web`, jak i `node apps/web/https.mjs dev` rozpoznają katalog certyfikatów względem repozytorium. W QA Compose montuje pliki w kontenerze w trybie tylko do odczytu.
 
-Jeśli potrzebujesz własnego kompletu na stanowisku, ustaw `CERTS_DIR=./certs/workstation` w prywatnym `infra/local/.env.dev` (dla QA również w `.env.qa`). Poniższe polecenia WSL wystawiają certyfikat w tym katalogu i zachowują publiczne pliki z Git.
+Jeśli potrzebujesz własnego kompletu na stanowisku, ustaw `CERTS_DIR=./certs/workstation` w prywatnym `infra/local/.env.dev` (dla QA również w `.env.qa`). Poniższe polecenia WSL wystawiają certyfikat w tym katalogu w osobnym katalogu stanowiska.
 
 ```sh
 mkcert -install

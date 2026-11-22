@@ -46,7 +46,30 @@ def markdown_tables(text):
     return tables
 
 
+def align_printed_text(page, spans):
+    """Ground unambiguous printed captions and values in source text geometry."""
+    index = defaultdict(list)
+
+    def key(text):
+        return " ".join(re.findall(r"\w+", text.casefold()))
+
+    for text, box in spans:
+        if normalized := key(text):
+            index[normalized].append(tuple(box))
+    for field in page.fields:
+        labels = index.get(key(field.label), [])
+        if len(labels) == 1:
+            field.label_bbox = labels[0]
+        # Table input areas belong to cells, and checkboxes belong to their squares.
+        if field.cell or field.kind == "checkbox" or not field.value:
+            continue
+        values = index.get(key(field.value), [])
+        if len(values) == 1:
+            field.bbox = values[0]
+
+
 def align_cells(page, encoded, spans=(), ocr_tables=(), review=None):
+    align_printed_text(page, spans)
     tables = defaultdict(list)
     for field in page.fields:
         if field.cell:

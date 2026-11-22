@@ -5,6 +5,13 @@ tags: [pg-boss, python, monitoring, konfiguracja]
 
 # Kolejka, pyworker i monitoring
 
+## Kolejka formularzy w PoC
+
+Compose uruchamia konsumenta razem z Web i pyworkerem po migracjach. Web zleca `form.process` i zwraca HTTP 202 z identyfikatorem operacji. Konsument pobiera oryginał z S3, wywołuje `POST /v1/forms/process` i zapisuje wynik przy formularzu. Stan jest dostępny pod `GET /api/v1/forms/{id}/process?operation={operation}`. Powiadomienia pokazują etap i postęp. Gotowość HTTP workera nie zastępuje działającego konsumenta.
+
+W PoC użyj `docker compose ps -a` oraz `docker compose logs --tail 100 queue pyworker`. Worker jest dostępny wyłącznie w sieci Compose. Token wywołania przetwarzania musi odpowiadać konfiguracji konsumenta. [Start PoC](0307-docker-poc.pl.md) · [Limity i błędy dostawcy](0209-harness-api.pl.md)
+
+
 Worker Node.js pobiera zadania z pg-boss w `queue_db`, zleca pracę przez uwierzytelnione HTTP i zapisuje wynik etapu. Python wykonuje operacje na dokumencie. Osobny most HTTP umożliwia przekazanie postępu lub zgłoszenia z Pythona do procesu Node. Tokeny `PYWORKER_API_TOKEN` i `PYWORKER_QUEUE_TOKEN` zabezpieczają różne kierunki komunikacji. [Pakiet kolejki](../packages/queue/src/) · [API workera](../apps/pyworker/src/pyworker/main.py)
 
 | Co chcesz sprawdzić | Jak |

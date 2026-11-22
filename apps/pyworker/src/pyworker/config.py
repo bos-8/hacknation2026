@@ -80,24 +80,39 @@ class Settings:
         eden = None
         pipeline = None
         if form_mode in {"eden", "ocr", "vision", "agentcore"}:
-            harness = values.get("PYWORKER_HARNESS_ARN", "") if form_mode == "agentcore" else ""
-            if form_mode == "agentcore" and not re.fullmatch(
-                r"arn:aws:bedrock-agentcore:[a-z0-9-]+:[0-9]{12}:harness/[a-zA-Z][a-zA-Z0-9_]{0,39}-[a-zA-Z0-9]{10}", harness
-            ):
-                raise ValueError("Invalid PYWORKER_HARNESS_ARN")
+            harness = ""
+            if form_mode == "agentcore":
+                from urllib.parse import urlsplit
+
+                url = urlsplit(values.get("PYWORKER_HARNESS_API_URL", ""))
+                if url.scheme != "https" or not url.hostname or url.username or url.password or url.query or url.fragment:
+                    raise ValueError("Set PYWORKER_HARNESS_API_URL to the HTTPS API endpoint")
+                if len(values.get("PYWORKER_HARNESS_API_KEY", "")) < 32:
+                    raise ValueError("Set PYWORKER_HARNESS_API_KEY")
+                harness = "https-api"
+            if harness:
+                from datetime import datetime
+
+                try:
+                    expiry = datetime.fromisoformat(values["PYWORKER_HARNESS_EXPIRES_AT"])
+                    if expiry.tzinfo is None:
+                        raise ValueError
+                except (KeyError, ValueError):
+                    raise ValueError("Set PYWORKER_HARNESS_EXPIRES_AT to a timezone-aware timestamp") from None
             defaults = EdenSettings(api_key="")
             eden = EdenSettings(
                 doc_classpath=values.get("PYWORKER_DOC_CLASSPATH", ""),
-                api_key=values.get("EDENAI_API_KEY", "").strip(),
-                harness_arn=harness,
-                harness_profile=values.get("PYWORKER_HARNESS_PROFILE", ""),
+                api_key=(values.get("EDENAI_API_KEY") or values.get("PYWORKER_HARNESS_API_KEY", "")).strip(),
+                harness_expires_at=values.get("PYWORKER_HARNESS_EXPIRES_AT", ""),
+                harness_api_url=values.get("PYWORKER_HARNESS_API_URL", ""),
+                harness_api_key=values.get("PYWORKER_HARNESS_API_KEY", ""),
                 ocr_only=form_mode == "ocr",
                 transcription_model=values.get("EDENAI_VISION_MODEL") or VISION_MODEL,
                 vision_model=(values.get("EDENAI_VISION_MODEL") or VISION_MODEL)
                 if form_mode in {"vision", "agentcore"}
                 else "",
                 upload_url=values.get("EDENAI_UPLOAD_URL") or defaults.upload_url,
-                llm_url=values.get("EDENAI_LLM_URL") or defaults.llm_url,
+                llm_url=values.get("EDENAI_LLM_URL") or (values.get("PYWORKER_HARNESS_API_URL") if harness else None) or defaults.llm_url,
                 llm_model=values.get("EDENAI_LLM_MODEL") or defaults.llm_model,
                 local_llm_url=""
                 if form_mode in {"vision", "agentcore"}

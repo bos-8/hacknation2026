@@ -5,6 +5,9 @@ tags: [architektura, audyt, coi, bezpieczenstwo, wdrozenie]
 
 # Audyt architektury generatora formularzy COI
 
+Dokument zachowuje historyczny projekt lub wynik wcześniejszego audytu. Aktualny stan opisują [architektura](0200-architecture.pl.md), [Harness API](0209-harness-api.pl.md) i [start Compose PoC](0307-docker-poc.pl.md). Dawne blokery należy porównywać z aktualnym backlogiem.
+
+
 > Audyt historycznego projektu z Nginx. W obecnym FORMIQ nie ma Nginx. Próby uploadu i odpowiedzi HTTP należy wykonywać pod adresem HTTPS Next.js. [Architektura FORMIQ](0200-architecture.pl.md)
 
 ## Wniosek

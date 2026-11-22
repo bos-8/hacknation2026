@@ -5,6 +5,13 @@ tags: [nextjs, i18n, katalog, administracja]
 
 # Web, API i administracja
 
+## Przetworzony formularz
+
+Szczegóły pokazują źródło, JSON COI i edytowalny formularz. Etykieta kontrolki pochodzi z definicji pola, a jej wartość z odczytanej odpowiedzi lub zapisanej poprawki. Dostępne są kopiowanie i pobranie JSON oraz podgląd dodatkowego `document_content` z pobraniem `.content.json`. Next.js przechowuje wynik przy oryginale.
+
+Ramki są nakładane na zmierzony obszar obrazu lub płótna PDF, z uwzględnieniem jego przesunięcia i zmiany rozmiaru. Worker dopasowuje jednoznaczne etykiety i wartości do tekstowej geometrii PDF. Niejednoznaczne dopasowania zachowują geometrię modelu. Dla skanów dokładność ramek nadal wymaga oceny na konkretnym pliku. Zmiana ekstrakcji wymaga ponownej analizy wcześniej zapisanych wyników. [Kontrakt dokumentu](0208-document-redaction.pl.md)
+
+
 Next.js obsługuje interfejs i backend Web. Strony aplikacji mają prefiks języka, np. `/pl/admin/files`. Publiczne ścieżki API zachowują prefiks `/api/v1` niezależnie od języka. Komponenty korzystają z Better Auth przez backend. Prywatne tokeny S3, workera i katalogu użytkowników pozostają po stronie serwera.
 
 | Przy zmianie | Miejsce w repozytorium |

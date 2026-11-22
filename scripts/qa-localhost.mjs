@@ -9,6 +9,12 @@ const services = new Map([
 setGlobalDispatcher(new Agent({
   factory(origin, options) {
     const url = new URL(origin);
+    // Literal IPs bypass DNS lookup. Route only the two configured HTTP loopback origins.
+    if (url.protocol === 'http:' && url.hostname === '127.0.0.1' && services.has(url.origin)) {
+      const target = new URL(url);
+      target.hostname = services.get(url.origin);
+      return new Pool(target.origin, options);
+    }
     const service = url.hostname === 'localhost' && services.get(url.origin);
     return new Pool(origin, service ? {
       ...options,

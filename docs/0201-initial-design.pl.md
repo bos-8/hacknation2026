@@ -5,6 +5,9 @@ tags: [architektura, fastapi, postgresql, keycloak, docker]
 
 # Pierwsze podejście do architektury
 
+Dokument zachowuje historyczny projekt lub wynik wcześniejszego audytu. Aktualny stan opisują [architektura](0200-architecture.pl.md), [Harness API](0209-harness-api.pl.md) i [start Compose PoC](0307-docker-poc.pl.md). Dawne blokery należy porównywać z aktualnym backlogiem.
+
+
 > Dokument historyczny. Wariant z Nginx opisany poniżej pochodzi z pierwszego projektu. W aktualnym FORMIQ nie ma Nginx. Next.js i Keycloak obsługują HTTPS bezpośrednio. [Architektura FORMIQ](0200-architecture.pl.md)
 
 **Projekt docelowy.** Rozwiązanie składa się z prostej aplikacji webowej i osobnego kontenera **formiq** z API w Pythonie 3.14+. Web odpowiada za wybór pliku i prezentację wyniku. Kontener przyjmuje jeden dokument, wykonuje ekstrakcję tekstu lub OCR, buduje konfigurację formularza i zwraca JSON. Klient integracyjny może wywołać ten sam endpoint bez otwierania panelu.

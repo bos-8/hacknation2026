@@ -69,4 +69,6 @@ Opis rozszerzeń wymienia wizualizację jako punkt V, a lista progów oceny pod 
 
 ## Obecny stan i warunki odbioru
 
-Panel DEV pozwala wgrać oryginał do S3, zlecić przetworzenie oraz obejrzeć zapisany wynik obok źródła. Integracja Eden AI służy do prób deweloperskich i generuje szkic JSON. Tryb `pipeline` składa lokalny odczyt dokumentów, inferencję Qwena i przygotowanie JSON-u w jednym żądaniu. Do odbioru konkursowego potrzebna jest próba z docelowymi wagami przy odłączonym internecie oraz potwierdzenie importu w systemie COI. [Architektura i tryby przetwarzania](0200-architecture.pl.md) · [Zadania odbiorowe](9999-backlog.pl.md)
+Działający PoC obejmuje start przez Docker Compose, logowanie Keycloak, upload do S3, kolejkę, konwersję oraz zapis wyniku przy oryginale. Dostępne są JSON COI, model pośredni, dodatkowa treść dokumentu, współrzędne oraz edytowalny podgląd. Tryb `agentcore` korzysta z chronionego HTTPS API w AWS i wymaga internetu. Lokalny `pipeline` składa odczyt Docling/Paddle z lokalnym Qwenem.
+
+Odbiór konkursowy nadal wymaga potwierdzenia działania offline z docelowymi wagami, audytu licencji całej dostawy, próby importu w systemie COI i porównania kompletności na nowych blankietach. Funkcjonujący PoC nie zamyka tych kryteriów. [Architektura](0200-architecture.pl.md) · [Start PoC](0307-docker-poc.pl.md) · [Zadania odbiorowe](9999-backlog.pl.md)

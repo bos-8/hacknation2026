@@ -5,6 +5,19 @@ tags: [backlog, formularze, hacknation, licencje]
 
 # Backlog — Cyfryzacja formularzy
 
+## Wdrożone elementy i otwarte kryteria odbioru
+
+- [x] Uruchomienie PoC jednym `docker compose up --build -d --wait`, z migracjami, lokalnym HTTP oraz kontami admin i user.
+- [x] Dostęp klienta do Harness i OCR przez HTTPS API z Bearer, bez profilu AWS i klucza Eden na komputerze użytkownika.
+- [x] Stały termin dostępu sprawdzany przez klienta, API i hook Harnessu oraz cztery miejsca analiz przez dzierżawy DynamoDB.
+- [x] Dodatkowy `document_content`, eksport treści, zapis wyniku przy pliku i nakładki na zmierzonym obszarze źródła.
+- [x] Lokalny odczyt DOC przez Apache POI oraz kompilacja arkuszy XLSX i ODS.
+- [ ] Potwierdzić kompletność i położenie wszystkich pól na całym zestawie nowych blankietów.
+- [ ] Potwierdzić rzeczywisty import COI i odbiór wariantu offline z pełnym audytem licencji.
+
+Poniższe listy zachowują kryteria odbioru konkursowego. Ich otwarty stan nie oznacza braku wszystkich opisanych funkcji w PoC. [Uruchomienie](0307-docker-poc.pl.md) · [API i granice](0209-harness-api.pl.md)
+
+
 Urzędnik przesyła blankiet wniosku i w odpowiedzi otrzymuje konfigurację JSON gotową do importu w systemie docelowym. Podstawą odbioru są treść blankietu, reguły projektowania formularzy i przykłady dostarczone przez COI. [Materiały referencyjne](../materials/)
 
 Baza techniczna obejmuje Next.js, Better Auth z Keycloak, PostgreSQL z Prisma, SeaweedFS oraz prywatny worker OCR. Poniższe kryteria dotyczą odbioru konkursowego. [Wymagania aplikacji](0203-application-requirements.pl.md) [Aktualne możliwości i limity](0200-architecture.pl.md)

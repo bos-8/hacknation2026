@@ -1,0 +1,10 @@
+name: formiqpoc
+include:
+  - path:
+      - infra/local/compose.yaml
+      - infra/local/compose.qa.yaml
+      - infra/local/compose.poc.yaml
+      - infra/local/compose.poc-bootstrap.yaml
+    env_file:
+      - .env.poc
+      - .env.poc.local

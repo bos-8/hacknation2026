@@ -5,7 +5,10 @@ tags: [overview, documentation]
 
 # FORMIQ documentation
 
-Start with the [local setup and service addresses](../README.md). FORMIQ runs without Nginx. Next.js and Keycloak serve HTTPS directly on separate localhost ports in DEV and QA.
+Domyślny start całego PoC opisują [instrukcja Docker Compose](0307-docker-poc.pl.md) oraz [kontrakt Harness API](0209-harness-api.pl.md). DEV i klasyczne QA pozostają osobnymi środowiskami deweloperskimi.
+
+
+Start with the [local setup and service addresses](../README.md). FORMIQ runs without Nginx. The PoC serves HTTP on 127.0.0.1. DEV and classic QA serve HTTPS directly on separate localhost ports.
 
 | Chapter | Contents |
 | --- | --- |

@@ -11,6 +11,7 @@ import { Button, Heading } from "@/ui/basic";
 import { CodeJson } from "@/ui/components/code-json";
 import { useForms, type FormEntry } from "../workspace";
 import { AnswerEditor } from "./answer-editor";
+import { SourceFrame } from "./source-frame";
 import { PdfPreview } from "./pdf-preview";
 import { SemanticReview } from "./semantic-review";
 
@@ -73,7 +74,7 @@ function FormResult({ entry, result }: { entry: FormEntry; result: FormProcessin
           onMouseEnter={() => fromSource(location.field_id)} onMouseLeave={() => fromSource()}
           onFocus={() => fromSource(location.field_id)} onBlur={() => fromSource()}
           onClick={() => setSelected(location.field_id)}
-          className={`pointer-events-auto absolute rounded-xs border-2 ${active === location.field_id
+          className={`pointer-events-auto absolute m-0 min-h-0 min-w-0 p-0 rounded-xs border-2 ${active === location.field_id
             ? "border-red-600 bg-red-500/20"
             : active ? "border-transparent"
               : kind === "label" ? "border-sky-600 bg-sky-500/10" : "border-emerald-600 bg-emerald-500/10"}`}
@@ -107,9 +108,11 @@ function FormResult({ entry, result }: { entry: FormEntry; result: FormProcessin
         {regions}
       </PdfPreview> : mime.startsWith("image/") ? <div className="flex justify-center">
         <div className="relative" style={{width: `min(100%, ${70 * imageRatio}vh)`}}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={entry.previewUrl} alt={entry.file.name} className="block h-auto w-full" onLoad={event => setImageRatio(event.currentTarget.naturalWidth / event.currentTarget.naturalHeight)} />
-          {regions}
+          <SourceFrame overlay={regions}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={entry.previewUrl} alt={entry.file.name} className="block h-auto w-full"
+              onLoad={event => setImageRatio(event.currentTarget.naturalWidth / event.currentTarget.naturalHeight)} />
+          </SourceFrame>
         </div>
       </div> : ["text/plain", "application/json"].includes(mime)
         ? <iframe sandbox="" src={entry.previewUrl} title={entry.file.name} className="h-[65vh] w-full" />

@@ -5,6 +5,9 @@ tags: [formularze, docx, import, teryt]
 
 # Formularze Word i kontrakt importu COI
 
+Odczyt materiałów jest podstawą reguł, a uruchomienie konwersji opisuje [kontrakt dokumentu](0208-document-redaction.pl.md). DOC jest czytany lokalnie przez Apache POI także w obrazie Docker. Walidacja rozpoznaje faktyczną zawartość, więc plik DOCX z rozszerzeniem `.doc` zostanie odrzucony. Rzeczywisty binarny DOC nie gwarantuje odtworzenia automatycznych podziałów stron Worda.
+
+
 W katalogu `materials/wyniki-docx` każdy blankiet ma własny tekst źródłowy `form.txt`, model z dowodami i decyzjami `form.ir.json` oraz eksport `form.coi.json`. Indeks łączy wynik z nazwą oryginału, skrótem SHA-256, profilem, liczbą pól i wyodrębnionymi obrazami. Wizualizacje i dokumenty techniczne mają osobne transkrypcje. Obrazy zapisujemy w oryginalnym formacie. Liczby pól poniżej obejmują kontrolki i bloki informacyjne wewnątrz sekcji.
 
 | Formularz źródłowy | Zakładki | Pola | Co wymaga uwagi |

@@ -5,6 +5,11 @@ tags: [oidc, keycloak, better-auth, sesje]
 
 # Tożsamość i sesje
 
+## Logowanie w PoC
+
+Po starcie Compose Web działa pod `http://127.0.0.1:4100`, a issuer pod `http://127.0.0.1:10800/realms/FORMIQ`. Seed przygotowuje admin/admin z rolą ROOT oraz user/user z rolą USER. Domyślny czas sesji to 45 minut, a maksymalny czas sesji Keycloak to 8 godzin. Termin dostępu do Harness API jest osobnym ograniczeniem. Przy równoległej pracy w DEV, QA i PoC korzystaj z osobnych profili przeglądarki. [Start HTTP PoC](0307-docker-poc.pl.md)
+
+
 Użytkownik wybiera logowanie w aplikacji. Better Auth rozpoczyna przepływ OIDC z PKCE S256 dla klienta `formiq-web`. Przeglądarka trafia do realmu `FORMIQ`; po zalogowaniu Keycloak zwraca ją do `/api/v1/auth/callback/keycloak` na porcie aplikacji. Better Auth zapisuje sesję w `app_db`. Osobny klient serwerowy `formiq-directory` ma ograniczony dostęp do odczytu katalogu. [Definicja realmu i klientów](../infra/local/keycloak/realms/formiq-realm.json)
 
 **Dostęp do administracji.** Hierarchia aplikacji obejmuje `ROOT → SADMIN → ADMIN → USER → LOGED`. Panel administracyjny wymaga co najmniej poziomu `ADMIN`; weryfikacja obejmuje również operacje po stronie serwera. Role `AUDITOR`, `VIEWER`, `GUEST` i `SYSTEM` mają odrębne przeznaczenie. Konto operatora w realmie `master` służy do zarządzania Keycloak. [Reguły dostępu](../apps/web/src/schemas/access.ts) · [Seed dwóch kont DEV](../README.md#konta-testowe-keycloak-w-dev)

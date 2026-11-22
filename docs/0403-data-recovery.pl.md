@@ -5,6 +5,11 @@ tags: [postgresql, s3, backup, odtwarzanie]
 
 # Spójność danych i odtwarzanie
 
+## Wolumeny Compose PoC
+
+Projekt `formiqpoc` przechowuje bazę i pliki w osobnych wolumenach. `docker compose down` zachowuje je, a ponowny start odtwarza kontenery. Chroń kopię oraz prywatny `.env.poc.local` poza repozytorium. Starszy wolumen `formiqpoc-certs` po wariancie HTTPS może pozostać na komputerze, ale obecny PoC go nie używa. Poniższe skrypty backupu DEV i QA mają własną walidację nazw wolumenów i nie stanowią potwierdzonej procedury backupu projektu PoC. [Nazwy i start PoC](0307-docker-poc.pl.md)
+
+
 ## Rozbieżność między bazą a S3
 
 Uruchom `pnpm storage:report`. Raport odczytuje katalog wersji plików i zawartość zasobnika dokumentów. Wskazuje m.in. brak obiektu, różnicę rozmiaru i obiekt bez powiązanej wersji. Dokument bez powiązania z produktem może być prawidłowym plikiem. Raport nie obejmuje zasobnika awatarów.

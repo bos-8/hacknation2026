@@ -1,0 +1,2179 @@
+{
+  "title": "Wniosek o ustalenie numeru porządkowego nieruchomości",
+  "tabs": [
+    {
+      "id": "398880fd-fe76-58bd-993d-c80b797825f5",
+      "title": "Dane",
+      "type": "MAIN",
+      "questions": [
+        {
+          "x": 0,
+          "y": 0,
+          "rows": 2,
+          "cols": 3,
+          "field": {
+            "id": "029ce804-2687-55a7-b1e6-cbd1e10e1cf5",
+            "type": "SECTION",
+            "techName": "sekcja_adresat",
+            "title": "Adresat",
+            "description": "",
+            "readOnly": false,
+            "questionOrder": 1,
+            "tooltipMessage": "",
+            "validation": [],
+            "states": [],
+            "options": [],
+            "repeatingSectionGrid": [
+              {
+                "x": 0,
+                "y": 0,
+                "rows": 1,
+                "cols": 3,
+                "field": {
+                  "id": "b95e5454-d082-570a-b7da-dbbbd89ff8c9",
+                  "type": "TEXT_FIELD",
+                  "techName": "organ",
+                  "title": "Organ, do którego składasz wniosek",
+                  "description": "ul. Browarna 85, 82-300 Elbląg",
+                  "readOnly": true,
+                  "questionOrder": 1,
+                  "tooltipMessage": "",
+                  "validation": [],
+                  "defaultValue": "Wójt Gminy Elbląg",
+                  "states": [],
+                  "options": [],
+                  "repeatingSectionGrid": []
+                }
+              }
+            ]
+          }
+        },
+        {
+          "x": 0,
+          "y": 2,
+          "rows": 4,
+          "cols": 3,
+          "field": {
+            "id": "e1e05b4a-c6e4-512d-bb9a-7f372cea13d2",
+            "type": "SECTION",
+            "techName": "sekcja_wnioskodawca",
+            "title": "Wnioskodawca",
+            "description": "",
+            "readOnly": false,
+            "questionOrder": 2,
+            "tooltipMessage": "",
+            "validation": [],
+            "states": [],
+            "options": [],
+            "repeatingSectionGrid": [
+              {
+                "x": 0,
+                "y": 0,
+                "rows": 1,
+                "cols": 3,
+                "field": {
+                  "id": "403e4872-de95-58b0-84dc-82caccaafefd",
+                  "type": "RADIO",
+                  "techName": "rodzaj_wnioskodawcy",
+                  "title": "Kto jest wnioskodawcą?",
+                  "description": "",
+                  "readOnly": false,
+                  "questionOrder": 1,
+                  "tooltipMessage": "",
+                  "validation": [
+                    "REQUIRED"
+                  ],
+                  "states": [],
+                  "options": [
+                    {
+                      "id": "Osoba fizyczna",
+                      "name": "Osoba fizyczna",
+                      "techName": "osoba_fizyczna"
+                    },
+                    {
+                      "id": "Osoba fizyczna prowadząca JDG",
+                      "name": "Osoba fizyczna prowadząca JDG",
+                      "techName": "osoba_fizyczna_prowadzaca_jdg"
+                    },
+                    {
+                      "id": "Organizacja",
+                      "name": "Organizacja",
+                      "techName": "organizacja"
+                    }
+                  ],
+                  "repeatingSectionGrid": []
+                }
+              },
+              {
+                "x": 0,
+                "y": 1,
+                "rows": 1,
+                "cols": 3,
+                "field": {
+                  "id": "9d92cf55-7308-5a99-897d-3599251612b0",
+                  "type": "RADIO",
+                  "techName": "reprezentacja_osoby",
+                  "title": "W jaki sposób składasz wniosek?",
+                  "description": "",
+                  "readOnly": false,
+                  "questionOrder": 2,
+                  "tooltipMessage": "",
+                  "validation": [
+                    "REQUIRED"
+                  ],
+                  "states": [
+                    {
+                      "type": "SHOW",
+                      "query": "((\"Osoba fizyczna\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer) or (\"Osoba fizyczna prowadząca JDG\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer))"
+                    }
+                  ],
+                  "options": [
+                    {
+                      "id": "Osobiście",
+                      "name": "Osobiście",
+                      "techName": "osobiscie"
+                    },
+                    {
+                      "id": "Przez pełnomocnika",
+                      "name": "Przez pełnomocnika",
+                      "techName": "przez_pelnomocnika"
+                    }
+                  ],
+                  "repeatingSectionGrid": []
+                }
+              },
+              {
+                "x": 0,
+                "y": 2,
+                "rows": 1,
+                "cols": 3,
+                "field": {
+                  "id": "17f12b38-26d0-5425-8dfe-99540af07f41",
+                  "type": "RADIO",
+                  "techName": "reprezentacja_organizacji",
+                  "title": "W jaki sposób składasz wniosek?",
+                  "description": "",
+                  "readOnly": false,
+                  "questionOrder": 3,
+                  "tooltipMessage": "",
+                  "validation": [
+                    "REQUIRED"
+                  ],
+                  "states": [
+                    {
+                      "type": "SHOW",
+                      "query": "(\"Organizacja\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer)"
+                    }
+                  ],
+                  "options": [
+                    {
+                      "id": "Przez uprawnionego reprezentanta",
+                      "name": "Przez uprawnionego reprezentanta",
+                      "techName": "przez_uprawnionego_reprezentanta"
+                    },
+                    {
+                      "id": "Przez pełnomocnika",
+                      "name": "Przez pełnomocnika",
+                      "techName": "przez_pelnomocnika"
+                    }
+                  ],
+                  "repeatingSectionGrid": []
+                }
+              }
+            ]
+          }
+        },
+        {
+          "x": 0,
+          "y": 6,
+          "rows": 4,
+          "cols": 3,
+          "field": {
+            "id": "240dc290-09d5-5020-a37f-ca64f3c9e283",
+            "type": "SECTION",
+            "techName": "sekcja_dane_wnioskodawcy",
+            "title": "Dane wnioskodawcy",
+            "description": "",
+            "readOnly": false,
+            "questionOrder": 3,
+            "tooltipMessage": "",
+            "validation": [],
+            "states": [
+              {
+                "type": "SHOW",
+                "query": "(((\"Osoba fizyczna\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer) or (\"Osoba fizyczna prowadząca JDG\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer)) or (\"Osoba fizyczna prowadząca JDG\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer))"
+              }
+            ],
+            "options": [],
+            "repeatingSectionGrid": [
+              {
+                "x": 0,
+                "y": 0,
+                "rows": 1,
+                "cols": 3,
+                "field": {
+                  "id": "1d390408-2a88-5e0a-b253-c7f5c81f2482",
+                  "type": "TEXT_FIELD",
+                  "techName": "wnioskodawca_imie",
+                  "title": "Imię",
+                  "description": "",
+                  "readOnly": false,
+                  "questionOrder": 1,
+                  "tooltipMessage": "",
+                  "validation": [],
+                  "states": [
+                    {
+                      "type": "SHOW",
+                      "query": "((\"Osoba fizyczna\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer) or (\"Osoba fizyczna prowadząca JDG\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer))"
+                    }
+                  ],
+                  "options": [],
+                  "repeatingSectionGrid": []
+                }
+              },
+              {
+                "x": 0,
+                "y": 1,
+                "rows": 1,
+                "cols": 3,
+                "field": {
+                  "id": "568585b2-d436-52eb-874e-55cf63ba8dca",
+                  "type": "TEXT_FIELD",
+                  "techName": "wnioskodawca_nazwisko",
+                  "title": "Nazwisko",
+                  "description": "",
+                  "readOnly": false,
+                  "questionOrder": 2,
+                  "tooltipMessage": "",
+                  "validation": [],
+                  "states": [
+                    {
+                      "type": "SHOW",
+                      "query": "((\"Osoba fizyczna\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer) or (\"Osoba fizyczna prowadząca JDG\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer))"
+                    }
+                  ],
+                  "options": [],
+                  "repeatingSectionGrid": []
+                }
+              },
+              {
+                "x": 0,
+                "y": 2,
+                "rows": 1,
+                "cols": 3,
+                "field": {
+                  "id": "5cffc35e-52a9-548e-9508-edb2351078e5",
+                  "type": "TEXT_FIELD",
+                  "techName": "firma_jdg",
+                  "title": "Nazwa działalności gospodarczej",
+                  "description": "",
+                  "readOnly": false,
+                  "questionOrder": 3,
+                  "tooltipMessage": "",
+                  "validation": [],
+                  "states": [
+                    {
+                      "type": "SHOW",
+                      "query": "(\"Osoba fizyczna prowadząca JDG\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer)"
+                    }
+                  ],
+                  "options": [],
+                  "repeatingSectionGrid": []
+                }
+              }
+            ]
+          }
+        },
+        {
+          "x": 0,
+          "y": 10,
+          "rows": 3,
+          "cols": 3,
+          "field": {
+            "id": "7d1974df-aa3d-5dc2-8ebe-8a55bbff1de4",
+            "type": "SECTION",
+            "techName": "sekcja_dane_pelnomocnika",
+            "title": "Dane pełnomocnika",
+            "description": "",
+            "readOnly": false,
+            "questionOrder": 4,
+            "tooltipMessage": "",
+            "validation": [],
+            "states": [
+              {
+                "type": "SHOW",
+                "query": "((((\"Osoba fizyczna\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer) or (\"Osoba fizyczna prowadząca JDG\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer)) and (\"Przez pełnomocnika\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"reprezentacja_osoby\" in field.techName].field.__userAnswer)) or ((\"Organizacja\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer) and (\"Przez pełnomocnika\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"reprezentacja_organizacji\" in field.techName].field.__userAnswer)))"
+              }
+            ],
+            "options": [],
+            "repeatingSectionGrid": [
+              {
+                "x": 0,
+                "y": 0,
+                "rows": 1,
+                "cols": 3,
+                "field": {
+                  "id": "90c47bd8-68fb-5d70-bc0d-111ecf886513",
+                  "type": "TEXT_FIELD",
+                  "techName": "pelnomocnik_imie",
+                  "title": "Imię",
+                  "description": "",
+                  "readOnly": false,
+                  "questionOrder": 1,
+                  "tooltipMessage": "",
+                  "validation": [],
+                  "states": [
+                    {
+                      "type": "SHOW",
+                      "query": "((((\"Osoba fizyczna\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer) or (\"Osoba fizyczna prowadząca JDG\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer)) and (\"Przez pełnomocnika\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"reprezentacja_osoby\" in field.techName].field.__userAnswer)) or ((\"Organizacja\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer) and (\"Przez pełnomocnika\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"reprezentacja_organizacji\" in field.techName].field.__userAnswer)))"
+                    }
+                  ],
+                  "options": [],
+                  "repeatingSectionGrid": []
+                }
+              },
+              {
+                "x": 0,
+                "y": 1,
+                "rows": 1,
+                "cols": 3,
+                "field": {
+                  "id": "6c5a3796-c404-5bb0-aeba-462b7b069606",
+                  "type": "TEXT_FIELD",
+                  "techName": "pelnomocnik_nazwisko",
+                  "title": "Nazwisko",
+                  "description": "",
+                  "readOnly": false,
+                  "questionOrder": 2,
+                  "tooltipMessage": "",
+                  "validation": [],
+                  "states": [
+                    {
+                      "type": "SHOW",
+                      "query": "((((\"Osoba fizyczna\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer) or (\"Osoba fizyczna prowadząca JDG\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer)) and (\"Przez pełnomocnika\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"reprezentacja_osoby\" in field.techName].field.__userAnswer)) or ((\"Organizacja\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer) and (\"Przez pełnomocnika\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"reprezentacja_organizacji\" in field.techName].field.__userAnswer)))"
+                    }
+                  ],
+                  "options": [],
+                  "repeatingSectionGrid": []
+                }
+              }
+            ]
+          }
+        },
+        {
+          "x": 0,
+          "y": 13,
+          "rows": 3,
+          "cols": 3,
+          "field": {
+            "id": "b23070e3-de55-5378-aaba-0956879fe663",
+            "type": "SECTION",
+            "techName": "sekcja_dane_reprezentanta",
+            "title": "Dane reprezentanta",
+            "description": "",
+            "readOnly": false,
+            "questionOrder": 5,
+            "tooltipMessage": "",
+            "validation": [],
+            "states": [
+              {
+                "type": "SHOW",
+                "query": "((\"Organizacja\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer) and (\"Przez uprawnionego reprezentanta\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"reprezentacja_organizacji\" in field.techName].field.__userAnswer))"
+              }
+            ],
+            "options": [],
+            "repeatingSectionGrid": [
+              {
+                "x": 0,
+                "y": 0,
+                "rows": 1,
+                "cols": 3,
+                "field": {
+                  "id": "fd70faa3-1a9f-5b8f-9566-fcb8238055c5",
+                  "type": "TEXT_FIELD",
+                  "techName": "reprezentant_imie",
+                  "title": "Imię",
+                  "description": "",
+                  "readOnly": false,
+                  "questionOrder": 1,
+                  "tooltipMessage": "",
+                  "validation": [],
+                  "states": [
+                    {
+                      "type": "SHOW",
+                      "query": "((\"Organizacja\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer) and (\"Przez uprawnionego reprezentanta\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"reprezentacja_organizacji\" in field.techName].field.__userAnswer))"
+                    }
+                  ],
+                  "options": [],
+                  "repeatingSectionGrid": []
+                }
+              },
+              {
+                "x": 0,
+                "y": 1,
+                "rows": 1,
+                "cols": 3,
+                "field": {
+                  "id": "e8fa0f9e-0cf9-513e-b8fc-c44f80c6e49f",
+                  "type": "TEXT_FIELD",
+                  "techName": "reprezentant_nazwisko",
+                  "title": "Nazwisko",
+                  "description": "",
+                  "readOnly": false,
+                  "questionOrder": 2,
+                  "tooltipMessage": "",
+                  "validation": [],
+                  "states": [
+                    {
+                      "type": "SHOW",
+                      "query": "((\"Organizacja\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer) and (\"Przez uprawnionego reprezentanta\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"reprezentacja_organizacji\" in field.techName].field.__userAnswer))"
+                    }
+                  ],
+                  "options": [],
+                  "repeatingSectionGrid": []
+                }
+              }
+            ]
+          }
+        },
+        {
+          "x": 0,
+          "y": 16,
+          "rows": 5,
+          "cols": 3,
+          "field": {
+            "id": "5bba1b16-d84c-559f-a086-615e53fb2172",
+            "type": "SECTION",
+            "techName": "sekcja_dane_organizacji",
+            "title": "Dane organizacji",
+            "description": "",
+            "readOnly": false,
+            "questionOrder": 6,
+            "tooltipMessage": "",
+            "validation": [],
+            "states": [
+              {
+                "type": "SHOW",
+                "query": "(\"Organizacja\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer)"
+              }
+            ],
+            "options": [],
+            "repeatingSectionGrid": [
+              {
+                "x": 0,
+                "y": 0,
+                "rows": 1,
+                "cols": 3,
+                "field": {
+                  "id": "5d301391-da8a-5feb-99ef-43d9dd61a684",
+                  "type": "TEXT_FIELD",
+                  "techName": "nazwa_organizacji",
+                  "title": "Nazwa organizacji",
+                  "description": "",
+                  "readOnly": false,
+                  "questionOrder": 1,
+                  "tooltipMessage": "",
+                  "validation": [],
+                  "states": [
+                    {
+                      "type": "SHOW",
+                      "query": "(\"Organizacja\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer)"
+                    }
+                  ],
+                  "options": [],
+                  "repeatingSectionGrid": []
+                }
+              },
+              {
+                "x": 0,
+                "y": 1,
+                "rows": 1,
+                "cols": 3,
+                "field": {
+                  "id": "aa9fd6a0-93b4-5777-8120-f65a8b17adfa",
+                  "type": "TEXT_FIELD",
+                  "techName": "organizacja_nip",
+                  "title": "NIP",
+                  "description": "",
+                  "readOnly": false,
+                  "questionOrder": 2,
+                  "tooltipMessage": "",
+                  "validation": [
+                    "NIP"
+                  ],
+                  "states": [
+                    {
+                      "type": "SHOW",
+                      "query": "(\"Organizacja\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer)"
+                    }
+                  ],
+                  "options": [],
+                  "repeatingSectionGrid": []
+                }
+              },
+              {
+                "x": 0,
+                "y": 2,
+                "rows": 1,
+                "cols": 3,
+                "field": {
+                  "id": "ee2bc8b0-6674-5b45-b8fc-f24393b5e370",
+                  "type": "TEXT_FIELD",
+                  "techName": "organizacja_regon",
+                  "title": "REGON",
+                  "description": "",
+                  "readOnly": false,
+                  "questionOrder": 3,
+                  "tooltipMessage": "",
+                  "validation": [
+                    "REGON"
+                  ],
+                  "states": [
+                    {
+                      "type": "SHOW",
+                      "query": "(\"Organizacja\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer)"
+                    }
+                  ],
+                  "options": [],
+                  "repeatingSectionGrid": []
+                }
+              },
+              {
+                "x": 0,
+                "y": 3,
+                "rows": 1,
+                "cols": 3,
+                "field": {
+                  "id": "35d3dca0-c3f3-5ef0-b2d3-3b7458aaa0af",
+                  "type": "TEXT_FIELD",
+                  "techName": "organizacja_krs",
+                  "title": "Numer KRS",
+                  "description": "",
+                  "readOnly": false,
+                  "questionOrder": 4,
+                  "tooltipMessage": "",
+                  "validation": [],
+                  "states": [
+                    {
+                      "type": "SHOW",
+                      "query": "(\"Organizacja\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer)"
+                    }
+                  ],
+                  "options": [],
+                  "repeatingSectionGrid": []
+                }
+              }
+            ]
+          }
+        },
+        {
+          "x": 0,
+          "y": 21,
+          "rows": 5,
+          "cols": 3,
+          "field": {
+            "id": "1463462f-a364-5230-9eb4-539461319226",
+            "type": "SECTION",
+            "techName": "sekcja_dokumenty_reprezentacji",
+            "title": "Dokumenty reprezentacji",
+            "description": "",
+            "readOnly": false,
+            "questionOrder": 7,
+            "tooltipMessage": "",
+            "validation": [],
+            "states": [
+              {
+                "type": "SHOW",
+                "query": "(((((\"Osoba fizyczna\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer) or (\"Osoba fizyczna prowadząca JDG\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer)) and (\"Przez pełnomocnika\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"reprezentacja_osoby\" in field.techName].field.__userAnswer)) or ((\"Organizacja\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer) and (\"Przez pełnomocnika\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"reprezentacja_organizacji\" in field.techName].field.__userAnswer))) or ((\"Organizacja\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer) and (\"Przez uprawnionego reprezentanta\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"reprezentacja_organizacji\" in field.techName].field.__userAnswer)) or (((((\"Osoba fizyczna\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer) or (\"Osoba fizyczna prowadząca JDG\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer)) and (\"Przez pełnomocnika\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"reprezentacja_osoby\" in field.techName].field.__userAnswer)) or ((\"Organizacja\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer) and (\"Przez pełnomocnika\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"reprezentacja_organizacji\" in field.techName].field.__userAnswer))) and (\"Tak\" in tabs[\"Dane\" in title].questions[\"sekcja_dokumenty_reprezentacji\" in field.techName].field.repeatingSectionGrid[\"dolaczenie_oplaty\" in field.techName].field.__userAnswer)))"
+              }
+            ],
+            "options": [],
+            "repeatingSectionGrid": [
+              {
+                "x": 0,
+                "y": 0,
+                "rows": 1,
+                "cols": 3,
+                "field": {
+                  "id": "631dd1c8-bb36-59af-bbb3-9c28f2941ebe",
+                  "type": "FILE_UPLOADER",
+                  "techName": "pelnomocnictwo",
+                  "title": "Dokument pełnomocnictwa",
+                  "description": "",
+                  "readOnly": false,
+                  "questionOrder": 1,
+                  "tooltipMessage": "",
+                  "validation": [],
+                  "defaultValue": [],
+                  "states": [
+                    {
+                      "type": "SHOW",
+                      "query": "((((\"Osoba fizyczna\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer) or (\"Osoba fizyczna prowadząca JDG\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer)) and (\"Przez pełnomocnika\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"reprezentacja_osoby\" in field.techName].field.__userAnswer)) or ((\"Organizacja\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer) and (\"Przez pełnomocnika\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"reprezentacja_organizacji\" in field.techName].field.__userAnswer)))"
+                    }
+                  ],
+                  "options": [],
+                  "repeatingSectionGrid": []
+                }
+              },
+              {
+                "x": 0,
+                "y": 1,
+                "rows": 1,
+                "cols": 3,
+                "field": {
+                  "id": "129fd623-8f9b-55cb-9d1d-bdf510c0792a",
+                  "type": "FILE_UPLOADER",
+                  "techName": "umocowanie",
+                  "title": "Dokument reprezentacji",
+                  "description": "",
+                  "readOnly": false,
+                  "questionOrder": 2,
+                  "tooltipMessage": "",
+                  "validation": [],
+                  "defaultValue": [],
+                  "states": [
+                    {
+                      "type": "SHOW",
+                      "query": "((\"Organizacja\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer) and (\"Przez uprawnionego reprezentanta\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"reprezentacja_organizacji\" in field.techName].field.__userAnswer))"
+                    }
+                  ],
+                  "options": [],
+                  "repeatingSectionGrid": []
+                }
+              },
+              {
+                "x": 0,
+                "y": 2,
+                "rows": 1,
+                "cols": 3,
+                "field": {
+                  "id": "943ed854-9526-52b0-85fe-3c5652e36c96",
+                  "type": "RADIO",
+                  "techName": "dolaczenie_oplaty",
+                  "title": "Czy dołączasz potwierdzenie opłaty?",
+                  "description": "",
+                  "readOnly": false,
+                  "questionOrder": 3,
+                  "tooltipMessage": "",
+                  "validation": [],
+                  "states": [
+                    {
+                      "type": "SHOW",
+                      "query": "((((\"Osoba fizyczna\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer) or (\"Osoba fizyczna prowadząca JDG\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer)) and (\"Przez pełnomocnika\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"reprezentacja_osoby\" in field.techName].field.__userAnswer)) or ((\"Organizacja\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer) and (\"Przez pełnomocnika\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"reprezentacja_organizacji\" in field.techName].field.__userAnswer)))"
+                    }
+                  ],
+                  "options": [
+                    {
+                      "id": "Tak",
+                      "name": "Tak",
+                      "techName": "tak"
+                    },
+                    {
+                      "id": "Nie",
+                      "name": "Nie",
+                      "techName": "nie"
+                    }
+                  ],
+                  "repeatingSectionGrid": []
+                }
+              },
+              {
+                "x": 0,
+                "y": 3,
+                "rows": 1,
+                "cols": 3,
+                "field": {
+                  "id": "9f629f22-428a-5804-9eca-b3253ce6e35b",
+                  "type": "FILE_UPLOADER",
+                  "techName": "dowod_oplaty",
+                  "title": "Potwierdzenie opłaty",
+                  "description": "",
+                  "readOnly": false,
+                  "questionOrder": 4,
+                  "tooltipMessage": "",
+                  "validation": [],
+                  "defaultValue": [],
+                  "states": [
+                    {
+                      "type": "SHOW",
+                      "query": "(((((\"Osoba fizyczna\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer) or (\"Osoba fizyczna prowadząca JDG\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer)) and (\"Przez pełnomocnika\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"reprezentacja_osoby\" in field.techName].field.__userAnswer)) or ((\"Organizacja\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer) and (\"Przez pełnomocnika\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"reprezentacja_organizacji\" in field.techName].field.__userAnswer))) and (\"Tak\" in tabs[\"Dane\" in title].questions[\"sekcja_dokumenty_reprezentacji\" in field.techName].field.repeatingSectionGrid[\"dolaczenie_oplaty\" in field.techName].field.__userAnswer))"
+                    }
+                  ],
+                  "options": [],
+                  "repeatingSectionGrid": []
+                }
+              }
+            ]
+          }
+        },
+        {
+          "x": 0,
+          "y": 26,
+          "rows": 13,
+          "cols": 3,
+          "field": {
+            "id": "032c8d45-bb3f-555f-8d8d-3a44fb8cfd07",
+            "type": "SECTION",
+            "techName": "sekcja_adres_wnioskodawcy",
+            "title": "Adres wnioskodawcy",
+            "description": "",
+            "readOnly": false,
+            "questionOrder": 8,
+            "tooltipMessage": "",
+            "validation": [],
+            "states": [],
+            "options": [],
+            "repeatingSectionGrid": [
+              {
+                "x": 0,
+                "y": 0,
+                "rows": 1,
+                "cols": 3,
+                "field": {
+                  "id": "8a159c73-ba1a-5359-b78e-83589208b251",
+                  "type": "RADIO",
+                  "techName": "kraj_wnioskodawcy",
+                  "title": "Kraj adresu",
+                  "description": "",
+                  "readOnly": false,
+                  "questionOrder": 1,
+                  "tooltipMessage": "",
+                  "validation": [],
+                  "states": [],
+                  "options": [
+                    {
+                      "id": "Polska",
+                      "name": "Polska",
+                      "techName": "polska"
+                    },
+                    {
+                      "id": "Inny kraj",
+                      "name": "Inny kraj",
+                      "techName": "inny_kraj"
+                    }
+                  ],
+                  "repeatingSectionGrid": []
+                }
+              },
+              {
+                "x": 0,
+                "y": 1,
+                "rows": 3,
+                "cols": 3,
+                "field": {
+                  "id": "364259c5-e4e9-5095-aaec-f9170ed9e2a7",
+                  "type": "TEXTAREA",
+                  "techName": "adres_zagraniczny",
+                  "title": "Adres zagraniczny z nazwą kraju",
+                  "description": "",
+                  "readOnly": false,
+                  "questionOrder": 2,
+                  "tooltipMessage": "",
+                  "validation": [],
+                  "states": [
+                    {
+                      "type": "SHOW",
+                      "query": "(\"Inny kraj\" in tabs[\"Dane\" in title].questions[\"sekcja_adres_wnioskodawcy\" in field.techName].field.repeatingSectionGrid[\"kraj_wnioskodawcy\" in field.techName].field.__userAnswer)"
+                    }
+                  ],
+                  "options": [],
+                  "repeatingSectionGrid": []
+                }
+              },
+              {
+                "x": 0,
+                "y": 4,
+                "rows": 1,
+                "cols": 3,
+                "field": {
+                  "id": "bc39c3aa-055c-5846-a792-94bb9814fb9b",
+                  "type": "SELECT",
+                  "techName": "adres_wojewodztwo",
+                  "title": "Województwo",
+                  "description": "",
+                  "readOnly": false,
+                  "questionOrder": 3,
+                  "tooltipMessage": "",
+                  "validation": [],
+                  "defaultValue": [],
+                  "searchEnabled": true,
+                  "dictionaryName": "Województwo",
+                  "states": [
+                    {
+                      "type": "SHOW",
+                      "query": "(\"Polska\" in tabs[\"Dane\" in title].questions[\"sekcja_adres_wnioskodawcy\" in field.techName].field.repeatingSectionGrid[\"kraj_wnioskodawcy\" in field.techName].field.__userAnswer)"
+                    }
+                  ],
+                  "options": [],
+                  "repeatingSectionGrid": []
+                }
+              },
+              {
+                "x": 0,
+                "y": 5,
+                "rows": 1,
+                "cols": 3,
+                "field": {
+                  "id": "e7c1a4ab-1174-556b-999f-f941644bcd71",
+                  "type": "SELECT",
+                  "techName": "adres_powiat",
+                  "title": "Powiat",
+                  "description": "",
+                  "readOnly": false,
+                  "questionOrder": 4,
+                  "tooltipMessage": "",
+                  "validation": [],
+                  "defaultValue": [],
+                  "searchEnabled": true,
+                  "dictionaryName": "Powiat",
+                  "states": [
+                    {
+                      "type": "SHOW",
+                      "query": "(\"Polska\" in tabs[\"Dane\" in title].questions[\"sekcja_adres_wnioskodawcy\" in field.techName].field.repeatingSectionGrid[\"kraj_wnioskodawcy\" in field.techName].field.__userAnswer)"
+                    }
+                  ],
+                  "options": [],
+                  "repeatingSectionGrid": []
+                }
+              },
+              {
+                "x": 0,
+                "y": 6,
+                "rows": 1,
+                "cols": 3,
+                "field": {
+                  "id": "c312333b-f0a3-5b1c-964a-d32642b88134",
+                  "type": "SELECT",
+                  "techName": "adres_gmina",
+                  "title": "Gmina",
+                  "description": "",
+                  "readOnly": false,
+                  "questionOrder": 5,
+                  "tooltipMessage": "",
+                  "validation": [],
+                  "defaultValue": [],
+                  "searchEnabled": true,
+                  "dictionaryName": "Gmina",
+                  "states": [
+                    {
+                      "type": "SHOW",
+                      "query": "(\"Polska\" in tabs[\"Dane\" in title].questions[\"sekcja_adres_wnioskodawcy\" in field.techName].field.repeatingSectionGrid[\"kraj_wnioskodawcy\" in field.techName].field.__userAnswer)"
+                    }
+                  ],
+                  "options": [],
+                  "repeatingSectionGrid": []
+                }
+              },
+              {
+                "x": 0,
+                "y": 7,
+                "rows": 1,
+                "cols": 3,
+                "field": {
+                  "id": "cc9411d1-8b29-57fd-a5c3-82716bed629b",
+                  "type": "SELECT",
+                  "techName": "adres_miejscowosc",
+                  "title": "Miejscowość",
+                  "description": "",
+                  "readOnly": false,
+                  "questionOrder": 6,
+                  "tooltipMessage": "",
+                  "validation": [],
+                  "defaultValue": [],
+                  "searchEnabled": true,
+                  "dictionaryName": "Miejscowość",
+                  "states": [
+                    {
+                      "type": "SHOW",
+                      "query": "(\"Polska\" in tabs[\"Dane\" in title].questions[\"sekcja_adres_wnioskodawcy\" in field.techName].field.repeatingSectionGrid[\"kraj_wnioskodawcy\" in field.techName].field.__userAnswer)"
+                    }
+                  ],
+                  "options": [],
+                  "repeatingSectionGrid": []
+                }
+              },
+              {
+                "x": 0,
+                "y": 8,
+                "rows": 1,
+                "cols": 3,
+                "field": {
+                  "id": "23649182-e2be-5cc2-89b5-30c170040582",
+                  "type": "TEXT_FIELD",
+                  "techName": "adres_ulica",
+                  "title": "Ulica",
+                  "description": "",
+                  "readOnly": false,
+                  "questionOrder": 7,
+                  "tooltipMessage": "",
+                  "validation": [],
+                  "states": [
+                    {
+                      "type": "SHOW",
+                      "query": "(\"Polska\" in tabs[\"Dane\" in title].questions[\"sekcja_adres_wnioskodawcy\" in field.techName].field.repeatingSectionGrid[\"kraj_wnioskodawcy\" in field.techName].field.__userAnswer)"
+                    }
+                  ],
+                  "options": [],
+                  "repeatingSectionGrid": []
+                }
+              },
+              {
+                "x": 0,
+                "y": 9,
+                "rows": 1,
+                "cols": 3,
+                "field": {
+                  "id": "841d995f-2e84-508f-a872-3b86e1c020da",
+                  "type": "TEXT_FIELD",
+                  "techName": "numer_budynku",
+                  "title": "Numer budynku",
+                  "description": "",
+                  "readOnly": false,
+                  "questionOrder": 8,
+                  "tooltipMessage": "",
+                  "validation": [],
+                  "states": [
+                    {
+                      "type": "SHOW",
+                      "query": "(\"Polska\" in tabs[\"Dane\" in title].questions[\"sekcja_adres_wnioskodawcy\" in field.techName].field.repeatingSectionGrid[\"kraj_wnioskodawcy\" in field.techName].field.__userAnswer)"
+                    }
+                  ],
+                  "options": [],
+                  "repeatingSectionGrid": []
+                }
+              },
+              {
+                "x": 0,
+                "y": 10,
+                "rows": 1,
+                "cols": 3,
+                "field": {
+                  "id": "6db062d4-f315-51e8-a623-cfe877c0a65c",
+                  "type": "TEXT_FIELD",
+                  "techName": "numer_lokalu",
+                  "title": "Numer lokalu",
+                  "description": "",
+                  "readOnly": false,
+                  "questionOrder": 9,
+                  "tooltipMessage": "",
+                  "validation": [],
+                  "states": [
+                    {
+                      "type": "SHOW",
+                      "query": "(\"Polska\" in tabs[\"Dane\" in title].questions[\"sekcja_adres_wnioskodawcy\" in field.techName].field.repeatingSectionGrid[\"kraj_wnioskodawcy\" in field.techName].field.__userAnswer)"
+                    }
+                  ],
+                  "options": [],
+                  "repeatingSectionGrid": []
+                }
+              },
+              {
+                "x": 0,
+                "y": 11,
+                "rows": 1,
+                "cols": 3,
+                "field": {
+                  "id": "3cc1e87f-1293-5081-8759-68055bc6472d",
+                  "type": "TEXT_FIELD",
+                  "techName": "kod_pocztowy",
+                  "title": "Kod pocztowy",
+                  "description": "",
+                  "readOnly": false,
+                  "questionOrder": 10,
+                  "tooltipMessage": "",
+                  "validation": [
+                    "ZIP_CODE"
+                  ],
+                  "states": [
+                    {
+                      "type": "SHOW",
+                      "query": "(\"Polska\" in tabs[\"Dane\" in title].questions[\"sekcja_adres_wnioskodawcy\" in field.techName].field.repeatingSectionGrid[\"kraj_wnioskodawcy\" in field.techName].field.__userAnswer)"
+                    }
+                  ],
+                  "options": [],
+                  "repeatingSectionGrid": []
+                }
+              }
+            ]
+          }
+        },
+        {
+          "x": 0,
+          "y": 39,
+          "rows": 13,
+          "cols": 3,
+          "field": {
+            "id": "ccbe87dd-e6a7-5f10-a979-88b82e5f3f37",
+            "type": "SECTION",
+            "techName": "sekcja_adres_osoby_skladajacej_wniosek_w_imieniu_wnioskodawcy",
+            "title": "Adres osoby składającej wniosek w imieniu wnioskodawcy",
+            "description": "",
+            "readOnly": false,
+            "questionOrder": 9,
+            "tooltipMessage": "",
+            "validation": [],
+            "states": [
+              {
+                "type": "SHOW",
+                "query": "((((((\"Osoba fizyczna\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer) or (\"Osoba fizyczna prowadząca JDG\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer)) and (\"Przez pełnomocnika\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"reprezentacja_osoby\" in field.techName].field.__userAnswer)) or ((\"Organizacja\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer) and (\"Przez pełnomocnika\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"reprezentacja_organizacji\" in field.techName].field.__userAnswer))) or ((\"Organizacja\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer) and (\"Przez uprawnionego reprezentanta\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"reprezentacja_organizacji\" in field.techName].field.__userAnswer))) or ((((((\"Osoba fizyczna\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer) or (\"Osoba fizyczna prowadząca JDG\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer)) and (\"Przez pełnomocnika\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"reprezentacja_osoby\" in field.techName].field.__userAnswer)) or ((\"Organizacja\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer) and (\"Przez pełnomocnika\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"reprezentacja_organizacji\" in field.techName].field.__userAnswer))) or ((\"Organizacja\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer) and (\"Przez uprawnionego reprezentanta\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"reprezentacja_organizacji\" in field.techName].field.__userAnswer))) and (\"Inny kraj\" in tabs[\"Dane\" in title].questions[\"sekcja_adres_osoby_skladajacej_wniosek_w_imieniu_wnioskodawcy\" in field.techName].field.repeatingSectionGrid[\"kraj_osoby_skladajacej\" in field.techName].field.__userAnswer)) or ((((((\"Osoba fizyczna\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer) or (\"Osoba fizyczna prowadząca JDG\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer)) and (\"Przez pełnomocnika\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"reprezentacja_osoby\" in field.techName].field.__userAnswer)) or ((\"Organizacja\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer) and (\"Przez pełnomocnika\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"reprezentacja_organizacji\" in field.techName].field.__userAnswer))) or ((\"Organizacja\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer) and (\"Przez uprawnionego reprezentanta\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"reprezentacja_organizacji\" in field.techName].field.__userAnswer))) and (\"Polska\" in tabs[\"Dane\" in title].questions[\"sekcja_adres_osoby_skladajacej_wniosek_w_imieniu_wnioskodawcy\" in field.techName].field.repeatingSectionGrid[\"kraj_osoby_skladajacej\" in field.techName].field.__userAnswer)))"
+              }
+            ],
+            "options": [],
+            "repeatingSectionGrid": [
+              {
+                "x": 0,
+                "y": 0,
+                "rows": 1,
+                "cols": 3,
+                "field": {
+                  "id": "519616e5-c3bd-5ab2-bcc9-fe61e4285012",
+                  "type": "RADIO",
+                  "techName": "kraj_osoby_skladajacej",
+                  "title": "Kraj adresu",
+                  "description": "",
+                  "readOnly": false,
+                  "questionOrder": 1,
+                  "tooltipMessage": "",
+                  "validation": [],
+                  "states": [
+                    {
+                      "type": "SHOW",
+                      "query": "(((((\"Osoba fizyczna\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer) or (\"Osoba fizyczna prowadząca JDG\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer)) and (\"Przez pełnomocnika\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"reprezentacja_osoby\" in field.techName].field.__userAnswer)) or ((\"Organizacja\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer) and (\"Przez pełnomocnika\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"reprezentacja_organizacji\" in field.techName].field.__userAnswer))) or ((\"Organizacja\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer) and (\"Przez uprawnionego reprezentanta\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"reprezentacja_organizacji\" in field.techName].field.__userAnswer)))"
+                    }
+                  ],
+                  "options": [
+                    {
+                      "id": "Polska",
+                      "name": "Polska",
+                      "techName": "polska"
+                    },
+                    {
+                      "id": "Inny kraj",
+                      "name": "Inny kraj",
+                      "techName": "inny_kraj"
+                    }
+                  ],
+                  "repeatingSectionGrid": []
+                }
+              },
+              {
+                "x": 0,
+                "y": 1,
+                "rows": 3,
+                "cols": 3,
+                "field": {
+                  "id": "fc82411d-b41e-5017-82e9-7c2408dd7fb5",
+                  "type": "TEXTAREA",
+                  "techName": "adres_zagraniczny_osoby_skladajacej",
+                  "title": "Adres zagraniczny z nazwą kraju",
+                  "description": "",
+                  "readOnly": false,
+                  "questionOrder": 2,
+                  "tooltipMessage": "",
+                  "validation": [],
+                  "states": [
+                    {
+                      "type": "SHOW",
+                      "query": "((((((\"Osoba fizyczna\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer) or (\"Osoba fizyczna prowadząca JDG\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer)) and (\"Przez pełnomocnika\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"reprezentacja_osoby\" in field.techName].field.__userAnswer)) or ((\"Organizacja\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer) and (\"Przez pełnomocnika\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"reprezentacja_organizacji\" in field.techName].field.__userAnswer))) or ((\"Organizacja\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer) and (\"Przez uprawnionego reprezentanta\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"reprezentacja_organizacji\" in field.techName].field.__userAnswer))) and (\"Inny kraj\" in tabs[\"Dane\" in title].questions[\"sekcja_adres_osoby_skladajacej_wniosek_w_imieniu_wnioskodawcy\" in field.techName].field.repeatingSectionGrid[\"kraj_osoby_skladajacej\" in field.techName].field.__userAnswer))"
+                    }
+                  ],
+                  "options": [],
+                  "repeatingSectionGrid": []
+                }
+              },
+              {
+                "x": 0,
+                "y": 4,
+                "rows": 1,
+                "cols": 3,
+                "field": {
+                  "id": "e8d0ca37-bd6a-55e9-94b5-5973c1a31d4e",
+                  "type": "SELECT",
+                  "techName": "skladajacy_wojewodztwo",
+                  "title": "Województwo",
+                  "description": "",
+                  "readOnly": false,
+                  "questionOrder": 3,
+                  "tooltipMessage": "",
+                  "validation": [],
+                  "defaultValue": [],
+                  "searchEnabled": true,
+                  "dictionaryName": "Województwo",
+                  "states": [
+                    {
+                      "type": "SHOW",
+                      "query": "((((((\"Osoba fizyczna\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer) or (\"Osoba fizyczna prowadząca JDG\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer)) and (\"Przez pełnomocnika\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"reprezentacja_osoby\" in field.techName].field.__userAnswer)) or ((\"Organizacja\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer) and (\"Przez pełnomocnika\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"reprezentacja_organizacji\" in field.techName].field.__userAnswer))) or ((\"Organizacja\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer) and (\"Przez uprawnionego reprezentanta\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"reprezentacja_organizacji\" in field.techName].field.__userAnswer))) and (\"Polska\" in tabs[\"Dane\" in title].questions[\"sekcja_adres_osoby_skladajacej_wniosek_w_imieniu_wnioskodawcy\" in field.techName].field.repeatingSectionGrid[\"kraj_osoby_skladajacej\" in field.techName].field.__userAnswer))"
+                    }
+                  ],
+                  "options": [],
+                  "repeatingSectionGrid": []
+                }
+              },
+              {
+                "x": 0,
+                "y": 5,
+                "rows": 1,
+                "cols": 3,
+                "field": {
+                  "id": "4dfe520d-1459-58ce-a8ee-96d1e667ee00",
+                  "type": "SELECT",
+                  "techName": "skladajacy_powiat",
+                  "title": "Powiat",
+                  "description": "",
+                  "readOnly": false,
+                  "questionOrder": 4,
+                  "tooltipMessage": "",
+                  "validation": [],
+                  "defaultValue": [],
+                  "searchEnabled": true,
+                  "dictionaryName": "Powiat",
+                  "states": [
+                    {
+                      "type": "SHOW",
+                      "query": "((((((\"Osoba fizyczna\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer) or (\"Osoba fizyczna prowadząca JDG\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer)) and (\"Przez pełnomocnika\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"reprezentacja_osoby\" in field.techName].field.__userAnswer)) or ((\"Organizacja\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer) and (\"Przez pełnomocnika\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"reprezentacja_organizacji\" in field.techName].field.__userAnswer))) or ((\"Organizacja\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer) and (\"Przez uprawnionego reprezentanta\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"reprezentacja_organizacji\" in field.techName].field.__userAnswer))) and (\"Polska\" in tabs[\"Dane\" in title].questions[\"sekcja_adres_osoby_skladajacej_wniosek_w_imieniu_wnioskodawcy\" in field.techName].field.repeatingSectionGrid[\"kraj_osoby_skladajacej\" in field.techName].field.__userAnswer))"
+                    }
+                  ],
+                  "options": [],
+                  "repeatingSectionGrid": []
+                }
+              },
+              {
+                "x": 0,
+                "y": 6,
+                "rows": 1,
+                "cols": 3,
+                "field": {
+                  "id": "5d0cefd8-019b-53cc-bf66-7df8109e1a8d",
+                  "type": "SELECT",
+                  "techName": "skladajacy_gmina",
+                  "title": "Gmina",
+                  "description": "",
+                  "readOnly": false,
+                  "questionOrder": 5,
+                  "tooltipMessage": "",
+                  "validation": [],
+                  "defaultValue": [],
+                  "searchEnabled": true,
+                  "dictionaryName": "Gmina",
+                  "states": [
+                    {
+                      "type": "SHOW",
+                      "query": "((((((\"Osoba fizyczna\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer) or (\"Osoba fizyczna prowadząca JDG\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer)) and (\"Przez pełnomocnika\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"reprezentacja_osoby\" in field.techName].field.__userAnswer)) or ((\"Organizacja\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer) and (\"Przez pełnomocnika\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"reprezentacja_organizacji\" in field.techName].field.__userAnswer))) or ((\"Organizacja\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer) and (\"Przez uprawnionego reprezentanta\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"reprezentacja_organizacji\" in field.techName].field.__userAnswer))) and (\"Polska\" in tabs[\"Dane\" in title].questions[\"sekcja_adres_osoby_skladajacej_wniosek_w_imieniu_wnioskodawcy\" in field.techName].field.repeatingSectionGrid[\"kraj_osoby_skladajacej\" in field.techName].field.__userAnswer))"
+                    }
+                  ],
+                  "options": [],
+                  "repeatingSectionGrid": []
+                }
+              },
+              {
+                "x": 0,
+                "y": 7,
+                "rows": 1,
+                "cols": 3,
+                "field": {
+                  "id": "ca85b391-56a0-5c5e-acee-0bbc5d375353",
+                  "type": "SELECT",
+                  "techName": "skladajacy_miejscowosc",
+                  "title": "Miejscowość",
+                  "description": "",
+                  "readOnly": false,
+                  "questionOrder": 6,
+                  "tooltipMessage": "",
+                  "validation": [],
+                  "defaultValue": [],
+                  "searchEnabled": true,
+                  "dictionaryName": "Miejscowość",
+                  "states": [
+                    {
+                      "type": "SHOW",
+                      "query": "((((((\"Osoba fizyczna\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer) or (\"Osoba fizyczna prowadząca JDG\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer)) and (\"Przez pełnomocnika\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"reprezentacja_osoby\" in field.techName].field.__userAnswer)) or ((\"Organizacja\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer) and (\"Przez pełnomocnika\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"reprezentacja_organizacji\" in field.techName].field.__userAnswer))) or ((\"Organizacja\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer) and (\"Przez uprawnionego reprezentanta\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"reprezentacja_organizacji\" in field.techName].field.__userAnswer))) and (\"Polska\" in tabs[\"Dane\" in title].questions[\"sekcja_adres_osoby_skladajacej_wniosek_w_imieniu_wnioskodawcy\" in field.techName].field.repeatingSectionGrid[\"kraj_osoby_skladajacej\" in field.techName].field.__userAnswer))"
+                    }
+                  ],
+                  "options": [],
+                  "repeatingSectionGrid": []
+                }
+              },
+              {
+                "x": 0,
+                "y": 8,
+                "rows": 1,
+                "cols": 3,
+                "field": {
+                  "id": "19ed0a15-674e-5950-b346-38136fc49bf6",
+                  "type": "TEXT_FIELD",
+                  "techName": "skladajacy_ulica",
+                  "title": "Ulica",
+                  "description": "",
+                  "readOnly": false,
+                  "questionOrder": 7,
+                  "tooltipMessage": "",
+                  "validation": [],
+                  "states": [
+                    {
+                      "type": "SHOW",
+                      "query": "((((((\"Osoba fizyczna\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer) or (\"Osoba fizyczna prowadząca JDG\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer)) and (\"Przez pełnomocnika\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"reprezentacja_osoby\" in field.techName].field.__userAnswer)) or ((\"Organizacja\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer) and (\"Przez pełnomocnika\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"reprezentacja_organizacji\" in field.techName].field.__userAnswer))) or ((\"Organizacja\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer) and (\"Przez uprawnionego reprezentanta\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"reprezentacja_organizacji\" in field.techName].field.__userAnswer))) and (\"Polska\" in tabs[\"Dane\" in title].questions[\"sekcja_adres_osoby_skladajacej_wniosek_w_imieniu_wnioskodawcy\" in field.techName].field.repeatingSectionGrid[\"kraj_osoby_skladajacej\" in field.techName].field.__userAnswer))"
+                    }
+                  ],
+                  "options": [],
+                  "repeatingSectionGrid": []
+                }
+              },
+              {
+                "x": 0,
+                "y": 9,
+                "rows": 1,
+                "cols": 3,
+                "field": {
+                  "id": "8d6c2321-7d18-5749-a712-16212b54e0f2",
+                  "type": "TEXT_FIELD",
+                  "techName": "skladajacy_numer_budynku",
+                  "title": "Numer budynku",
+                  "description": "",
+                  "readOnly": false,
+                  "questionOrder": 8,
+                  "tooltipMessage": "",
+                  "validation": [],
+                  "states": [
+                    {
+                      "type": "SHOW",
+                      "query": "((((((\"Osoba fizyczna\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer) or (\"Osoba fizyczna prowadząca JDG\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer)) and (\"Przez pełnomocnika\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"reprezentacja_osoby\" in field.techName].field.__userAnswer)) or ((\"Organizacja\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer) and (\"Przez pełnomocnika\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"reprezentacja_organizacji\" in field.techName].field.__userAnswer))) or ((\"Organizacja\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer) and (\"Przez uprawnionego reprezentanta\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"reprezentacja_organizacji\" in field.techName].field.__userAnswer))) and (\"Polska\" in tabs[\"Dane\" in title].questions[\"sekcja_adres_osoby_skladajacej_wniosek_w_imieniu_wnioskodawcy\" in field.techName].field.repeatingSectionGrid[\"kraj_osoby_skladajacej\" in field.techName].field.__userAnswer))"
+                    }
+                  ],
+                  "options": [],
+                  "repeatingSectionGrid": []
+                }
+              },
+              {
+                "x": 0,
+                "y": 10,
+                "rows": 1,
+                "cols": 3,
+                "field": {
+                  "id": "72c1e0fe-2c8a-5f4f-89b7-5863eae677ec",
+                  "type": "TEXT_FIELD",
+                  "techName": "skladajacy_numer_lokalu",
+                  "title": "Numer lokalu",
+                  "description": "",
+                  "readOnly": false,
+                  "questionOrder": 9,
+                  "tooltipMessage": "",
+                  "validation": [],
+                  "states": [
+                    {
+                      "type": "SHOW",
+                      "query": "((((((\"Osoba fizyczna\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer) or (\"Osoba fizyczna prowadząca JDG\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer)) and (\"Przez pełnomocnika\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"reprezentacja_osoby\" in field.techName].field.__userAnswer)) or ((\"Organizacja\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer) and (\"Przez pełnomocnika\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"reprezentacja_organizacji\" in field.techName].field.__userAnswer))) or ((\"Organizacja\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer) and (\"Przez uprawnionego reprezentanta\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"reprezentacja_organizacji\" in field.techName].field.__userAnswer))) and (\"Polska\" in tabs[\"Dane\" in title].questions[\"sekcja_adres_osoby_skladajacej_wniosek_w_imieniu_wnioskodawcy\" in field.techName].field.repeatingSectionGrid[\"kraj_osoby_skladajacej\" in field.techName].field.__userAnswer))"
+                    }
+                  ],
+                  "options": [],
+                  "repeatingSectionGrid": []
+                }
+              },
+              {
+                "x": 0,
+                "y": 11,
+                "rows": 1,
+                "cols": 3,
+                "field": {
+                  "id": "5e96dd93-2b80-5634-ae2b-69853756f7ea",
+                  "type": "TEXT_FIELD",
+                  "techName": "skladajacy_kod_pocztowy",
+                  "title": "Kod pocztowy",
+                  "description": "",
+                  "readOnly": false,
+                  "questionOrder": 10,
+                  "tooltipMessage": "",
+                  "validation": [
+                    "ZIP_CODE"
+                  ],
+                  "states": [
+                    {
+                      "type": "SHOW",
+                      "query": "((((((\"Osoba fizyczna\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer) or (\"Osoba fizyczna prowadząca JDG\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer)) and (\"Przez pełnomocnika\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"reprezentacja_osoby\" in field.techName].field.__userAnswer)) or ((\"Organizacja\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer) and (\"Przez pełnomocnika\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"reprezentacja_organizacji\" in field.techName].field.__userAnswer))) or ((\"Organizacja\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer) and (\"Przez uprawnionego reprezentanta\" in tabs[\"Dane\" in title].questions[\"sekcja_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"reprezentacja_organizacji\" in field.techName].field.__userAnswer))) and (\"Polska\" in tabs[\"Dane\" in title].questions[\"sekcja_adres_osoby_skladajacej_wniosek_w_imieniu_wnioskodawcy\" in field.techName].field.repeatingSectionGrid[\"kraj_osoby_skladajacej\" in field.techName].field.__userAnswer))"
+                    }
+                  ],
+                  "options": [],
+                  "repeatingSectionGrid": []
+                }
+              }
+            ]
+          }
+        },
+        {
+          "x": 0,
+          "y": 52,
+          "rows": 14,
+          "cols": 3,
+          "field": {
+            "id": "017ad1f7-084b-518f-9d06-f2ce455919e4",
+            "type": "SECTION",
+            "techName": "sekcja_dane_wnioskodawca",
+            "title": "Wnioskodawca",
+            "description": "",
+            "readOnly": false,
+            "questionOrder": 10,
+            "tooltipMessage": "",
+            "validation": [],
+            "states": [],
+            "options": [],
+            "repeatingSectionGrid": [
+              {
+                "x": 0,
+                "y": 0,
+                "rows": 1,
+                "cols": 3,
+                "field": {
+                  "id": "683c978f-df24-5fdb-ac20-9507e094e4f8",
+                  "type": "DATEPICKER",
+                  "techName": "dane_wnioskodawca_data",
+                  "title": "data",
+                  "description": "",
+                  "readOnly": false,
+                  "questionOrder": 1,
+                  "tooltipMessage": "",
+                  "validation": [],
+                  "states": [],
+                  "options": [],
+                  "repeatingSectionGrid": []
+                }
+              },
+              {
+                "x": 0,
+                "y": 1,
+                "rows": 1,
+                "cols": 3,
+                "field": {
+                  "id": "0ac4b5f3-3c0c-5260-9593-ffbc53348f8c",
+                  "type": "RADIO",
+                  "techName": "dane_wnioskodawca_rodzaj_wnioskodawcy",
+                  "title": "Rodzaj wnioskodawcy",
+                  "description": "",
+                  "readOnly": false,
+                  "questionOrder": 2,
+                  "tooltipMessage": "",
+                  "validation": [],
+                  "states": [],
+                  "options": [
+                    {
+                      "id": "Osoba fizyczna",
+                      "name": "Osoba fizyczna",
+                      "techName": "osoba_fizyczna"
+                    },
+                    {
+                      "id": "Podmiot",
+                      "name": "Podmiot",
+                      "techName": "podmiot"
+                    }
+                  ],
+                  "repeatingSectionGrid": []
+                }
+              },
+              {
+                "x": 0,
+                "y": 2,
+                "rows": 1,
+                "cols": 3,
+                "field": {
+                  "id": "92833785-8599-5735-87ff-ff70e8cc0a49",
+                  "type": "TEXT_FIELD",
+                  "techName": "dane_wnioskodawca_imie",
+                  "title": "Imię",
+                  "description": "",
+                  "readOnly": false,
+                  "questionOrder": 3,
+                  "tooltipMessage": "",
+                  "validation": [],
+                  "states": [
+                    {
+                      "type": "SHOW",
+                      "query": "(\"Osoba fizyczna\" in tabs[\"Dane\" in title].questions[\"sekcja_dane_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"dane_wnioskodawca_rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer)"
+                    }
+                  ],
+                  "options": [],
+                  "repeatingSectionGrid": []
+                }
+              },
+              {
+                "x": 0,
+                "y": 3,
+                "rows": 1,
+                "cols": 3,
+                "field": {
+                  "id": "c3ea7591-4232-59e7-8ecf-37d6790bbb83",
+                  "type": "TEXT_FIELD",
+                  "techName": "dane_wnioskodawca_nazwisko",
+                  "title": "Nazwisko",
+                  "description": "",
+                  "readOnly": false,
+                  "questionOrder": 4,
+                  "tooltipMessage": "",
+                  "validation": [],
+                  "states": [
+                    {
+                      "type": "SHOW",
+                      "query": "(\"Osoba fizyczna\" in tabs[\"Dane\" in title].questions[\"sekcja_dane_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"dane_wnioskodawca_rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer)"
+                    }
+                  ],
+                  "options": [],
+                  "repeatingSectionGrid": []
+                }
+              },
+              {
+                "x": 0,
+                "y": 4,
+                "rows": 1,
+                "cols": 3,
+                "field": {
+                  "id": "99b52307-ab63-557d-9f57-ca4d18578bc2",
+                  "type": "TEXT_FIELD",
+                  "techName": "dane_wnioskodawca_nazwa_podmiotu",
+                  "title": "Nazwa podmiotu",
+                  "description": "",
+                  "readOnly": false,
+                  "questionOrder": 5,
+                  "tooltipMessage": "",
+                  "validation": [],
+                  "states": [
+                    {
+                      "type": "SHOW",
+                      "query": "(\"Podmiot\" in tabs[\"Dane\" in title].questions[\"sekcja_dane_wnioskodawca\" in field.techName].field.repeatingSectionGrid[\"dane_wnioskodawca_rodzaj_wnioskodawcy\" in field.techName].field.__userAnswer)"
+                    }
+                  ],
+                  "options": [],
+                  "repeatingSectionGrid": []
+                }
+              },
+              {
+                "x": 0,
+                "y": 5,
+                "rows": 1,
+                "cols": 3,
+                "field": {
+                  "id": "80a7813f-aa44-59ec-8204-d4a6294ed15b",
+                  "type": "SELECT",
+                  "techName": "dane_wnioskodawca_kraj",
+                  "title": "Kraj",
+                  "description": "",
+                  "readOnly": false,
+                  "questionOrder": 6,
+                  "tooltipMessage": "",
+                  "validation": [],
+                  "defaultValue": [],
+                  "searchEnabled": true,
+                  "dictionaryName": "Kraje",
+                  "states": [],
+                  "options": [],
+                  "repeatingSectionGrid": []
+                }
+              },
+              {
+                "x": 0,
+                "y": 6,
+                "rows": 1,
+                "cols": 3,
+                "field": {
+                  "id": "ba8d6fb4-6725-5850-ac8e-3ca906a8cf06",
+                  "type": "TEXT_FIELD",
+                  "techName": "dane_wnioskodawca_miejscowosc",
+                  "title": "Miejscowość",
+                  "description": "",
+                  "readOnly": false,
+                  "questionOrder": 7,
+                  "tooltipMessage": "",
+                  "validation": [],
+                  "states": [],
+                  "options": [],
+                  "repeatingSectionGrid": []
+                }
+              },
+              {
+                "x": 0,
+                "y": 7,
+                "rows": 1,
+                "cols": 3,
+                "field": {
+                  "id": "2e1becf8-0503-588d-9ad8-ebfa22cfdca5",
+                  "type": "TEXT_FIELD",
+                  "techName": "dane_wnioskodawca_ulica",
+                  "title": "Ulica",
+                  "description": "",
+                  "readOnly": false,
+                  "questionOrder": 8,
+                  "tooltipMessage": "",
+                  "validation": [],
+                  "states": [],
+                  "options": [],
+                  "repeatingSectionGrid": []
+                }
+              },
+              {
+                "x": 0,
+                "y": 8,
+                "rows": 1,
+                "cols": 3,
+                "field": {
+                  "id": "1ccb82b3-6c13-5611-b9fa-37c9f50d7304",
+                  "type": "TEXT_FIELD",
+                  "techName": "dane_wnioskodawca_numer_budynku",
+                  "title": "Numer budynku",
+                  "description": "",
+                  "readOnly": false,
+                  "questionOrder": 9,
+                  "tooltipMessage": "",
+                  "validation": [],
+                  "states": [],
+                  "options": [],
+                  "repeatingSectionGrid": []
+                }
+              },
+              {
+                "x": 0,
+                "y": 9,
+                "rows": 1,
+                "cols": 3,
+                "field": {
+                  "id": "51f1ca86-38ff-515d-85c6-084204410680",
+                  "type": "TEXT_FIELD",
+                  "techName": "dane_wnioskodawca_numer_lokalu",
+                  "title": "Numer lokalu",
+                  "description": "",
+                  "readOnly": false,
+                  "questionOrder": 10,
+                  "tooltipMessage": "",
+                  "validation": [],
+                  "states": [],
+                  "options": [],
+                  "repeatingSectionGrid": []
+                }
+              },
+              {
+                "x": 0,
+                "y": 10,
+                "rows": 1,
+                "cols": 3,
+                "field": {
+                  "id": "3c757452-41a1-5754-b47c-d6f0c297545e",
+                  "type": "TEXT_FIELD",
+                  "techName": "dane_wnioskodawca_kod_pocztowy_zip",
+                  "title": "Kod pocztowy / ZIP",
+                  "description": "",
+                  "readOnly": false,
+                  "questionOrder": 11,
+                  "tooltipMessage": "",
+                  "validation": [],
+                  "states": [],
+                  "options": [],
+                  "repeatingSectionGrid": []
+                }
+              },
+              {
+                "x": 0,
+                "y": 11,
+                "rows": 1,
+                "cols": 3,
+                "field": {
+                  "id": "a033667f-65c4-56f4-807d-4620d97d9b19",
+                  "type": "TEXT_FIELD",
+                  "techName": "dane_wnioskodawca_numer_telefonu",
+                  "title": "Numer telefonu",
+                  "description": "",
+                  "readOnly": false,
+                  "questionOrder": 12,
+                  "tooltipMessage": "",
+                  "validation": [],
+                  "states": [],
+                  "options": [],
+                  "repeatingSectionGrid": []
+                }
+              },
+              {
+                "x": 0,
+                "y": 12,
+                "rows": 1,
+                "cols": 3,
+                "field": {
+                  "id": "488cf987-2b95-53c1-8a80-0cc18a4bc5e1",
+                  "type": "TEXT_FIELD",
+                  "techName": "dane_wnioskodawca_adres_e_mail",
+                  "title": "Adres e-mail",
+                  "description": "",
+                  "readOnly": false,
+                  "questionOrder": 13,
+                  "tooltipMessage": "",
+                  "validation": [
+                    "EMAIL"
+                  ],
+                  "states": [],
+                  "options": [],
+                  "repeatingSectionGrid": []
+                }
+              }
+            ]
+          }
+        },
+        {
+          "x": 0,
+          "y": 66,
+          "rows": 3,
+          "cols": 3,
+          "field": {
+            "id": "154f5fed-165a-5257-ac57-7773413e906e",
+            "type": "SECTION",
+            "techName": "sekcja_dane_wniosek_o_ustalenie_numeru_porzadkowego",
+            "title": "WNIOSEK O USTALENIE NUMERU PORZĄDKOWEGO",
+            "description": "",
+            "readOnly": false,
+            "questionOrder": 11,
+            "tooltipMessage": "",
+            "validation": [],
+            "states": [],
+            "options": [],
+            "repeatingSectionGrid": [
+              {
+                "x": 0,
+                "y": 0,
+                "rows": 1,
+                "cols": 3,
+                "field": {
+                  "id": "d67897d7-c239-571e-9eda-41e19c87d96e",
+                  "type": "TEXT_FIELD",
+                  "techName": "dane_wniosek_o_ustalenie_numeru_porzadkowego_miejscowosc",
+                  "title": "miejscowość",
+                  "description": "",
+                  "readOnly": false,
+                  "questionOrder": 1,
+                  "tooltipMessage": "",
+                  "validation": [],
+                  "states": [],
+                  "options": [],
+                  "repeatingSectionGrid": []
+                }
+              },
+              {
+                "x": 0,
+                "y": 1,
+                "rows": 1,
+                "cols": 3,
+                "field": {
+                  "id": "dcd0aaeb-0565-5147-867f-e260f842f42b",
+                  "type": "TEXT_FIELD",
+                  "techName": "dane_wniosek_o_ustalenie_numeru_porzadkowego_ulica",
+                  "title": "ulica",
+                  "description": "",
+                  "readOnly": false,
+                  "questionOrder": 2,
+                  "tooltipMessage": "",
+                  "validation": [],
+                  "states": [],
+                  "options": [],
+                  "repeatingSectionGrid": [],
+                  "defaultValue": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "x": 0,
+          "y": 69,
+          "rows": 2,
+          "cols": 3,
+          "field": {
+            "id": "9565e498-d3a2-5618-b351-94014e6071bc",
+            "type": "SECTION",
+            "techName": "sekcja_dane_informacje",
+            "title": "Informacje",
+            "description": "",
+            "readOnly": false,
+            "questionOrder": 12,
+            "tooltipMessage": "",
+            "validation": [],
+            "states": [],
+            "options": [],
+            "repeatingSectionGrid": [
+              {
+                "x": 0,
+                "y": 0,
+                "rows": 1,
+                "cols": 3,
+                "field": {
+                  "id": "44d05ceb-fe77-5f5e-9ee9-3aafea02274c",
+                  "type": "TEXT_BLOCK",
+                  "techName": "dane_informacje_informacje_ze_strony_1",
+                  "title": "Informacje ze strony 1",
+                  "description": "<p>\n(data)\nWnioskodawca: Adresat:\n\n(imię i nazwisko/nazwa wnioskodawcy) Wójt Gminy Elbląg\nul. Browarna 85\n82-300 Elbląg\n(adres)\n\n(nr telefonu/adres e-mail)1)\nWnoszę o ustalenie numeru porządkowego budynkowi zlokalizowanemu\nw miejscowościprzy ulicy1)\nnr ewidencyjny działki w obrębie \n\n(podpis wnioskodawcy)2)\n1 ) Dane nieobowiązkowe.\n2 )\nPodpis własnoręczny, a w przypadku składania wniosku w postaci elektronicznej: kwalifikowany podpis elektroniczny,\npodpis osobisty albo podpis zaufany.</p>",
+                  "readOnly": true,
+                  "questionOrder": 1,
+                  "tooltipMessage": "",
+                  "validation": [],
+                  "states": [],
+                  "options": [],
+                  "repeatingSectionGrid": []
+                }
+              }
+            ]
+          }
+        },
+        {
+          "x": 0,
+          "y": 71,
+          "rows": 2,
+          "cols": 3,
+          "field": {
+            "id": "a0e68741-da51-5c5c-9663-43a9b6624288",
+            "type": "SECTION",
+            "techName": "sekcja_dane_informacje_2",
+            "title": "Informacje",
+            "description": "",
+            "readOnly": false,
+            "questionOrder": 13,
+            "tooltipMessage": "",
+            "validation": [],
+            "states": [],
+            "options": [],
+            "repeatingSectionGrid": [
+              {
+                "x": 0,
+                "y": 0,
+                "rows": 1,
+                "cols": 3,
+                "field": {
+                  "id": "86c219cf-ef7e-500b-adb3-55488a1fb718",
+                  "type": "TEXT_BLOCK",
+                  "techName": "dane_informacje_informacje_ze_strony_2",
+                  "title": "Informacje ze strony 2",
+                  "description": "<p>KLAUZULA INFORMACYJNA \nnumeracja porządkowa nieruchomości\nZgodnie z art. 13 ust. 1 i 2 Rozporządzenia Parlamentu Europejskiego i Rady (UE) 2016/679 z dnia 27 kwietnia 2016 r. w sprawie ochrony\nosób fizycznych w związku przetwarzaniem danych osobowych i w sprawie swobodnego przepływu takich danych oraz uchylenia\ndyrektywy 95/46/W – ogólne rozporządzenie o ochronie danych, informujemy, iż: \n1. Administratorem Państwa danych osobowych jest Gmina Elbląg. \nMożna się z nim kontaktować w następujący sposób: \n - listownie na adres: Urząd Gminy Elbląg 82-300 Elbląg, ul. Browarna 85, \n- przez e-mail: sekretariat@gminaelblag.pl\n- telefonicznie: 55 234-18-84\n2. Wyznaczyliśmy Inspektora Ochrony Danych. Jest to osoba, z którą możesz się kontaktować we wszystkich sprawach\ndotyczących przetwarzania Twoich danych osobowych oraz korzystania z przysługujących Ci praw związanych z przetwarzaniem\ndanych. Z inspektorem możesz się kontaktować w następujący sposób:\n- listownie na adres: 82-300 Elbląg, ul. Browarna 85\n- przez e-mail: iod@gminaelblag.pl\n3. Państwa dane osobowe będą przetwarzane w celu ustalenia i potwierdzenia numeru porządkowego nieruchomości na podstawie\nart. 6 ust. 1 lit c RODO, art. 47 a ust. 1 ustawy z dnia 17 maja 1989 r. Prawo geodezyjne i kartograficzne. \n4. Państwa dane osobowe możemy przekazywać i udostępniać wyłącznie podmiotom uprawnionym na podstawie obowiązujących\nprzepisów prawa są nimi np.: sądy, organy ścigania, organy podatkowe oraz inne podmioty publiczne, gdy wystąpią z takim\nżądaniem oczywiście w oparciu o stosowną podstawę prawną. Państwa dane osobowe możemy także przekazywać podmiotom,\nktóre przetwarzają je na zlecenie administratora tzw. podmiotom przetwarzającym, są nimi np.: podmioty świadczące usługi\ninformatyczne, telekomunikacyjne, pocztowe i inne, jednakże przekazanie Państwa danych nastąpić może tylko wtedy, gdy\nzapewnią one odpowiednią ochronę Państwa praw. \n5. Państwa dane osobowe nie będą przekazywane do państw trzecich ani do organizacji międzynarodowych.\n6. Państwa dane osobowe będą przetwarzane przez okres zgodny z obowiązującymi przepisami prawa, tj. przez 25 lat, a następnie\nprzekazane do archiwum państwowego. \n7. Mają Państwo prawo do żądania od administratora dostępu do danych, można je sprostować, gdy zachodzi taka konieczność.\nMają Państwo także prawo żądania usunięcia lub ograniczenia przetwarzania.\n8. Podania danych wymaga ustawa na podstawie, której działa administrator. \n9. Przysługuje Państwu także skarga do organu do organu nadzorczego - Prezesa Urzędu Ochrony Danych Osobowych ul. Stawki 2,\n00-193 Warszawa, gdy przetwarzanie Państwa danych osobowych naruszy przepisy ogólnego rozporządzenia o ochronie danych\nosobowych z dnia 27 kwietnia 2016 r. \n10. Państwa dane nie będą przetwarzane w sposób zautomatyzowany, w tym również w formie profilowania.</p>",
+                  "readOnly": true,
+                  "questionOrder": 1,
+                  "tooltipMessage": "",
+                  "validation": [],
+                  "states": [],
+                  "options": [],
+                  "repeatingSectionGrid": []
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "c2b3e8e8-3cc1-5155-9cdb-95a632ab6c42",
+      "title": "Informacje o budynku",
+      "type": "MAIN",
+      "questions": [
+        {
+          "x": 0,
+          "y": 0,
+          "rows": 8,
+          "cols": 3,
+          "field": {
+            "id": "6eb8f9a6-c912-5b31-97e2-ba2fc437a28a",
+            "type": "SECTION",
+            "techName": "sekcja_lokalizacja_budynku",
+            "title": "Lokalizacja budynku",
+            "description": "",
+            "readOnly": false,
+            "questionOrder": 1,
+            "tooltipMessage": "",
+            "validation": [],
+            "states": [],
+            "options": [],
+            "repeatingSectionGrid": [
+              {
+                "x": 0,
+                "y": 0,
+                "rows": 1,
+                "cols": 3,
+                "field": {
+                  "id": "c50dc39b-d612-5c7f-ba41-a62c8c0c714f",
+                  "type": "SELECT",
+                  "techName": "budynek_wojewodztwo",
+                  "title": "Województwo",
+                  "description": "",
+                  "readOnly": false,
+                  "questionOrder": 1,
+                  "tooltipMessage": "",
+                  "validation": [],
+                  "defaultValue": [],
+                  "searchEnabled": true,
+                  "dictionaryName": "Województwo",
+                  "states": [],
+                  "options": [],
+                  "repeatingSectionGrid": []
+                }
+              },
+              {
+                "x": 0,
+                "y": 1,
+                "rows": 1,
+                "cols": 3,
+                "field": {
+                  "id": "66c0a780-9649-5866-bbd5-1208ff9a4724",
+                  "type": "SELECT",
+                  "techName": "budynek_powiat",
+                  "title": "Powiat",
+                  "description": "",
+                  "readOnly": false,
+                  "questionOrder": 2,
+                  "tooltipMessage": "",
+                  "validation": [],
+                  "defaultValue": [],
+                  "searchEnabled": true,
+                  "dictionaryName": "Powiat",
+                  "states": [],
+                  "options": [],
+                  "repeatingSectionGrid": []
+                }
+              },
+              {
+                "x": 0,
+                "y": 2,
+                "rows": 1,
+                "cols": 3,
+                "field": {
+                  "id": "e04943b3-8361-577e-ab88-d0b3bce7952b",
+                  "type": "SELECT",
+                  "techName": "budynek_gmina",
+                  "title": "Gmina",
+                  "description": "",
+                  "readOnly": false,
+                  "questionOrder": 3,
+                  "tooltipMessage": "",
+                  "validation": [],
+                  "defaultValue": [],
+                  "searchEnabled": true,
+                  "dictionaryName": "Gmina",
+                  "states": [],
+                  "options": [],
+                  "repeatingSectionGrid": []
+                }
+              },
+              {
+                "x": 0,
+                "y": 3,
+                "rows": 1,
+                "cols": 3,
+                "field": {
+                  "id": "bb53f444-037e-5b20-acd8-aa5249d52d58",
+                  "type": "SELECT",
+                  "techName": "budynek_miejscowosc",
+                  "title": "Miejscowość",
+                  "description": "",
+                  "readOnly": false,
+                  "questionOrder": 4,
+                  "tooltipMessage": "",
+                  "validation": [],
+                  "defaultValue": [],
+                  "searchEnabled": true,
+                  "dictionaryName": "Miejscowość",
+                  "states": [],
+                  "options": [],
+                  "repeatingSectionGrid": []
+                }
+              },
+              {
+                "x": 0,
+                "y": 4,
+                "rows": 1,
+                "cols": 3,
+                "field": {
+                  "id": "9e5ae2ee-ba9e-55d4-bf9a-72a818539ea9",
+                  "type": "TEXT_FIELD",
+                  "techName": "budynek_ulica",
+                  "title": "Ulica",
+                  "description": "",
+                  "readOnly": false,
+                  "questionOrder": 5,
+                  "tooltipMessage": "",
+                  "validation": [],
+                  "states": [],
+                  "options": [],
+                  "repeatingSectionGrid": []
+                }
+              },
+              {
+                "x": 0,
+                "y": 5,
+                "rows": 1,
+                "cols": 3,
+                "field": {
+                  "id": "c30f482f-0022-5a41-9875-32e24ebe6a0e",
+                  "type": "TEXT_FIELD",
+                  "techName": "obreb",
+                  "title": "Obręb",
+                  "description": "Podaj nazwę, czterocyfrowy kod lub pełny identyfikator obrębu.",
+                  "readOnly": false,
+                  "questionOrder": 6,
+                  "tooltipMessage": "",
+                  "validation": [],
+                  "states": [],
+                  "options": [],
+                  "repeatingSectionGrid": []
+                }
+              },
+              {
+                "x": 0,
+                "y": 6,
+                "rows": 1,
+                "cols": 3,
+                "field": {
+                  "id": "1c62b26b-1472-5d23-ad80-1917e1bf9f69",
+                  "type": "TEXT_FIELD",
+                  "techName": "numer_dzialki",
+                  "title": "Nr ewidencyjny działki",
+                  "description": "",
+                  "readOnly": false,
+                  "questionOrder": 7,
+                  "tooltipMessage": "",
+                  "validation": [],
+                  "states": [],
+                  "options": [],
+                  "repeatingSectionGrid": []
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "e00a8b86-255f-5f13-8d22-62f07296b972",
+      "title": "Kontakt i oświadczenia",
+      "type": "MAIN",
+      "questions": [
+        {
+          "x": 0,
+          "y": 0,
+          "rows": 3,
+          "cols": 3,
+          "field": {
+            "id": "6bcdf346-24e6-5a71-bf6e-03920c8a5d6e",
+            "type": "SECTION",
+            "techName": "sekcja_kontakt",
+            "title": "Kontakt",
+            "description": "",
+            "readOnly": false,
+            "questionOrder": 1,
+            "tooltipMessage": "",
+            "validation": [],
+            "states": [],
+            "options": [],
+            "repeatingSectionGrid": [
+              {
+                "x": 0,
+                "y": 0,
+                "rows": 1,
+                "cols": 3,
+                "field": {
+                  "id": "0714c37d-3695-5fec-a7a8-89357abdae63",
+                  "type": "TEXT_FIELD",
+                  "techName": "telefon",
+                  "title": "Numer telefonu",
+                  "description": "",
+                  "readOnly": false,
+                  "questionOrder": 1,
+                  "tooltipMessage": "",
+                  "validation": [],
+                  "states": [],
+                  "options": [],
+                  "repeatingSectionGrid": []
+                }
+              },
+              {
+                "x": 0,
+                "y": 1,
+                "rows": 1,
+                "cols": 3,
+                "field": {
+                  "id": "f5fed472-7209-55e1-accd-5c385c33f59d",
+                  "type": "TEXT_FIELD",
+                  "techName": "email",
+                  "title": "Adres e-mail",
+                  "description": "",
+                  "readOnly": false,
+                  "questionOrder": 2,
+                  "tooltipMessage": "",
+                  "validation": [
+                    "EMAIL"
+                  ],
+                  "states": [],
+                  "options": [],
+                  "repeatingSectionGrid": []
+                }
+              }
+            ]
+          }
+        },
+        {
+          "x": 0,
+          "y": 3,
+          "rows": 3,
+          "cols": 3,
+          "field": {
+            "id": "142c66fc-e57e-506e-abcb-060a6f22a53d",
+            "type": "SECTION",
+            "techName": "sekcja_podpis",
+            "title": "Podpis",
+            "description": "",
+            "readOnly": false,
+            "questionOrder": 2,
+            "tooltipMessage": "",
+            "validation": [],
+            "states": [],
+            "options": [],
+            "repeatingSectionGrid": [
+              {
+                "x": 0,
+                "y": 0,
+                "rows": 1,
+                "cols": 3,
+                "field": {
+                  "id": "53eb98cb-c343-5c29-92c7-24c0829ea259",
+                  "type": "DATEPICKER",
+                  "techName": "data_wniosku",
+                  "title": "Data wniosku",
+                  "description": "",
+                  "readOnly": false,
+                  "questionOrder": 1,
+                  "tooltipMessage": "",
+                  "validation": [],
+                  "states": [],
+                  "options": [],
+                  "repeatingSectionGrid": []
+                }
+              },
+              {
+                "x": 0,
+                "y": 1,
+                "rows": 1,
+                "cols": 3,
+                "field": {
+                  "id": "87d3940a-28fc-5681-800e-c195c7759742",
+                  "type": "TEXT_BLOCK",
+                  "techName": "podpis",
+                  "title": "Podpis wnioskodawcy",
+                  "description": "Podpis własnoręczny, a przy składaniu elektronicznym: kwalifikowany podpis elektroniczny, podpis osobisty albo podpis zaufany.",
+                  "readOnly": true,
+                  "questionOrder": 2,
+                  "tooltipMessage": "",
+                  "validation": [],
+                  "states": [],
+                  "options": [],
+                  "repeatingSectionGrid": []
+                }
+              }
+            ]
+          }
+        },
+        {
+          "x": 0,
+          "y": 6,
+          "rows": 2,
+          "cols": 3,
+          "field": {
+            "id": "df60bf0d-07e7-5d63-a09f-cd4a832383a1",
+            "type": "SECTION",
+            "techName": "sekcja_prywatnosc",
+            "title": "Prywatność",
+            "description": "",
+            "readOnly": false,
+            "questionOrder": 3,
+            "tooltipMessage": "",
+            "validation": [],
+            "states": [],
+            "options": [],
+            "repeatingSectionGrid": [
+              {
+                "x": 0,
+                "y": 0,
+                "rows": 1,
+                "cols": 3,
+                "field": {
+                  "id": "1d507a06-bf4a-5717-96f2-03c32e2d43ce",
+                  "type": "TEXT_BLOCK",
+                  "techName": "klauzula_informacyjna",
+                  "title": "Klauzula informacyjna",
+                  "description": "<p>numeracja porządkowa nieruchomości Zgodnie z art. 13 ust. 1 i 2 Rozporządzenia Parlamentu Europejskiego i Rady (UE) 2016/679 z dnia 27 kwietnia 2016 r. w sprawie ochrony osób fizycznych w związku przetwarzaniem danych osobowych i w sprawie swobodnego przepływu takich danych oraz uchylenia dyrektywy 95/46/W – ogólne rozporządzenie o ochronie danych, informujemy, iż:</p><p>1. Administratorem Państwa danych osobowych jest Gmina Elbląg. Można się z nim kontaktować w następujący sposób:</p><p>- listownie na adres: Urząd Gminy Elbląg 82-300 Elbląg, ul. Browarna 85,</p><p>- przez e-mail: sekretariat@gminaelblag.pl</p><p>- telefonicznie: 55 234-18-84</p><p>2. Wyznaczyliśmy Inspektora Ochrony Danych. Jest to osoba, z którą możesz się kontaktować we wszystkich sprawach dotyczących przetwarzania Twoich danych osobowych oraz korzystania z przysługujących Ci praw związanych z przetwarzaniem danych. Z inspektorem możesz się kontaktować w następujący sposób:</p><p>- listownie na adres: 82-300 Elbląg, ul. Browarna 85</p><p>- przez e-mail: iod@gminaelblag.pl</p><p>3. Państwa dane osobowe będą przetwarzane w celu ustalenia i potwierdzenia numeru porządkowego nieruchomości na podstawie art. 6 ust. 1 lit c RODO, art. 47 a ust. 1 ustawy z dnia 17 maja 1989 r. Prawo geodezyjne i kartograficzne.</p><p>4. Państwa dane osobowe możemy przekazywać i udostępniać wyłącznie podmiotom uprawnionym na podstawie obowiązujących przepisów prawa są nimi np.: sądy, organy ścigania, organy podatkowe oraz inne podmioty publiczne, gdy wystąpią z takim żądaniem oczywiście w oparciu o stosowną podstawę prawną. Państwa dane osobowe możemy także przekazywać podmiotom, które przetwarzają je na zlecenie administratora tzw. podmiotom przetwarzającym, są nimi np.: podmioty świadczące usługi informatyczne, telekomunikacyjne, pocztowe i inne, jednakże przekazanie Państwa danych nastąpić może tylko wtedy, gdy zapewnią one odpowiednią ochronę Państwa praw.</p><p>5. Państwa dane osobowe nie będą przekazywane do państw trzecich ani do organizacji międzynarodowych.</p><p>6. Państwa dane osobowe będą przetwarzane przez okres zgodny z obowiązującymi przepisami prawa, tj. przez 25 lat, a następnie przekazane do archiwum państwowego.</p><p>7. Mają Państwo prawo do żądania od administratora dostępu do danych, można je sprostować, gdy zachodzi taka konieczność. Mają Państwo także prawo żądania usunięcia lub ograniczenia przetwarzania.</p><p>8. Podania danych wymaga ustawa na podstawie, której działa administrator.</p><p>9. Przysługuje Państwu także skarga do organu do organu nadzorczego - Prezesa Urzędu Ochrony Danych Osobowych ul. Stawki 2, 00-193 Warszawa, gdy przetwarzanie Państwa danych osobowych naruszy przepisy ogólnego rozporządzenia o ochronie danych osobowych z dnia 27 kwietnia 2016 r.</p><p>10. Państwa dane nie będą przetwarzane w sposób zautomatyzowany, w tym również w formie profilowania.</p>",
+                  "readOnly": true,
+                  "questionOrder": 1,
+                  "tooltipMessage": "",
+                  "validation": [],
+                  "states": [],
+                  "options": [],
+                  "repeatingSectionGrid": []
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "e4d2c172-2424-5c72-a9e2-b5839655fa57",
+      "title": "Podsumowanie",
+      "type": "FINISH",
+      "questions": [
+        {
+          "x": 0,
+          "y": 0,
+          "rows": 2,
+          "cols": 3,
+          "field": {
+            "id": "75a2f88f-d8bf-52b8-b2ae-77d6bb736852",
+            "type": "SECTION",
+            "techName": "podsumowanie",
+            "title": "Podsumowanie",
+            "description": "",
+            "readOnly": false,
+            "questionOrder": 1,
+            "tooltipMessage": "",
+            "validation": [],
+            "states": [],
+            "options": [],
+            "repeatingSectionGrid": [
+              {
+                "x": 0,
+                "y": 0,
+                "rows": 1,
+                "cols": 3,
+                "field": {
+                  "id": "6b370319-53a8-5765-bc27-c7e5a55495ff",
+                  "type": "INFO_SECTION",
+                  "techName": "sprawdz_wniosek",
+                  "title": "Sprawdź wniosek",
+                  "description": "Sprawdź dane przed wysłaniem formularza.",
+                  "readOnly": false,
+                  "questionOrder": 1,
+                  "tooltipMessage": "",
+                  "validation": [],
+                  "states": [],
+                  "options": [],
+                  "repeatingSectionGrid": []
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "flow": {
+    "links": [
+      {
+        "id": "f1fdbe14-962b-5a49-89f8-73956a69b919",
+        "source": "398880fd-fe76-58bd-993d-c80b797825f5",
+        "target": "c2b3e8e8-3cc1-5155-9cdb-95a632ab6c42"
+      },
+      {
+        "id": "b202a0c2-091b-5fe5-a6e7-ff4eab606336",
+        "source": "c2b3e8e8-3cc1-5155-9cdb-95a632ab6c42",
+        "target": "e00a8b86-255f-5f13-8d22-62f07296b972"
+      },
+      {
+        "id": "24722f1b-f301-58ca-8c12-8bead155d786",
+        "source": "e00a8b86-255f-5f13-8d22-62f07296b972",
+        "target": "e4d2c172-2424-5c72-a9e2-b5839655fa57"
+      }
+    ]
+  }
+}

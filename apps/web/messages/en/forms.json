@@ -176,6 +176,7 @@
     "documentTextFailed": "Pyworker could not read the document content.",
     "pipelineUnavailable": "A required local processing engine is unavailable.",
     "pipelineReadFailed": "The document could not be read locally.",
+    "agentcoreExpired": "The AWS AgentCore admission window has expired. New analyses are blocked.",
     "agentcoreFailed": "AWS AgentCore could not complete the page analysis.",
     "agentcoreInvalidJson": "AWS AgentCore returned an invalid JSON structure.",
     "pipelineLlmFailed": "Qwen could not generate a result.",

@@ -49,8 +49,9 @@ class EdenSettings:
     ocr_only: bool = False
     transcription_model: str = DEFAULT_QWEN_MODEL
     vision_model: str = ""
-    harness_arn: str = ""
-    harness_profile: str = ""
+    harness_api_url: str = ""
+    harness_api_key: str = field(default="", repr=False)
+    harness_expires_at: str = ""
     doc_classpath: str = ""
 
     def uses_vision(self, mime: str) -> bool:
@@ -355,7 +356,7 @@ async def read_visual_pages(client, settings, headers, images, deadline):
             transcript = await transcribe_image(client, settings, headers, image)
             if transcript:
                 page.notes.append(transcript)
-        if settings.harness_arn:
+        if settings.harness_api_url:
             from pyworker.agentcore import design_page
 
             return await asyncio.to_thread(design_page, settings, page, native)
@@ -375,6 +376,10 @@ async def convert_document(
     semantic_mode="EXTENDED",
     as_of=None,
 ) -> tuple[GeneratedDraft | CoiResult, bool]:
+    if settings.harness_api_url:
+        from pyworker.agentcore import ensure_available
+
+        ensure_available(settings)
     use_ocr = mime == "application/pdf" or mime.startswith("image/")
     use_text = mime in {"text/plain", "application/json"}
     use_doc = mime == "application/msword"

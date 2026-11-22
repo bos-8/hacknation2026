@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import type { PDFDocumentLoadingTask, PDFDocumentProxy, RenderTask } from "pdfjs-dist";
+import { SourceFrame } from "./source-frame";
 import { Button, Throbber } from "@/ui/basic";
 
 export function PdfPreview({ src, name, page, onPage, children }: {
@@ -84,9 +85,10 @@ export function PdfPreview({ src, name, page, onPage, children }: {
     {(!document || rendered !== current) && <div className="flex min-h-24 items-center justify-center"><Throbber /></div>}
     <div className="flex justify-center">
       <div className="relative" style={{width: `min(100%, ${70 * ratio}vh)`}}>
-        <canvas ref={canvas} key={current} role="img"
-          aria-label={`${name} · ${current}`} className={`block h-auto w-full ${rendered === current ? "" : "hidden"}`} />
-        {rendered === current && children}
+        <SourceFrame overlay={rendered === current ? children : null}>
+          <canvas ref={canvas} key={current} role="img"
+            aria-label={`${name} · ${current}`} className={`block h-auto w-full ${rendered === current ? "" : "hidden"}`} />
+        </SourceFrame>
       </div>
     </div>
   </div>;

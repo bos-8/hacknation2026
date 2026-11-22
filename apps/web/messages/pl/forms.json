@@ -176,6 +176,7 @@
     "documentTextFailed": "Pyworker nie mógł odczytać treści dokumentu.",
     "pipelineUnavailable": "Brakuje lokalnego silnika przetwarzania.",
     "pipelineReadFailed": "Nie udało się odczytać dokumentu lokalnie.",
+    "agentcoreExpired": "Minął dozwolony czas działania AWS AgentCore. Nowe analizy są zablokowane.",
     "agentcoreFailed": "Nie udało się zakończyć analizy strony przez AWS AgentCore.",
     "agentcoreInvalidJson": "Odpowiedź AWS AgentCore ma nieprawidłową strukturę JSON.",
     "pipelineLlmFailed": "Qwen nie wygenerował wyniku.",

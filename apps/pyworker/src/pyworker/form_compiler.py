@@ -4,6 +4,7 @@ from collections import Counter
 from dataclasses import replace
 from uuid import UUID, uuid5
 
+from pyworker.form_title import clean_writing_guides
 from pyworker.coi import DocumentContent, DocumentPage
 from pyworker.coi import (
     CoiField,
@@ -284,7 +285,7 @@ def render_plan(plan, document, form_id):
         )
         for source, target in zip(tabs[:-1], tabs[1:], strict=True)
     ]
-    return CoiResult(
+    exported = CoiResult(
         document_content=DocumentContent(pages=[
             DocumentPage(
                 page=number,
@@ -300,6 +301,7 @@ def render_plan(plan, document, form_id):
         field_locations=locations,
         field_confidences=confidences,
     )
+    return CoiResult.model_validate(clean_writing_guides(exported.model_dump()))
 
 
 def finish_tab(form_id):
