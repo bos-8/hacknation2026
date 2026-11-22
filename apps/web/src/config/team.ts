@@ -2,7 +2,7 @@ export type TeamMember = {
   id: string;
   name: string;
   initials: string;
-  roles: readonly ("owner" | "architect" | "projectLead")[];
+  roles: readonly ("owner" | "architect" | "projectLead" | "aiLead" | "uiUx" | "projectManager" | "seniorDeveloper" | "trainer" | "midDeveloper" | "ciCd")[];
   profileKey?: string;
   image?: string;
   imagePosition?: string;
@@ -20,6 +20,7 @@ export const teamMembers: readonly TeamMember[] = [
     roles: ["architect", "projectLead"],
     profileKey: "kacper",
     image: "/team/agent-kb22.jpg",
+    imagePosition: "center 20%",
     hoverImage: "/team/thinkpad_in_server_room.gif",
     linkedin: "https://www.linkedin.com/in/kacper-boss",
     github: "https://github.com/bos-8",
@@ -28,7 +29,8 @@ export const teamMembers: readonly TeamMember[] = [
     id: "jakub-mielcarek",
     name: "Jakub Mielcarek",
     initials: "JM",
-    roles: [],
+    roles: ["aiLead", "uiUx"],
+    profileKey: "jakub",
     image: "/team/jakub-mielcarek.png",
     linkedin: "https://www.linkedin.com/in/mielcarekjakub/",
     github: "https://github.com/vGiacomov",
@@ -37,7 +39,8 @@ export const teamMembers: readonly TeamMember[] = [
     id: "natalia-balicka",
     name: "Balicka Natalia",
     initials: "NB",
-    roles: [],
+    roles: ["owner", "projectManager"],
+    profileKey: "natalia",
     image: "/team/natalia-balicka-portrait.webp",
     imagePosition: "center 10%",
     linkedin: "https://www.linkedin.com/in/natalia-balicka",
@@ -47,7 +50,8 @@ export const teamMembers: readonly TeamMember[] = [
     id: "yurii-holovko",
     name: "Yurii Holovko",
     initials: "YH",
-    roles: [],
+    roles: ["seniorDeveloper", "trainer"],
+    profileKey: "yurii",
     image: "/team/yurii-holovko.webp",
     linkedin: "https://www.linkedin.com/in/yurii-holovko/",
     github: "https://github.com/Yurich3112",
@@ -56,7 +60,8 @@ export const teamMembers: readonly TeamMember[] = [
     id: "stanislaw-walga",
     name: "Stanisław Wałga",
     initials: "SW",
-    roles: [],
+    roles: ["midDeveloper", "ciCd"],
+    profileKey: "stanislaw",
     image: "/team/stanislaw-walga-portrait.webp",
     linkedin: "https://www.linkedin.com/in/stanislaw-walga/",
     github: "https://github.com/Aglawxd",

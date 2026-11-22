@@ -65,12 +65,30 @@
       "eyebrow": "Ludzie za projektem",
       "title": "Zespół developerski",
       "description": "Osoby tworzące i rozwijające FORMIQ.",
-      "owner": "Właściciel projektu",
+      "owner": "Project Owner",
       "architect": "Architekt",
       "projectLead": "Lider projektu",
+      "aiLead": "AI Lead",
+      "uiUx": "UI/UX",
+      "projectManager": "Project Manager",
+      "seniorDeveloper": "Senior Developer",
+      "trainer": "Trainer",
+      "midDeveloper": "Mid Developer",
+      "ciCd": "CI/CD",
+      "jakub": {
+        "motto": "Wielbiciel chińskich modeli"
+      },
+      "natalia": {
+        "motto": "Będzie dobrze ;)"
+      },
+      "yurii": {
+        "motto": "Gemini robi brrrrrrr"
+      },
+      "stanislaw": {
+        "motto": "Nie ma to jak dobry pipeline"
+      },
       "kacper": {
-        "bio": "Odpowiada za architekturę, kierunek rozwoju i spójność techniczną FORMIQ.",
-        "motto": "Proste rozwiązania. Solidne fundamenty."
+        "motto": "Harder Better Faster"
       },
       "namePlaceholder": "Imię i nazwisko",
       "rolePlaceholder": "Rola",

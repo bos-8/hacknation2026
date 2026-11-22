@@ -65,12 +65,30 @@
       "eyebrow": "People behind the project",
       "title": "Development team",
       "description": "The people building and developing FORMIQ.",
-      "owner": "Project owner",
+      "owner": "Project Owner",
       "architect": "Architect",
       "projectLead": "Project lead",
+      "aiLead": "AI Lead",
+      "uiUx": "UI/UX",
+      "projectManager": "Project Manager",
+      "seniorDeveloper": "Senior Developer",
+      "trainer": "Trainer",
+      "midDeveloper": "Mid Developer",
+      "ciCd": "CI/CD",
+      "jakub": {
+        "motto": "A fan of Chinese AI models"
+      },
+      "natalia": {
+        "motto": "It’ll be fine ;)"
+      },
+      "yurii": {
+        "motto": "Gemini goes brrrrrrr"
+      },
+      "stanislaw": {
+        "motto": "Nothing beats a good pipeline"
+      },
       "kacper": {
-        "bio": "Responsible for FORMIQ's architecture, development direction and technical consistency.",
-        "motto": "Simple solutions. Solid foundations."
+        "motto": "Harder Better Faster"
       },
       "namePlaceholder": "Full name",
       "rolePlaceholder": "Role",

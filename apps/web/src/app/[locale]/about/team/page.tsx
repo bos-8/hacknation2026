@@ -37,7 +37,7 @@ export default async function TeamPage() {
                 {member.roles.map(role => <li key={role}><Badge tone="accent" className="glass-accent-text">{t(role)}</Badge></li>)}
               </ul>}
               {member.profileKey && <>
-                <Text className="mt-4 text-sm text-muted-foreground">{t(`${member.profileKey}.bio`)}</Text>
+                {t.has(`${member.profileKey}.bio`) && <Text className="mt-4 text-sm text-muted-foreground">{t(`${member.profileKey}.bio`)}</Text>}
                 <blockquote className="mt-4 border-l-2 border-accent/40 pl-3 text-sm font-medium italic">{t(`${member.profileKey}.motto`)}</blockquote>
               </>}
               <div className="mt-auto flex gap-2 pt-5">
