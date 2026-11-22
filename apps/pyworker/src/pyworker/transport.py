@@ -6,8 +6,11 @@ import hmac
 from starlette.responses import JSONResponse
 from starlette.types import ASGIApp, Receive, Scope, Send
 
+from pyworker.answer_checks import CHECK_ANSWERS
 from pyworker.config import Settings
-from pyworker.forms import UPLOAD_PATH
+from pyworker.forms import PROCESS_PATH, SCHEMA_PATH, UPLOAD_PATH, VALUE_PATH
+from pyworker.geography import ADDRESS_PATH
+from pyworker.profile_api import EVALUATE, PROFILES, REVIEW
 
 MAX_BODY_BYTES = 8192
 
@@ -18,11 +21,26 @@ class TaskBoundary:
         self.settings = settings
 
     async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
-        if (
-            scope["type"] != "http"
-            or scope["method"] != "POST"
-            or scope["path"] not in ("/v1/tasks/check", UPLOAD_PATH)
-        ):
+        if scope["type"] != "http":
+            await self.app(scope, receive, send)
+            return
+        protected_read = scope["method"] == "GET" and scope["path"] in (
+            PROCESS_PATH,
+            SCHEMA_PATH,
+            SCHEMA_PATH + "/catalog",
+            PROFILES,
+        )
+        task = scope["method"] == "POST" and scope["path"] in (
+            "/v1/tasks/check",
+            VALUE_PATH,
+            CHECK_ANSWERS,
+            ADDRESS_PATH,
+            REVIEW,
+            EVALUATE,
+            UPLOAD_PATH,
+            PROCESS_PATH,
+        )
+        if not (protected_read or task):
             await self.app(scope, receive, send)
             return
         headers = dict(scope["headers"])
@@ -30,7 +48,10 @@ class TaskBoundary:
         if not hmac.compare_digest(headers.get(b"authorization", b""), expected):
             await JSONResponse({"error": "unauthorized"}, status_code=401)(scope, receive, send)
             return
-        upload = scope["path"] == UPLOAD_PATH
+        if protected_read:
+            await self.app(scope, receive, send)
+            return
+        upload = scope["path"] in (UPLOAD_PATH, PROCESS_PATH)
         media_type = b"multipart/form-data" if upload else b"application/json"
         if headers.get(b"content-type", b"").split(b";")[0].strip().lower() != media_type:
             await JSONResponse({"error": "unsupported_content_type"}, status_code=415)(
@@ -41,6 +62,9 @@ class TaskBoundary:
             await self.app(scope, receive, send)
             return
         body = bytearray()
+        limit = {REVIEW: 32 * 1024, EVALUATE: 2 * 1024 * 1024, CHECK_ANSWERS: 2 * 1024 * 1024}.get(
+            scope["path"], MAX_BODY_BYTES
+        )
         try:
             async with asyncio.timeout(self.settings.task_timeout):
                 while True:
@@ -48,7 +72,7 @@ class TaskBoundary:
                     if message["type"] == "http.disconnect":
                         return
                     chunk = message.get("body", b"")
-                    if len(body) + len(chunk) > MAX_BODY_BYTES:
+                    if len(body) + len(chunk) > limit:
                         await JSONResponse({"error": "body_too_large"}, status_code=413)(
                             scope, receive, send
                         )

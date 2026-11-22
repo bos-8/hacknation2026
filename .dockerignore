@@ -13,6 +13,8 @@
 **/.env
 **/.env.*
 **/.venv
+**/.models
+apps/pyworker/legacy-word/target
 **/.cache
 **/__pycache__
 **/.ruff_cache

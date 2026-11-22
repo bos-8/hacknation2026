@@ -1,13 +1,13 @@
 "use client";
 
-import { useId, useRef, useState, type CSSProperties } from "react";
-import { useTranslations } from "next-intl";
+import { useEffect, useId, useRef, useState, type CSSProperties } from "react";
+import { useFormatter, useTranslations } from "next-intl";
 import { Bell, BellFill, CheckCircleFill, ExclamationTriangleFill, InfoCircleFill, Trash, X, XOctagonFill } from "react-bootstrap-icons";
-import { Button, Tooltip } from "@/ui/basic";
+import { Button, Progress, Tooltip } from "@/ui/basic";
 import { CornerBadge } from "./corner-badge";
 import { useHydrated } from "./use-hydrated";
 import { useNotificationBell, useNotificationOwner, useNotifications } from "./notification-provider";
-import { NOTIFICATION_PRIORITY, notificationSummary, type NotificationItem } from "./notification-store";
+import { NOTIFICATION_PRIORITY, notificationSummary, type NotificationItem, type NotificationProgress } from "./notification-store";
 import { notificationStyles as styles } from "./styles";
 import { OverlayAside } from "./aside";
 
@@ -15,8 +15,44 @@ const icons = { error: XOctagonFill, warning: ExclamationTriangleFill, success: 
 const badgeColors = { error: "red", warning: "amber", success: "green", info: "blue" } as const;
 const pulseColors = { error: "--error", warning: "--warning", success: "--success", info: "--primary" };
 
+function ConversionProgress({ progress }: { progress: NotificationProgress }) {
+  const t = useTranslations("common.notifications");
+  const [clock, setClock] = useState<number>();
+  useEffect(() => {
+    const tick = () => setClock(Date.now());
+    const initial = setTimeout(tick, 0);
+    const interval = setInterval(tick, 1000);
+    return () => { clearTimeout(initial); clearInterval(interval); };
+  }, []);
+
+  const now = clock ?? progress.startedAt;
+  const duration = (ms: number) => {
+    const seconds = Math.ceil(Math.max(0, ms) / 1000);
+    return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
+  };
+  const estimate = progress.estimatedEndAt && progress.estimatedEndAt > now
+    ? t("progressEta", { time: duration(progress.estimatedEndAt - now) })
+    : progress.deadlineAt
+      ? t("progressDeadline", { time: duration(progress.deadlineAt - now) })
+      : t("progressEstimating");
+
+  return <div className="mt-2 space-y-1">
+    <div className="flex justify-between gap-2 text-xs font-medium">
+      <span>{t("progressLabel")}</span>
+      {progress.percent !== undefined && <span className="tabular-nums">{progress.percent}%</span>}
+    </div>
+    <Progress max={100} value={progress.percent} aria-label={t("progressLabel")} className="block" />
+    <p aria-live="off" className="flex flex-wrap justify-between gap-x-2 text-xs tabular-nums text-muted-foreground">
+      <span>{t("progressElapsed", { time: duration(Math.floor((now - progress.startedAt) / 1000) * 1000) })}</span>
+      <span>{estimate}</span>
+    </p>
+  </div>;
+}
+
 function NotificationRow({ item }: { item: NotificationItem }) {
   const t = useTranslations("common.notifications");
+  const format = useFormatter();
+  const createdAt = new Date(item.createdAt);
   const { closeNotification, pauseNotification } = useNotifications();
   const Icon = icons[item.mode];
   return <article data-notification-id={item.id} data-mode={item.mode} className={styles.item} role={item.mode === "error" ? "alert" : "status"}
@@ -28,7 +64,13 @@ function NotificationRow({ item }: { item: NotificationItem }) {
     <div className="min-w-0 flex-1 break-words">
       {item.title && <h3 className="text-sm font-semibold">{item.title}</h3>}
       <div className="text-sm">{item.message}</div>
-      <p aria-hidden="true" className="mt-2 text-xs text-muted-foreground">{item.dismissible === false ? t("protected") : item.remainingMs === null ? t("persistent") : t("expiresIn", { seconds: Math.ceil(item.remainingMs / 1000) })}</p>
+      <p className="mt-1 text-xs tabular-nums text-muted-foreground">
+        {t.rich("receivedAt", { time: () => <time dateTime={createdAt.toISOString()}>
+          {format.dateTime(createdAt, { dateStyle: "short", timeStyle: "medium" })}
+        </time> })}
+      </p>
+      {item.pending && item.progress ? <ConversionProgress progress={item.progress} />
+        : <p aria-hidden="true" className="mt-2 text-xs text-muted-foreground">{item.dismissible === false ? t("protected") : item.remainingMs === null ? t("persistent") : t("expiresIn", { seconds: Math.ceil(item.remainingMs / 1000) })}</p>}
     </div>
     {item.dismissible !== false && <Tooltip content={t("dismiss")} placement="left" topLayer>
       <Button size="sm" tone="danger-outline" aria-label={t("dismiss")} className={styles.iconButton} onClick={() => closeNotification(item.id)}><X className="size-4" /></Button>

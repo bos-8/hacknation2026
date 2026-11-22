@@ -4,6 +4,11 @@ import os
 import re
 from collections.abc import Mapping
 from dataclasses import dataclass, field
+from pathlib import Path
+
+from pyworker.eden import EdenSettings
+from pyworker.pipeline import PipelineSettings
+from pyworker.vision import MODEL as VISION_MODEL
 
 
 @dataclass(frozen=True, slots=True)
@@ -15,6 +20,8 @@ class Settings:
     task_timeout: int = 5
     log_level: str = "info"
     allow_network_bind: bool = False
+    eden: EdenSettings | None = None
+    pipeline: PipelineSettings | None = None
 
     def __post_init__(self) -> None:
         if (
@@ -59,8 +66,53 @@ class Settings:
         network = values.get("PYWORKER_ALLOW_NETWORK_BIND", "false")
         if network not in {"true", "false"}:
             raise ValueError("Invalid PYWORKER_ALLOW_NETWORK_BIND")
+        form_mode = values.get("PYWORKER_FORM_MODE", "bypass")
+        if form_mode not in {"bypass", "eden", "ocr", "vision", "pipeline"}:
+            raise ValueError("Invalid PYWORKER_FORM_MODE")
+        eden = None
+        pipeline = None
+        if form_mode in {"eden", "ocr", "vision"}:
+            defaults = EdenSettings(api_key="")
+            eden = EdenSettings(
+                api_key=values.get("EDENAI_API_KEY", "").strip(),
+                ocr_only=form_mode == "ocr",
+                vision_model=(values.get("EDENAI_VISION_MODEL") or VISION_MODEL)
+                if form_mode == "vision"
+                else "",
+                upload_url=values.get("EDENAI_UPLOAD_URL") or defaults.upload_url,
+                ocr_url=values.get("EDENAI_OCR_URL") or defaults.ocr_url,
+                llm_url=values.get("EDENAI_LLM_URL") or defaults.llm_url,
+                ocr_model=values.get("EDENAI_OCR_MODEL") or defaults.ocr_model,
+                pdf_ocr_model=values.get("EDENAI_PDF_OCR_MODEL") or defaults.pdf_ocr_model,
+                llm_model=values.get("EDENAI_LLM_MODEL") or defaults.llm_model,
+                local_llm_url="" if form_mode == "vision" else values.get("PYWORKER_LOCAL_LLM_URL", "").strip(),
+                local_llm_model=values.get("PYWORKER_LOCAL_LLM_MODEL") or defaults.local_llm_model,
+                timeout_seconds=integer("EDENAI_TIMEOUT_SECONDS", defaults.timeout_seconds, 1, 300),
+                max_input_chars=integer(
+                    "EDENAI_MAX_INPUT_CHARS", defaults.max_input_chars, 1, 500_000
+                ),
+                max_output_tokens=integer(
+                    "EDENAI_MAX_OUTPUT_TOKENS", defaults.max_output_tokens, 1, 32_768
+                ),
+            )
+        if form_mode == "pipeline":
+            defaults = PipelineSettings()
+            pipeline = PipelineSettings(
+                qwen_url=values.get("PYWORKER_LOCAL_LLM_URL") or defaults.qwen_url,
+                qwen_model=values.get("PYWORKER_LOCAL_LLM_MODEL") or defaults.qwen_model,
+                timeout_seconds=integer("PYWORKER_PIPELINE_TIMEOUT_SECONDS", 300, 1, 300),
+                document_python=values.get("PYWORKER_DOCUMENT_PYTHON") or defaults.document_python,
+                assets=Path(values.get("PYWORKER_PIPELINE_ASSETS") or defaults.assets),
+                device=values.get("PYWORKER_DOCUMENT_DEVICE") or defaults.device,
+                doc_classpath=values.get("PYWORKER_DOC_CLASSPATH", ""),
+                prompt_file=Path(
+                    values.get("PYWORKER_PIPELINE_PROMPT_FILE") or defaults.prompt_file
+                ),
+            )
         return cls(
             token=token,
+            eden=eden,
+            pipeline=pipeline,
             host=host,
             port=integer("PYWORKER_PORT", 8010, 1024, 65535),
             concurrency=integer("PYWORKER_MAX_CONCURRENCY", 4, 1, 16),

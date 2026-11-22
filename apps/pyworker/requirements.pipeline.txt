@@ -1,0 +1,7 @@
+# The optional document inference runtime uses Python 3.13.
+jsonschema==4.26.0
+docling==2.151.1
+docling-slim[format-opendocument]==2.151.1
+paddleocr[doc-parser]==3.7.0
+paddlepaddle==3.3.1
+# Pillow, NumPy, OpenCV and pypdfium2 are pulled in by the document engines.

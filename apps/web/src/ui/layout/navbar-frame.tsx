@@ -8,7 +8,7 @@ import { layoutStyles } from "./styles";
 
 /** Reveal labels at the page top, on hover and keyboard focus; keep the shell observable by asides. */
 export function NavbarFrame({ children, className }: { children: ReactNode; className?: string }) {
-  const pathname = usePathname();
+  const pathname = usePathname() ?? "";
   const chat = pathname === "/chat";
   const glass = pathname === "/" || pathname === "/about" || pathname === "/about/team"
     || pathname === "/access-denied" || chat || pathname === "/chat/settings"

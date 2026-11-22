@@ -1,7 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import { footerLegalDocuments, footerLegalLinks } from "@/config/footer";
-import { APP_BUILD_YEAR, APP_DISPLAY_VERSION } from "@/config/version";
+import { APP_DISPLAY_VERSION } from "@/config/version";
 import { Link } from "@/i18n/navigation";
 import type { AppLocale } from "@/schemas/i18n";
 import { cx } from "@/ui/basic/styles";
@@ -11,13 +11,12 @@ import { layoutStyles } from "./styles";
 
 export type FooterProps = {
   appName: string;
-  companyName: string;
   locale: AppLocale;
   languageCookieName?: string;
   className?: string;
 };
 
-export async function Footer({ appName, companyName, locale, languageCookieName, className }: FooterProps) {
+export async function Footer({ appName, locale, languageCookieName, className }: FooterProps) {
   const t = await getTranslations({ locale, namespace: "common" });
   const legalLinks = footerLegalLinks[locale];
   return (
@@ -45,7 +44,6 @@ export async function Footer({ appName, companyName, locale, languageCookieName,
                 </li>;
               })}
               <li><CookieSettingsButton className={`${layoutStyles.footerLink} cursor-pointer`} /></li>
-              <li><a href="/LICENSE.md" target="_blank" rel="noopener noreferrer" className={layoutStyles.footerLink}>{t("footer.license")}</a></li>
             </ul>
           </div>
         </nav>
@@ -61,7 +59,7 @@ export async function Footer({ appName, companyName, locale, languageCookieName,
             <span aria-hidden="true" className={layoutStyles.footerSeparator}>•</span>
             <span className="font-medium">{appName}</span>
             <span aria-hidden="true" className={layoutStyles.footerSeparator}>•</span>
-            <span>{["©", APP_BUILD_YEAR, companyName].filter(Boolean).join(" ")}</span>
+            <span>© 2026 Feature From Future</span>
             <span aria-hidden="true" className={layoutStyles.footerSeparator}>•</span>
             <span className="tabular-nums">{APP_DISPLAY_VERSION}</span>
           </div>

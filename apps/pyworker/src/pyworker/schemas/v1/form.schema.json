@@ -1,0 +1,5543 @@
+{
+  "$defs": {
+    "ActorRole": {
+      "enum": [
+        "account_holder",
+        "applicant",
+        "applicant_or_authorized_person",
+        "applicant_or_representative",
+        "authority",
+        "beneficiary",
+        "contractor",
+        "legal_guardian",
+        "previous_owner",
+        "proxy",
+        "representative",
+        "responsible_person",
+        "spouse",
+        "trainee",
+        "trainee_or_guardian"
+      ],
+      "title": "ActorRole",
+      "type": "string"
+    },
+    "Assessment": {
+      "properties": {
+        "match": {
+          "enum": [
+            "reference_sha256",
+            "reference_text",
+            "text_candidate",
+            "unknown"
+          ],
+          "title": "Match",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "unknown",
+            "review",
+            "multiple",
+            "blocked"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "candidates": {
+          "items": {
+            "$ref": "#/$defs/Profile"
+          },
+          "title": "Candidates",
+          "type": "array"
+        },
+        "documentId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Documentid"
+        },
+        "sourceSha256": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Sourcesha256"
+        }
+      },
+      "required": [
+        "match",
+        "status",
+        "candidates",
+        "documentId",
+        "sourceSha256"
+      ],
+      "title": "Assessment",
+      "type": "object"
+    },
+    "Evidence": {
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "description": {
+          "default": "",
+          "title": "Description",
+          "type": "string"
+        },
+        "printedValue": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Printedvalue"
+        },
+        "pages": {
+          "items": {
+            "type": "integer"
+          },
+          "title": "Pages",
+          "type": "array"
+        },
+        "blocks": {
+          "items": {
+            "type": "integer"
+          },
+          "title": "Blocks",
+          "type": "array"
+        },
+        "method": {
+          "enum": [
+            "source_inventory",
+            "document_text",
+            "ocr",
+            "model_observation"
+          ],
+          "title": "Method",
+          "type": "string"
+        },
+        "sourceKey": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sourcekey"
+        },
+        "actor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Actor"
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "pages",
+        "blocks",
+        "method"
+      ],
+      "title": "Evidence",
+      "type": "object"
+    },
+    "JsonValue": {},
+    "ParticipantRole": {
+      "properties": {
+        "role": {
+          "$ref": "#/$defs/ActorRole"
+        },
+        "evidenceRefs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidencerefs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "role",
+        "evidenceRefs"
+      ],
+      "title": "ParticipantRole",
+      "type": "object"
+    },
+    "Profile": {
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "releaseStatus": {
+          "title": "Releasestatus",
+          "type": "string"
+        },
+        "releaseGates": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Releasegates",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "releaseStatus",
+        "releaseGates"
+      ],
+      "title": "Profile",
+      "type": "object"
+    },
+    "ReviewItem": {
+      "properties": {
+        "nodeId": {
+          "title": "Nodeid",
+          "type": "string"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "nodeId",
+        "reason"
+      ],
+      "title": "ReviewItem",
+      "type": "object"
+    },
+    "option": {
+      "type": "object",
+      "required": [
+        "code",
+        "label"
+      ],
+      "properties": {
+        "code": {
+          "type": "string",
+          "minLength": 1
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "binding": {
+      "type": "object",
+      "required": [
+        "scope",
+        "path"
+      ],
+      "properties": {
+        "scope": {
+          "enum": [
+            "answers",
+            "context",
+            "item"
+          ]
+        },
+        "path": {
+          "type": "string",
+          "pattern": "^(?:/(?:[^~]|~[01])*)*$"
+        },
+        "depth": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "scope": {
+                "enum": [
+                  "answers",
+                  "context"
+                ]
+              }
+            }
+          },
+          "then": {
+            "not": {
+              "required": [
+                "depth"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "expression": {
+      "type": "object",
+      "required": [
+        "op"
+      ],
+      "properties": {
+        "op": {
+          "enum": [
+            "literal",
+            "ref",
+            "eq",
+            "ne",
+            "in",
+            "and",
+            "or",
+            "not",
+            "exists",
+            "multiply"
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "op": {
+                "const": "literal"
+              }
+            }
+          },
+          "then": {
+            "type": "object",
+            "required": [
+              "op",
+              "value"
+            ],
+            "properties": {
+              "op": {
+                "const": "literal"
+              },
+              "value": {}
+            },
+            "additionalProperties": false
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "op": {
+                "const": "ref"
+              }
+            }
+          },
+          "then": {
+            "type": "object",
+            "required": [
+              "op",
+              "scope",
+              "path"
+            ],
+            "properties": {
+              "op": {
+                "const": "ref"
+              },
+              "scope": {
+                "enum": [
+                  "answers",
+                  "context",
+                  "item"
+                ]
+              },
+              "path": {
+                "type": "string",
+                "pattern": "^(?:/(?:[^~]|~[01])*)*$"
+              },
+              "depth": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "additionalProperties": false,
+            "allOf": [
+              {
+                "if": {
+                  "properties": {
+                    "scope": {
+                      "enum": [
+                        "answers",
+                        "context"
+                      ]
+                    }
+                  }
+                },
+                "then": {
+                  "not": {
+                    "required": [
+                      "depth"
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "op": {
+                "const": "eq"
+              }
+            }
+          },
+          "then": {
+            "type": "object",
+            "required": [
+              "op",
+              "args"
+            ],
+            "properties": {
+              "op": {
+                "const": "eq"
+              },
+              "args": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/expression"
+                },
+                "minItems": 2,
+                "maxItems": 2
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "op": {
+                "const": "ne"
+              }
+            }
+          },
+          "then": {
+            "type": "object",
+            "required": [
+              "op",
+              "args"
+            ],
+            "properties": {
+              "op": {
+                "const": "ne"
+              },
+              "args": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/expression"
+                },
+                "minItems": 2,
+                "maxItems": 2
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "op": {
+                "const": "in"
+              }
+            }
+          },
+          "then": {
+            "type": "object",
+            "required": [
+              "op",
+              "args"
+            ],
+            "properties": {
+              "op": {
+                "const": "in"
+              },
+              "args": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/expression"
+                },
+                "minItems": 2,
+                "maxItems": 2
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "op": {
+                "const": "and"
+              }
+            }
+          },
+          "then": {
+            "type": "object",
+            "required": [
+              "op",
+              "args"
+            ],
+            "properties": {
+              "op": {
+                "const": "and"
+              },
+              "args": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/expression"
+                },
+                "minItems": 2
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "op": {
+                "const": "or"
+              }
+            }
+          },
+          "then": {
+            "type": "object",
+            "required": [
+              "op",
+              "args"
+            ],
+            "properties": {
+              "op": {
+                "const": "or"
+              },
+              "args": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/expression"
+                },
+                "minItems": 2
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "op": {
+                "const": "not"
+              }
+            }
+          },
+          "then": {
+            "type": "object",
+            "required": [
+              "op",
+              "args"
+            ],
+            "properties": {
+              "op": {
+                "const": "not"
+              },
+              "args": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/expression"
+                },
+                "minItems": 1,
+                "maxItems": 1
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "op": {
+                "const": "exists"
+              }
+            }
+          },
+          "then": {
+            "type": "object",
+            "required": [
+              "op",
+              "args"
+            ],
+            "properties": {
+              "op": {
+                "const": "exists"
+              },
+              "args": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/expression"
+                },
+                "minItems": 1,
+                "maxItems": 1
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "op": {
+                "const": "multiply"
+              }
+            }
+          },
+          "then": {
+            "type": "object",
+            "required": [
+              "op",
+              "args"
+            ],
+            "properties": {
+              "op": {
+                "const": "multiply"
+              },
+              "args": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/expression"
+                },
+                "minItems": 2,
+                "maxItems": 2
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      ]
+    },
+    "node": {
+      "type": "object",
+      "required": [
+        "id",
+        "type",
+        "label",
+        "children",
+        "config",
+        "state",
+        "access",
+        "provenance"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_.:-]*$",
+          "minLength": 1
+        },
+        "type": {
+          "enum": [
+            "FORM",
+            "STEP",
+            "SECTION",
+            "GROUP",
+            "GRID",
+            "CONDITIONAL",
+            "REPEATER",
+            "ITEM",
+            "TABLE",
+            "TABLE_ROW",
+            "TABLE_CELL",
+            "ACCORDION",
+            "PANEL",
+            "PARTY_BLOCK",
+            "PERSON_BLOCK",
+            "ORGANIZATION_BLOCK",
+            "REPRESENTATION_BLOCK",
+            "ADDRESS_BLOCK",
+            "CONTACT_BLOCK",
+            "IDENTIFIER_BLOCK",
+            "PROPERTY_BLOCK",
+            "PARCEL_BLOCK",
+            "PERIOD_BLOCK",
+            "PAYMENT_BLOCK",
+            "BANK_ACCOUNT_BLOCK",
+            "ATTACHMENTS_BLOCK",
+            "SIGNATURE_BLOCK",
+            "STAMP_BLOCK",
+            "ELECTRONIC_SEAL_BLOCK",
+            "AUTHORITY_BLOCK",
+            "DELIVERY_BLOCK",
+            "DECLARATIONS_BLOCK",
+            "PRIVACY_BLOCK",
+            "CONSENT_BLOCK",
+            "OFFICE_BLOCK",
+            "ANIMAL_BLOCK",
+            "SPORTS_BLOCK",
+            "ROAD_BLOCK",
+            "RENTAL_BLOCK",
+            "TEXT_FIELD",
+            "TEXTAREA",
+            "INTEGER",
+            "DECIMAL",
+            "MONEY",
+            "DATE",
+            "DATE_TIME",
+            "TIME",
+            "MONTH",
+            "YEAR",
+            "BOOLEAN",
+            "CHECKBOX",
+            "RADIO",
+            "SELECT",
+            "MULTI_SELECT",
+            "DICTIONARY_SELECT",
+            "TREE_SELECT",
+            "EMAIL",
+            "PHONE",
+            "URL",
+            "IDENTIFIER",
+            "POSTAL_CODE",
+            "FILE_UPLOADER",
+            "GEO_POINT",
+            "ENTITY_REFERENCE",
+            "SIGNATURE_EVIDENCE",
+            "STAMP_EVIDENCE",
+            "CALCULATED",
+            "HIDDEN_METADATA",
+            "TEXT_BLOCK",
+            "HEADING",
+            "HELP",
+            "NOTICE",
+            "LEGAL_BASIS",
+            "PRIVACY_NOTICE",
+            "DOCUMENT_PREVIEW",
+            "SUMMARY",
+            "RECEIPT",
+            "SAVE_DRAFT",
+            "PREVIOUS_STEP",
+            "NEXT_STEP",
+            "VALIDATE",
+            "SIGN",
+            "SUBMIT",
+            "PRINT"
+          ]
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "children": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/node"
+          }
+        },
+        "config": {
+          "type": "object",
+          "properties": {
+            "accept": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "authenticity": {
+              "type": "string"
+            },
+            "cardinalityBasis": {
+              "type": "string"
+            },
+            "columns": {
+              "type": "integer"
+            },
+            "country": {
+              "type": "string"
+            },
+            "countryBinding": {
+              "type": "string"
+            },
+            "crs": {
+              "type": "string"
+            },
+            "currency": {
+              "type": "string"
+            },
+            "default": {
+              "anyOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "dictionary": {
+              "type": "string"
+            },
+            "disabledInDemo": {
+              "type": "boolean"
+            },
+            "documentRef": {
+              "type": "string"
+            },
+            "entityCollection": {
+              "type": "string"
+            },
+            "exampleOnly": {
+              "type": "boolean"
+            },
+            "exclusiveOption": {
+              "type": "string"
+            },
+            "exportToAuthority": {
+              "type": "boolean"
+            },
+            "format": {
+              "type": "string"
+            },
+            "itemKey": {
+              "type": "string"
+            },
+            "limitsBasis": {
+              "type": "string"
+            },
+            "maxFileSizeBytes": {
+              "type": "integer"
+            },
+            "maxItems": {
+              "type": "integer"
+            },
+            "minItems": {
+              "type": "integer"
+            },
+            "minimum": {
+              "type": "integer"
+            },
+            "mode": {
+              "type": "string"
+            },
+            "normalization": {
+              "type": "string"
+            },
+            "options": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/option"
+              }
+            },
+            "origin": {
+              "type": "string"
+            },
+            "productionReady": {
+              "type": "boolean"
+            },
+            "ruleBasis": {
+              "type": "string"
+            },
+            "scale": {
+              "type": "integer"
+            },
+            "semanticType": {
+              "type": "string"
+            },
+            "submissionEnabled": {
+              "type": "boolean"
+            },
+            "timezone": {
+              "type": "string"
+            },
+            "transmissionPolicy": {
+              "type": "string"
+            },
+            "uncheckedMeans": {
+              "type": "string"
+            },
+            "uniqueBy": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "unit": {
+              "type": "string"
+            },
+            "validator": {
+              "type": "string"
+            },
+            "watermark": {
+              "type": "string"
+            },
+            "policyRefs": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "uniqueItems": true
+            },
+            "sourceRefs": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "uniqueItems": true
+            },
+            "signerRefs": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "minItems": 1,
+              "uniqueItems": true
+            },
+            "onBehalfOfRefs": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "minItems": 1,
+              "uniqueItems": true
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        },
+        "state": {
+          "type": "object",
+          "required": [
+            "active",
+            "visible",
+            "enabled",
+            "required"
+          ],
+          "properties": {
+            "active": {
+              "type": "boolean"
+            },
+            "visible": {
+              "type": "boolean"
+            },
+            "enabled": {
+              "type": "boolean"
+            },
+            "required": {
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": false
+        },
+        "access": {
+          "type": "object",
+          "required": [
+            "read",
+            "write"
+          ],
+          "properties": {
+            "read": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "uniqueItems": true
+            },
+            "write": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "uniqueItems": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "provenance": {
+          "type": "object",
+          "required": [
+            "kind",
+            "sourceRefs"
+          ],
+          "properties": {
+            "kind": {
+              "enum": [
+                "source_document",
+                "design_proposal",
+                "approved_profile"
+              ]
+            },
+            "sourceRefs": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "uniqueItems": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "binding": {
+          "$ref": "#/$defs/binding"
+        }
+      },
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "FORM"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "items": {
+                  "properties": {
+                    "type": {
+                      "enum": [
+                        "STEP"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "STEP"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "items": {
+                  "properties": {
+                    "type": {
+                      "enum": [
+                        "SECTION"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "SECTION"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "items": {
+                  "properties": {
+                    "type": {
+                      "enum": [
+                        "GROUP",
+                        "GRID",
+                        "CONDITIONAL",
+                        "REPEATER",
+                        "TABLE",
+                        "ACCORDION",
+                        "PARTY_BLOCK",
+                        "PERSON_BLOCK",
+                        "ORGANIZATION_BLOCK",
+                        "REPRESENTATION_BLOCK",
+                        "ADDRESS_BLOCK",
+                        "CONTACT_BLOCK",
+                        "IDENTIFIER_BLOCK",
+                        "PROPERTY_BLOCK",
+                        "PARCEL_BLOCK",
+                        "PERIOD_BLOCK",
+                        "PAYMENT_BLOCK",
+                        "BANK_ACCOUNT_BLOCK",
+                        "ATTACHMENTS_BLOCK",
+                        "SIGNATURE_BLOCK",
+                        "STAMP_BLOCK",
+                        "ELECTRONIC_SEAL_BLOCK",
+                        "AUTHORITY_BLOCK",
+                        "DELIVERY_BLOCK",
+                        "DECLARATIONS_BLOCK",
+                        "PRIVACY_BLOCK",
+                        "CONSENT_BLOCK",
+                        "OFFICE_BLOCK",
+                        "ANIMAL_BLOCK",
+                        "SPORTS_BLOCK",
+                        "ROAD_BLOCK",
+                        "RENTAL_BLOCK",
+                        "TEXT_FIELD",
+                        "TEXTAREA",
+                        "INTEGER",
+                        "DECIMAL",
+                        "MONEY",
+                        "DATE",
+                        "DATE_TIME",
+                        "TIME",
+                        "MONTH",
+                        "YEAR",
+                        "BOOLEAN",
+                        "CHECKBOX",
+                        "RADIO",
+                        "SELECT",
+                        "MULTI_SELECT",
+                        "DICTIONARY_SELECT",
+                        "TREE_SELECT",
+                        "EMAIL",
+                        "PHONE",
+                        "URL",
+                        "IDENTIFIER",
+                        "POSTAL_CODE",
+                        "FILE_UPLOADER",
+                        "GEO_POINT",
+                        "ENTITY_REFERENCE",
+                        "SIGNATURE_EVIDENCE",
+                        "STAMP_EVIDENCE",
+                        "CALCULATED",
+                        "HIDDEN_METADATA",
+                        "TEXT_BLOCK",
+                        "HEADING",
+                        "HELP",
+                        "NOTICE",
+                        "LEGAL_BASIS",
+                        "PRIVACY_NOTICE",
+                        "DOCUMENT_PREVIEW",
+                        "SUMMARY",
+                        "RECEIPT",
+                        "SAVE_DRAFT",
+                        "PREVIOUS_STEP",
+                        "NEXT_STEP",
+                        "VALIDATE",
+                        "SIGN",
+                        "SUBMIT",
+                        "PRINT"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "GROUP"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "items": {
+                  "properties": {
+                    "type": {
+                      "enum": [
+                        "GRID",
+                        "CONDITIONAL",
+                        "REPEATER",
+                        "TABLE",
+                        "ACCORDION",
+                        "PARTY_BLOCK",
+                        "PERSON_BLOCK",
+                        "ORGANIZATION_BLOCK",
+                        "REPRESENTATION_BLOCK",
+                        "ADDRESS_BLOCK",
+                        "CONTACT_BLOCK",
+                        "IDENTIFIER_BLOCK",
+                        "PROPERTY_BLOCK",
+                        "PARCEL_BLOCK",
+                        "PERIOD_BLOCK",
+                        "PAYMENT_BLOCK",
+                        "BANK_ACCOUNT_BLOCK",
+                        "ATTACHMENTS_BLOCK",
+                        "SIGNATURE_BLOCK",
+                        "STAMP_BLOCK",
+                        "ELECTRONIC_SEAL_BLOCK",
+                        "AUTHORITY_BLOCK",
+                        "DELIVERY_BLOCK",
+                        "DECLARATIONS_BLOCK",
+                        "PRIVACY_BLOCK",
+                        "CONSENT_BLOCK",
+                        "OFFICE_BLOCK",
+                        "ANIMAL_BLOCK",
+                        "SPORTS_BLOCK",
+                        "ROAD_BLOCK",
+                        "RENTAL_BLOCK",
+                        "TEXT_FIELD",
+                        "TEXTAREA",
+                        "INTEGER",
+                        "DECIMAL",
+                        "MONEY",
+                        "DATE",
+                        "DATE_TIME",
+                        "TIME",
+                        "MONTH",
+                        "YEAR",
+                        "BOOLEAN",
+                        "CHECKBOX",
+                        "RADIO",
+                        "SELECT",
+                        "MULTI_SELECT",
+                        "DICTIONARY_SELECT",
+                        "TREE_SELECT",
+                        "EMAIL",
+                        "PHONE",
+                        "URL",
+                        "IDENTIFIER",
+                        "POSTAL_CODE",
+                        "FILE_UPLOADER",
+                        "GEO_POINT",
+                        "ENTITY_REFERENCE",
+                        "SIGNATURE_EVIDENCE",
+                        "STAMP_EVIDENCE",
+                        "CALCULATED",
+                        "HIDDEN_METADATA",
+                        "TEXT_BLOCK",
+                        "HEADING",
+                        "HELP",
+                        "NOTICE",
+                        "LEGAL_BASIS",
+                        "PRIVACY_NOTICE",
+                        "DOCUMENT_PREVIEW",
+                        "SUMMARY",
+                        "RECEIPT",
+                        "SAVE_DRAFT",
+                        "PREVIOUS_STEP",
+                        "NEXT_STEP",
+                        "VALIDATE",
+                        "SIGN",
+                        "SUBMIT",
+                        "PRINT"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "GRID"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "items": {
+                  "properties": {
+                    "type": {
+                      "enum": [
+                        "GROUP",
+                        "CONDITIONAL",
+                        "REPEATER",
+                        "PARTY_BLOCK",
+                        "PERSON_BLOCK",
+                        "ORGANIZATION_BLOCK",
+                        "REPRESENTATION_BLOCK",
+                        "ADDRESS_BLOCK",
+                        "CONTACT_BLOCK",
+                        "IDENTIFIER_BLOCK",
+                        "PROPERTY_BLOCK",
+                        "PARCEL_BLOCK",
+                        "PERIOD_BLOCK",
+                        "PAYMENT_BLOCK",
+                        "BANK_ACCOUNT_BLOCK",
+                        "ATTACHMENTS_BLOCK",
+                        "SIGNATURE_BLOCK",
+                        "STAMP_BLOCK",
+                        "ELECTRONIC_SEAL_BLOCK",
+                        "AUTHORITY_BLOCK",
+                        "DELIVERY_BLOCK",
+                        "DECLARATIONS_BLOCK",
+                        "PRIVACY_BLOCK",
+                        "CONSENT_BLOCK",
+                        "OFFICE_BLOCK",
+                        "ANIMAL_BLOCK",
+                        "SPORTS_BLOCK",
+                        "ROAD_BLOCK",
+                        "RENTAL_BLOCK",
+                        "TEXT_FIELD",
+                        "TEXTAREA",
+                        "INTEGER",
+                        "DECIMAL",
+                        "MONEY",
+                        "DATE",
+                        "DATE_TIME",
+                        "TIME",
+                        "MONTH",
+                        "YEAR",
+                        "BOOLEAN",
+                        "CHECKBOX",
+                        "RADIO",
+                        "SELECT",
+                        "MULTI_SELECT",
+                        "DICTIONARY_SELECT",
+                        "TREE_SELECT",
+                        "EMAIL",
+                        "PHONE",
+                        "URL",
+                        "IDENTIFIER",
+                        "POSTAL_CODE",
+                        "FILE_UPLOADER",
+                        "GEO_POINT",
+                        "ENTITY_REFERENCE",
+                        "SIGNATURE_EVIDENCE",
+                        "STAMP_EVIDENCE",
+                        "CALCULATED",
+                        "HIDDEN_METADATA",
+                        "TEXT_BLOCK",
+                        "HEADING",
+                        "HELP",
+                        "NOTICE",
+                        "LEGAL_BASIS",
+                        "PRIVACY_NOTICE",
+                        "DOCUMENT_PREVIEW",
+                        "SUMMARY",
+                        "RECEIPT",
+                        "SAVE_DRAFT",
+                        "PREVIOUS_STEP",
+                        "NEXT_STEP",
+                        "VALIDATE",
+                        "SIGN",
+                        "SUBMIT",
+                        "PRINT"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "CONDITIONAL"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "items": {
+                  "properties": {
+                    "type": {
+                      "enum": [
+                        "GROUP",
+                        "GRID",
+                        "CONDITIONAL",
+                        "REPEATER",
+                        "TABLE",
+                        "ACCORDION",
+                        "PARTY_BLOCK",
+                        "PERSON_BLOCK",
+                        "ORGANIZATION_BLOCK",
+                        "REPRESENTATION_BLOCK",
+                        "ADDRESS_BLOCK",
+                        "CONTACT_BLOCK",
+                        "IDENTIFIER_BLOCK",
+                        "PROPERTY_BLOCK",
+                        "PARCEL_BLOCK",
+                        "PERIOD_BLOCK",
+                        "PAYMENT_BLOCK",
+                        "BANK_ACCOUNT_BLOCK",
+                        "ATTACHMENTS_BLOCK",
+                        "SIGNATURE_BLOCK",
+                        "STAMP_BLOCK",
+                        "ELECTRONIC_SEAL_BLOCK",
+                        "AUTHORITY_BLOCK",
+                        "DELIVERY_BLOCK",
+                        "DECLARATIONS_BLOCK",
+                        "PRIVACY_BLOCK",
+                        "CONSENT_BLOCK",
+                        "OFFICE_BLOCK",
+                        "ANIMAL_BLOCK",
+                        "SPORTS_BLOCK",
+                        "ROAD_BLOCK",
+                        "RENTAL_BLOCK",
+                        "TEXT_FIELD",
+                        "TEXTAREA",
+                        "INTEGER",
+                        "DECIMAL",
+                        "MONEY",
+                        "DATE",
+                        "DATE_TIME",
+                        "TIME",
+                        "MONTH",
+                        "YEAR",
+                        "BOOLEAN",
+                        "CHECKBOX",
+                        "RADIO",
+                        "SELECT",
+                        "MULTI_SELECT",
+                        "DICTIONARY_SELECT",
+                        "TREE_SELECT",
+                        "EMAIL",
+                        "PHONE",
+                        "URL",
+                        "IDENTIFIER",
+                        "POSTAL_CODE",
+                        "FILE_UPLOADER",
+                        "GEO_POINT",
+                        "ENTITY_REFERENCE",
+                        "SIGNATURE_EVIDENCE",
+                        "STAMP_EVIDENCE",
+                        "CALCULATED",
+                        "HIDDEN_METADATA",
+                        "TEXT_BLOCK",
+                        "HEADING",
+                        "HELP",
+                        "NOTICE",
+                        "LEGAL_BASIS",
+                        "PRIVACY_NOTICE",
+                        "DOCUMENT_PREVIEW",
+                        "SUMMARY",
+                        "RECEIPT",
+                        "SAVE_DRAFT",
+                        "PREVIOUS_STEP",
+                        "NEXT_STEP",
+                        "VALIDATE",
+                        "SIGN",
+                        "SUBMIT",
+                        "PRINT"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "REPEATER"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "items": {
+                  "properties": {
+                    "type": {
+                      "enum": [
+                        "ITEM"
+                      ]
+                    }
+                  }
+                },
+                "minItems": 1,
+                "maxItems": 1
+              },
+              "config": {
+                "required": [
+                  "itemKey",
+                  "minItems",
+                  "maxItems"
+                ]
+              }
+            },
+            "required": [
+              "binding"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "ITEM"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "items": {
+                  "properties": {
+                    "type": {
+                      "enum": [
+                        "GROUP",
+                        "GRID",
+                        "CONDITIONAL",
+                        "REPEATER",
+                        "TABLE",
+                        "ACCORDION",
+                        "PARTY_BLOCK",
+                        "PERSON_BLOCK",
+                        "ORGANIZATION_BLOCK",
+                        "REPRESENTATION_BLOCK",
+                        "ADDRESS_BLOCK",
+                        "CONTACT_BLOCK",
+                        "IDENTIFIER_BLOCK",
+                        "PROPERTY_BLOCK",
+                        "PARCEL_BLOCK",
+                        "PERIOD_BLOCK",
+                        "PAYMENT_BLOCK",
+                        "BANK_ACCOUNT_BLOCK",
+                        "ATTACHMENTS_BLOCK",
+                        "SIGNATURE_BLOCK",
+                        "STAMP_BLOCK",
+                        "ELECTRONIC_SEAL_BLOCK",
+                        "AUTHORITY_BLOCK",
+                        "DELIVERY_BLOCK",
+                        "DECLARATIONS_BLOCK",
+                        "PRIVACY_BLOCK",
+                        "CONSENT_BLOCK",
+                        "OFFICE_BLOCK",
+                        "ANIMAL_BLOCK",
+                        "SPORTS_BLOCK",
+                        "ROAD_BLOCK",
+                        "RENTAL_BLOCK",
+                        "TEXT_FIELD",
+                        "TEXTAREA",
+                        "INTEGER",
+                        "DECIMAL",
+                        "MONEY",
+                        "DATE",
+                        "DATE_TIME",
+                        "TIME",
+                        "MONTH",
+                        "YEAR",
+                        "BOOLEAN",
+                        "CHECKBOX",
+                        "RADIO",
+                        "SELECT",
+                        "MULTI_SELECT",
+                        "DICTIONARY_SELECT",
+                        "TREE_SELECT",
+                        "EMAIL",
+                        "PHONE",
+                        "URL",
+                        "IDENTIFIER",
+                        "POSTAL_CODE",
+                        "FILE_UPLOADER",
+                        "GEO_POINT",
+                        "ENTITY_REFERENCE",
+                        "SIGNATURE_EVIDENCE",
+                        "STAMP_EVIDENCE",
+                        "CALCULATED",
+                        "HIDDEN_METADATA",
+                        "TEXT_BLOCK",
+                        "HEADING",
+                        "HELP",
+                        "NOTICE",
+                        "LEGAL_BASIS",
+                        "PRIVACY_NOTICE",
+                        "DOCUMENT_PREVIEW",
+                        "SUMMARY",
+                        "RECEIPT",
+                        "SAVE_DRAFT",
+                        "PREVIOUS_STEP",
+                        "NEXT_STEP",
+                        "VALIDATE",
+                        "SIGN",
+                        "SUBMIT",
+                        "PRINT"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "TABLE"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "items": {
+                  "properties": {
+                    "type": {
+                      "enum": [
+                        "TABLE_ROW"
+                      ]
+                    }
+                  }
+                },
+                "minItems": 1,
+                "maxItems": 1
+              },
+              "config": {
+                "required": [
+                  "itemKey",
+                  "minItems",
+                  "maxItems"
+                ]
+              }
+            },
+            "required": [
+              "binding"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "TABLE_ROW"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "items": {
+                  "properties": {
+                    "type": {
+                      "enum": [
+                        "TABLE_CELL"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "TABLE_CELL"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "items": {
+                  "properties": {
+                    "type": {
+                      "enum": [
+                        "TEXT_FIELD",
+                        "TEXTAREA",
+                        "INTEGER",
+                        "DECIMAL",
+                        "MONEY",
+                        "DATE",
+                        "DATE_TIME",
+                        "TIME",
+                        "MONTH",
+                        "YEAR",
+                        "BOOLEAN",
+                        "CHECKBOX",
+                        "RADIO",
+                        "SELECT",
+                        "MULTI_SELECT",
+                        "DICTIONARY_SELECT",
+                        "TREE_SELECT",
+                        "EMAIL",
+                        "PHONE",
+                        "URL",
+                        "IDENTIFIER",
+                        "POSTAL_CODE",
+                        "FILE_UPLOADER",
+                        "GEO_POINT",
+                        "ENTITY_REFERENCE",
+                        "SIGNATURE_EVIDENCE",
+                        "STAMP_EVIDENCE",
+                        "CALCULATED",
+                        "HIDDEN_METADATA",
+                        "TEXT_BLOCK",
+                        "HEADING",
+                        "HELP",
+                        "NOTICE",
+                        "LEGAL_BASIS",
+                        "PRIVACY_NOTICE",
+                        "DOCUMENT_PREVIEW",
+                        "SUMMARY",
+                        "RECEIPT"
+                      ]
+                    }
+                  }
+                },
+                "minItems": 1,
+                "maxItems": 1
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "ACCORDION"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "items": {
+                  "properties": {
+                    "type": {
+                      "enum": [
+                        "PANEL"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "PANEL"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "items": {
+                  "properties": {
+                    "type": {
+                      "enum": [
+                        "GROUP",
+                        "GRID",
+                        "CONDITIONAL",
+                        "REPEATER",
+                        "TABLE",
+                        "ACCORDION",
+                        "PARTY_BLOCK",
+                        "PERSON_BLOCK",
+                        "ORGANIZATION_BLOCK",
+                        "REPRESENTATION_BLOCK",
+                        "ADDRESS_BLOCK",
+                        "CONTACT_BLOCK",
+                        "IDENTIFIER_BLOCK",
+                        "PROPERTY_BLOCK",
+                        "PARCEL_BLOCK",
+                        "PERIOD_BLOCK",
+                        "PAYMENT_BLOCK",
+                        "BANK_ACCOUNT_BLOCK",
+                        "ATTACHMENTS_BLOCK",
+                        "SIGNATURE_BLOCK",
+                        "STAMP_BLOCK",
+                        "ELECTRONIC_SEAL_BLOCK",
+                        "AUTHORITY_BLOCK",
+                        "DELIVERY_BLOCK",
+                        "DECLARATIONS_BLOCK",
+                        "PRIVACY_BLOCK",
+                        "CONSENT_BLOCK",
+                        "OFFICE_BLOCK",
+                        "ANIMAL_BLOCK",
+                        "SPORTS_BLOCK",
+                        "ROAD_BLOCK",
+                        "RENTAL_BLOCK",
+                        "TEXT_FIELD",
+                        "TEXTAREA",
+                        "INTEGER",
+                        "DECIMAL",
+                        "MONEY",
+                        "DATE",
+                        "DATE_TIME",
+                        "TIME",
+                        "MONTH",
+                        "YEAR",
+                        "BOOLEAN",
+                        "CHECKBOX",
+                        "RADIO",
+                        "SELECT",
+                        "MULTI_SELECT",
+                        "DICTIONARY_SELECT",
+                        "TREE_SELECT",
+                        "EMAIL",
+                        "PHONE",
+                        "URL",
+                        "IDENTIFIER",
+                        "POSTAL_CODE",
+                        "FILE_UPLOADER",
+                        "GEO_POINT",
+                        "ENTITY_REFERENCE",
+                        "SIGNATURE_EVIDENCE",
+                        "STAMP_EVIDENCE",
+                        "CALCULATED",
+                        "HIDDEN_METADATA",
+                        "TEXT_BLOCK",
+                        "HEADING",
+                        "HELP",
+                        "NOTICE",
+                        "LEGAL_BASIS",
+                        "PRIVACY_NOTICE",
+                        "DOCUMENT_PREVIEW",
+                        "SUMMARY",
+                        "RECEIPT",
+                        "SAVE_DRAFT",
+                        "PREVIOUS_STEP",
+                        "NEXT_STEP",
+                        "VALIDATE",
+                        "SIGN",
+                        "SUBMIT",
+                        "PRINT"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "PARTY_BLOCK"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "items": {
+                  "properties": {
+                    "type": {
+                      "enum": [
+                        "GROUP",
+                        "GRID",
+                        "CONDITIONAL",
+                        "REPEATER",
+                        "TABLE",
+                        "ACCORDION",
+                        "PERSON_BLOCK",
+                        "ORGANIZATION_BLOCK",
+                        "REPRESENTATION_BLOCK",
+                        "ADDRESS_BLOCK",
+                        "CONTACT_BLOCK",
+                        "IDENTIFIER_BLOCK",
+                        "PROPERTY_BLOCK",
+                        "PARCEL_BLOCK",
+                        "PERIOD_BLOCK",
+                        "PAYMENT_BLOCK",
+                        "BANK_ACCOUNT_BLOCK",
+                        "ATTACHMENTS_BLOCK",
+                        "SIGNATURE_BLOCK",
+                        "STAMP_BLOCK",
+                        "ELECTRONIC_SEAL_BLOCK",
+                        "AUTHORITY_BLOCK",
+                        "DELIVERY_BLOCK",
+                        "DECLARATIONS_BLOCK",
+                        "PRIVACY_BLOCK",
+                        "CONSENT_BLOCK",
+                        "OFFICE_BLOCK",
+                        "ANIMAL_BLOCK",
+                        "SPORTS_BLOCK",
+                        "ROAD_BLOCK",
+                        "RENTAL_BLOCK",
+                        "TEXT_FIELD",
+                        "TEXTAREA",
+                        "INTEGER",
+                        "DECIMAL",
+                        "MONEY",
+                        "DATE",
+                        "DATE_TIME",
+                        "TIME",
+                        "MONTH",
+                        "YEAR",
+                        "BOOLEAN",
+                        "CHECKBOX",
+                        "RADIO",
+                        "SELECT",
+                        "MULTI_SELECT",
+                        "DICTIONARY_SELECT",
+                        "TREE_SELECT",
+                        "EMAIL",
+                        "PHONE",
+                        "URL",
+                        "IDENTIFIER",
+                        "POSTAL_CODE",
+                        "FILE_UPLOADER",
+                        "GEO_POINT",
+                        "ENTITY_REFERENCE",
+                        "SIGNATURE_EVIDENCE",
+                        "STAMP_EVIDENCE",
+                        "CALCULATED",
+                        "HIDDEN_METADATA",
+                        "TEXT_BLOCK",
+                        "HEADING",
+                        "HELP",
+                        "NOTICE",
+                        "LEGAL_BASIS",
+                        "PRIVACY_NOTICE",
+                        "DOCUMENT_PREVIEW",
+                        "SUMMARY",
+                        "RECEIPT",
+                        "SAVE_DRAFT",
+                        "PREVIOUS_STEP",
+                        "NEXT_STEP",
+                        "VALIDATE",
+                        "SIGN",
+                        "SUBMIT",
+                        "PRINT"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "PERSON_BLOCK"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "items": {
+                  "properties": {
+                    "type": {
+                      "enum": [
+                        "GROUP",
+                        "GRID",
+                        "CONDITIONAL",
+                        "REPEATER",
+                        "TABLE",
+                        "ACCORDION",
+                        "PARTY_BLOCK",
+                        "ORGANIZATION_BLOCK",
+                        "REPRESENTATION_BLOCK",
+                        "ADDRESS_BLOCK",
+                        "CONTACT_BLOCK",
+                        "IDENTIFIER_BLOCK",
+                        "PROPERTY_BLOCK",
+                        "PARCEL_BLOCK",
+                        "PERIOD_BLOCK",
+                        "PAYMENT_BLOCK",
+                        "BANK_ACCOUNT_BLOCK",
+                        "ATTACHMENTS_BLOCK",
+                        "SIGNATURE_BLOCK",
+                        "STAMP_BLOCK",
+                        "ELECTRONIC_SEAL_BLOCK",
+                        "AUTHORITY_BLOCK",
+                        "DELIVERY_BLOCK",
+                        "DECLARATIONS_BLOCK",
+                        "PRIVACY_BLOCK",
+                        "CONSENT_BLOCK",
+                        "OFFICE_BLOCK",
+                        "ANIMAL_BLOCK",
+                        "SPORTS_BLOCK",
+                        "ROAD_BLOCK",
+                        "RENTAL_BLOCK",
+                        "TEXT_FIELD",
+                        "TEXTAREA",
+                        "INTEGER",
+                        "DECIMAL",
+                        "MONEY",
+                        "DATE",
+                        "DATE_TIME",
+                        "TIME",
+                        "MONTH",
+                        "YEAR",
+                        "BOOLEAN",
+                        "CHECKBOX",
+                        "RADIO",
+                        "SELECT",
+                        "MULTI_SELECT",
+                        "DICTIONARY_SELECT",
+                        "TREE_SELECT",
+                        "EMAIL",
+                        "PHONE",
+                        "URL",
+                        "IDENTIFIER",
+                        "POSTAL_CODE",
+                        "FILE_UPLOADER",
+                        "GEO_POINT",
+                        "ENTITY_REFERENCE",
+                        "SIGNATURE_EVIDENCE",
+                        "STAMP_EVIDENCE",
+                        "CALCULATED",
+                        "HIDDEN_METADATA",
+                        "TEXT_BLOCK",
+                        "HEADING",
+                        "HELP",
+                        "NOTICE",
+                        "LEGAL_BASIS",
+                        "PRIVACY_NOTICE",
+                        "DOCUMENT_PREVIEW",
+                        "SUMMARY",
+                        "RECEIPT",
+                        "SAVE_DRAFT",
+                        "PREVIOUS_STEP",
+                        "NEXT_STEP",
+                        "VALIDATE",
+                        "SIGN",
+                        "SUBMIT",
+                        "PRINT"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "ORGANIZATION_BLOCK"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "items": {
+                  "properties": {
+                    "type": {
+                      "enum": [
+                        "GROUP",
+                        "GRID",
+                        "CONDITIONAL",
+                        "REPEATER",
+                        "TABLE",
+                        "ACCORDION",
+                        "PARTY_BLOCK",
+                        "PERSON_BLOCK",
+                        "REPRESENTATION_BLOCK",
+                        "ADDRESS_BLOCK",
+                        "CONTACT_BLOCK",
+                        "IDENTIFIER_BLOCK",
+                        "PROPERTY_BLOCK",
+                        "PARCEL_BLOCK",
+                        "PERIOD_BLOCK",
+                        "PAYMENT_BLOCK",
+                        "BANK_ACCOUNT_BLOCK",
+                        "ATTACHMENTS_BLOCK",
+                        "SIGNATURE_BLOCK",
+                        "STAMP_BLOCK",
+                        "ELECTRONIC_SEAL_BLOCK",
+                        "AUTHORITY_BLOCK",
+                        "DELIVERY_BLOCK",
+                        "DECLARATIONS_BLOCK",
+                        "PRIVACY_BLOCK",
+                        "CONSENT_BLOCK",
+                        "OFFICE_BLOCK",
+                        "ANIMAL_BLOCK",
+                        "SPORTS_BLOCK",
+                        "ROAD_BLOCK",
+                        "RENTAL_BLOCK",
+                        "TEXT_FIELD",
+                        "TEXTAREA",
+                        "INTEGER",
+                        "DECIMAL",
+                        "MONEY",
+                        "DATE",
+                        "DATE_TIME",
+                        "TIME",
+                        "MONTH",
+                        "YEAR",
+                        "BOOLEAN",
+                        "CHECKBOX",
+                        "RADIO",
+                        "SELECT",
+                        "MULTI_SELECT",
+                        "DICTIONARY_SELECT",
+                        "TREE_SELECT",
+                        "EMAIL",
+                        "PHONE",
+                        "URL",
+                        "IDENTIFIER",
+                        "POSTAL_CODE",
+                        "FILE_UPLOADER",
+                        "GEO_POINT",
+                        "ENTITY_REFERENCE",
+                        "SIGNATURE_EVIDENCE",
+                        "STAMP_EVIDENCE",
+                        "CALCULATED",
+                        "HIDDEN_METADATA",
+                        "TEXT_BLOCK",
+                        "HEADING",
+                        "HELP",
+                        "NOTICE",
+                        "LEGAL_BASIS",
+                        "PRIVACY_NOTICE",
+                        "DOCUMENT_PREVIEW",
+                        "SUMMARY",
+                        "RECEIPT",
+                        "SAVE_DRAFT",
+                        "PREVIOUS_STEP",
+                        "NEXT_STEP",
+                        "VALIDATE",
+                        "SIGN",
+                        "SUBMIT",
+                        "PRINT"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "REPRESENTATION_BLOCK"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "items": {
+                  "properties": {
+                    "type": {
+                      "enum": [
+                        "GROUP",
+                        "GRID",
+                        "CONDITIONAL",
+                        "REPEATER",
+                        "TABLE",
+                        "ACCORDION",
+                        "PARTY_BLOCK",
+                        "PERSON_BLOCK",
+                        "ORGANIZATION_BLOCK",
+                        "ADDRESS_BLOCK",
+                        "CONTACT_BLOCK",
+                        "IDENTIFIER_BLOCK",
+                        "PROPERTY_BLOCK",
+                        "PARCEL_BLOCK",
+                        "PERIOD_BLOCK",
+                        "PAYMENT_BLOCK",
+                        "BANK_ACCOUNT_BLOCK",
+                        "ATTACHMENTS_BLOCK",
+                        "SIGNATURE_BLOCK",
+                        "STAMP_BLOCK",
+                        "ELECTRONIC_SEAL_BLOCK",
+                        "AUTHORITY_BLOCK",
+                        "DELIVERY_BLOCK",
+                        "DECLARATIONS_BLOCK",
+                        "PRIVACY_BLOCK",
+                        "CONSENT_BLOCK",
+                        "OFFICE_BLOCK",
+                        "ANIMAL_BLOCK",
+                        "SPORTS_BLOCK",
+                        "ROAD_BLOCK",
+                        "RENTAL_BLOCK",
+                        "TEXT_FIELD",
+                        "TEXTAREA",
+                        "INTEGER",
+                        "DECIMAL",
+                        "MONEY",
+                        "DATE",
+                        "DATE_TIME",
+                        "TIME",
+                        "MONTH",
+                        "YEAR",
+                        "BOOLEAN",
+                        "CHECKBOX",
+                        "RADIO",
+                        "SELECT",
+                        "MULTI_SELECT",
+                        "DICTIONARY_SELECT",
+                        "TREE_SELECT",
+                        "EMAIL",
+                        "PHONE",
+                        "URL",
+                        "IDENTIFIER",
+                        "POSTAL_CODE",
+                        "FILE_UPLOADER",
+                        "GEO_POINT",
+                        "ENTITY_REFERENCE",
+                        "SIGNATURE_EVIDENCE",
+                        "STAMP_EVIDENCE",
+                        "CALCULATED",
+                        "HIDDEN_METADATA",
+                        "TEXT_BLOCK",
+                        "HEADING",
+                        "HELP",
+                        "NOTICE",
+                        "LEGAL_BASIS",
+                        "PRIVACY_NOTICE",
+                        "DOCUMENT_PREVIEW",
+                        "SUMMARY",
+                        "RECEIPT",
+                        "SAVE_DRAFT",
+                        "PREVIOUS_STEP",
+                        "NEXT_STEP",
+                        "VALIDATE",
+                        "SIGN",
+                        "SUBMIT",
+                        "PRINT"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "ADDRESS_BLOCK"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "items": {
+                  "properties": {
+                    "type": {
+                      "enum": [
+                        "GROUP",
+                        "GRID",
+                        "CONDITIONAL",
+                        "REPEATER",
+                        "TABLE",
+                        "ACCORDION",
+                        "PARTY_BLOCK",
+                        "PERSON_BLOCK",
+                        "ORGANIZATION_BLOCK",
+                        "REPRESENTATION_BLOCK",
+                        "CONTACT_BLOCK",
+                        "IDENTIFIER_BLOCK",
+                        "PROPERTY_BLOCK",
+                        "PARCEL_BLOCK",
+                        "PERIOD_BLOCK",
+                        "PAYMENT_BLOCK",
+                        "BANK_ACCOUNT_BLOCK",
+                        "ATTACHMENTS_BLOCK",
+                        "SIGNATURE_BLOCK",
+                        "STAMP_BLOCK",
+                        "ELECTRONIC_SEAL_BLOCK",
+                        "AUTHORITY_BLOCK",
+                        "DELIVERY_BLOCK",
+                        "DECLARATIONS_BLOCK",
+                        "PRIVACY_BLOCK",
+                        "CONSENT_BLOCK",
+                        "OFFICE_BLOCK",
+                        "ANIMAL_BLOCK",
+                        "SPORTS_BLOCK",
+                        "ROAD_BLOCK",
+                        "RENTAL_BLOCK",
+                        "TEXT_FIELD",
+                        "TEXTAREA",
+                        "INTEGER",
+                        "DECIMAL",
+                        "MONEY",
+                        "DATE",
+                        "DATE_TIME",
+                        "TIME",
+                        "MONTH",
+                        "YEAR",
+                        "BOOLEAN",
+                        "CHECKBOX",
+                        "RADIO",
+                        "SELECT",
+                        "MULTI_SELECT",
+                        "DICTIONARY_SELECT",
+                        "TREE_SELECT",
+                        "EMAIL",
+                        "PHONE",
+                        "URL",
+                        "IDENTIFIER",
+                        "POSTAL_CODE",
+                        "FILE_UPLOADER",
+                        "GEO_POINT",
+                        "ENTITY_REFERENCE",
+                        "SIGNATURE_EVIDENCE",
+                        "STAMP_EVIDENCE",
+                        "CALCULATED",
+                        "HIDDEN_METADATA",
+                        "TEXT_BLOCK",
+                        "HEADING",
+                        "HELP",
+                        "NOTICE",
+                        "LEGAL_BASIS",
+                        "PRIVACY_NOTICE",
+                        "DOCUMENT_PREVIEW",
+                        "SUMMARY",
+                        "RECEIPT",
+                        "SAVE_DRAFT",
+                        "PREVIOUS_STEP",
+                        "NEXT_STEP",
+                        "VALIDATE",
+                        "SIGN",
+                        "SUBMIT",
+                        "PRINT"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "CONTACT_BLOCK"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "items": {
+                  "properties": {
+                    "type": {
+                      "enum": [
+                        "GROUP",
+                        "GRID",
+                        "CONDITIONAL",
+                        "REPEATER",
+                        "TABLE",
+                        "ACCORDION",
+                        "PARTY_BLOCK",
+                        "PERSON_BLOCK",
+                        "ORGANIZATION_BLOCK",
+                        "REPRESENTATION_BLOCK",
+                        "ADDRESS_BLOCK",
+                        "IDENTIFIER_BLOCK",
+                        "PROPERTY_BLOCK",
+                        "PARCEL_BLOCK",
+                        "PERIOD_BLOCK",
+                        "PAYMENT_BLOCK",
+                        "BANK_ACCOUNT_BLOCK",
+                        "ATTACHMENTS_BLOCK",
+                        "SIGNATURE_BLOCK",
+                        "STAMP_BLOCK",
+                        "ELECTRONIC_SEAL_BLOCK",
+                        "AUTHORITY_BLOCK",
+                        "DELIVERY_BLOCK",
+                        "DECLARATIONS_BLOCK",
+                        "PRIVACY_BLOCK",
+                        "CONSENT_BLOCK",
+                        "OFFICE_BLOCK",
+                        "ANIMAL_BLOCK",
+                        "SPORTS_BLOCK",
+                        "ROAD_BLOCK",
+                        "RENTAL_BLOCK",
+                        "TEXT_FIELD",
+                        "TEXTAREA",
+                        "INTEGER",
+                        "DECIMAL",
+                        "MONEY",
+                        "DATE",
+                        "DATE_TIME",
+                        "TIME",
+                        "MONTH",
+                        "YEAR",
+                        "BOOLEAN",
+                        "CHECKBOX",
+                        "RADIO",
+                        "SELECT",
+                        "MULTI_SELECT",
+                        "DICTIONARY_SELECT",
+                        "TREE_SELECT",
+                        "EMAIL",
+                        "PHONE",
+                        "URL",
+                        "IDENTIFIER",
+                        "POSTAL_CODE",
+                        "FILE_UPLOADER",
+                        "GEO_POINT",
+                        "ENTITY_REFERENCE",
+                        "SIGNATURE_EVIDENCE",
+                        "STAMP_EVIDENCE",
+                        "CALCULATED",
+                        "HIDDEN_METADATA",
+                        "TEXT_BLOCK",
+                        "HEADING",
+                        "HELP",
+                        "NOTICE",
+                        "LEGAL_BASIS",
+                        "PRIVACY_NOTICE",
+                        "DOCUMENT_PREVIEW",
+                        "SUMMARY",
+                        "RECEIPT",
+                        "SAVE_DRAFT",
+                        "PREVIOUS_STEP",
+                        "NEXT_STEP",
+                        "VALIDATE",
+                        "SIGN",
+                        "SUBMIT",
+                        "PRINT"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "IDENTIFIER_BLOCK"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "items": {
+                  "properties": {
+                    "type": {
+                      "enum": [
+                        "GROUP",
+                        "GRID",
+                        "CONDITIONAL",
+                        "REPEATER",
+                        "TABLE",
+                        "ACCORDION",
+                        "PARTY_BLOCK",
+                        "PERSON_BLOCK",
+                        "ORGANIZATION_BLOCK",
+                        "REPRESENTATION_BLOCK",
+                        "ADDRESS_BLOCK",
+                        "CONTACT_BLOCK",
+                        "PROPERTY_BLOCK",
+                        "PARCEL_BLOCK",
+                        "PERIOD_BLOCK",
+                        "PAYMENT_BLOCK",
+                        "BANK_ACCOUNT_BLOCK",
+                        "ATTACHMENTS_BLOCK",
+                        "SIGNATURE_BLOCK",
+                        "STAMP_BLOCK",
+                        "ELECTRONIC_SEAL_BLOCK",
+                        "AUTHORITY_BLOCK",
+                        "DELIVERY_BLOCK",
+                        "DECLARATIONS_BLOCK",
+                        "PRIVACY_BLOCK",
+                        "CONSENT_BLOCK",
+                        "OFFICE_BLOCK",
+                        "ANIMAL_BLOCK",
+                        "SPORTS_BLOCK",
+                        "ROAD_BLOCK",
+                        "RENTAL_BLOCK",
+                        "TEXT_FIELD",
+                        "TEXTAREA",
+                        "INTEGER",
+                        "DECIMAL",
+                        "MONEY",
+                        "DATE",
+                        "DATE_TIME",
+                        "TIME",
+                        "MONTH",
+                        "YEAR",
+                        "BOOLEAN",
+                        "CHECKBOX",
+                        "RADIO",
+                        "SELECT",
+                        "MULTI_SELECT",
+                        "DICTIONARY_SELECT",
+                        "TREE_SELECT",
+                        "EMAIL",
+                        "PHONE",
+                        "URL",
+                        "IDENTIFIER",
+                        "POSTAL_CODE",
+                        "FILE_UPLOADER",
+                        "GEO_POINT",
+                        "ENTITY_REFERENCE",
+                        "SIGNATURE_EVIDENCE",
+                        "STAMP_EVIDENCE",
+                        "CALCULATED",
+                        "HIDDEN_METADATA",
+                        "TEXT_BLOCK",
+                        "HEADING",
+                        "HELP",
+                        "NOTICE",
+                        "LEGAL_BASIS",
+                        "PRIVACY_NOTICE",
+                        "DOCUMENT_PREVIEW",
+                        "SUMMARY",
+                        "RECEIPT",
+                        "SAVE_DRAFT",
+                        "PREVIOUS_STEP",
+                        "NEXT_STEP",
+                        "VALIDATE",
+                        "SIGN",
+                        "SUBMIT",
+                        "PRINT"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "PROPERTY_BLOCK"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "items": {
+                  "properties": {
+                    "type": {
+                      "enum": [
+                        "GROUP",
+                        "GRID",
+                        "CONDITIONAL",
+                        "REPEATER",
+                        "TABLE",
+                        "ACCORDION",
+                        "PARTY_BLOCK",
+                        "PERSON_BLOCK",
+                        "ORGANIZATION_BLOCK",
+                        "REPRESENTATION_BLOCK",
+                        "ADDRESS_BLOCK",
+                        "CONTACT_BLOCK",
+                        "IDENTIFIER_BLOCK",
+                        "PARCEL_BLOCK",
+                        "PERIOD_BLOCK",
+                        "PAYMENT_BLOCK",
+                        "BANK_ACCOUNT_BLOCK",
+                        "ATTACHMENTS_BLOCK",
+                        "SIGNATURE_BLOCK",
+                        "STAMP_BLOCK",
+                        "ELECTRONIC_SEAL_BLOCK",
+                        "AUTHORITY_BLOCK",
+                        "DELIVERY_BLOCK",
+                        "DECLARATIONS_BLOCK",
+                        "PRIVACY_BLOCK",
+                        "CONSENT_BLOCK",
+                        "OFFICE_BLOCK",
+                        "ANIMAL_BLOCK",
+                        "SPORTS_BLOCK",
+                        "ROAD_BLOCK",
+                        "RENTAL_BLOCK",
+                        "TEXT_FIELD",
+                        "TEXTAREA",
+                        "INTEGER",
+                        "DECIMAL",
+                        "MONEY",
+                        "DATE",
+                        "DATE_TIME",
+                        "TIME",
+                        "MONTH",
+                        "YEAR",
+                        "BOOLEAN",
+                        "CHECKBOX",
+                        "RADIO",
+                        "SELECT",
+                        "MULTI_SELECT",
+                        "DICTIONARY_SELECT",
+                        "TREE_SELECT",
+                        "EMAIL",
+                        "PHONE",
+                        "URL",
+                        "IDENTIFIER",
+                        "POSTAL_CODE",
+                        "FILE_UPLOADER",
+                        "GEO_POINT",
+                        "ENTITY_REFERENCE",
+                        "SIGNATURE_EVIDENCE",
+                        "STAMP_EVIDENCE",
+                        "CALCULATED",
+                        "HIDDEN_METADATA",
+                        "TEXT_BLOCK",
+                        "HEADING",
+                        "HELP",
+                        "NOTICE",
+                        "LEGAL_BASIS",
+                        "PRIVACY_NOTICE",
+                        "DOCUMENT_PREVIEW",
+                        "SUMMARY",
+                        "RECEIPT",
+                        "SAVE_DRAFT",
+                        "PREVIOUS_STEP",
+                        "NEXT_STEP",
+                        "VALIDATE",
+                        "SIGN",
+                        "SUBMIT",
+                        "PRINT"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "PARCEL_BLOCK"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "items": {
+                  "properties": {
+                    "type": {
+                      "enum": [
+                        "GROUP",
+                        "GRID",
+                        "CONDITIONAL",
+                        "REPEATER",
+                        "TABLE",
+                        "ACCORDION",
+                        "PARTY_BLOCK",
+                        "PERSON_BLOCK",
+                        "ORGANIZATION_BLOCK",
+                        "REPRESENTATION_BLOCK",
+                        "ADDRESS_BLOCK",
+                        "CONTACT_BLOCK",
+                        "IDENTIFIER_BLOCK",
+                        "PROPERTY_BLOCK",
+                        "PERIOD_BLOCK",
+                        "PAYMENT_BLOCK",
+                        "BANK_ACCOUNT_BLOCK",
+                        "ATTACHMENTS_BLOCK",
+                        "SIGNATURE_BLOCK",
+                        "STAMP_BLOCK",
+                        "ELECTRONIC_SEAL_BLOCK",
+                        "AUTHORITY_BLOCK",
+                        "DELIVERY_BLOCK",
+                        "DECLARATIONS_BLOCK",
+                        "PRIVACY_BLOCK",
+                        "CONSENT_BLOCK",
+                        "OFFICE_BLOCK",
+                        "ANIMAL_BLOCK",
+                        "SPORTS_BLOCK",
+                        "ROAD_BLOCK",
+                        "RENTAL_BLOCK",
+                        "TEXT_FIELD",
+                        "TEXTAREA",
+                        "INTEGER",
+                        "DECIMAL",
+                        "MONEY",
+                        "DATE",
+                        "DATE_TIME",
+                        "TIME",
+                        "MONTH",
+                        "YEAR",
+                        "BOOLEAN",
+                        "CHECKBOX",
+                        "RADIO",
+                        "SELECT",
+                        "MULTI_SELECT",
+                        "DICTIONARY_SELECT",
+                        "TREE_SELECT",
+                        "EMAIL",
+                        "PHONE",
+                        "URL",
+                        "IDENTIFIER",
+                        "POSTAL_CODE",
+                        "FILE_UPLOADER",
+                        "GEO_POINT",
+                        "ENTITY_REFERENCE",
+                        "SIGNATURE_EVIDENCE",
+                        "STAMP_EVIDENCE",
+                        "CALCULATED",
+                        "HIDDEN_METADATA",
+                        "TEXT_BLOCK",
+                        "HEADING",
+                        "HELP",
+                        "NOTICE",
+                        "LEGAL_BASIS",
+                        "PRIVACY_NOTICE",
+                        "DOCUMENT_PREVIEW",
+                        "SUMMARY",
+                        "RECEIPT",
+                        "SAVE_DRAFT",
+                        "PREVIOUS_STEP",
+                        "NEXT_STEP",
+                        "VALIDATE",
+                        "SIGN",
+                        "SUBMIT",
+                        "PRINT"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "PERIOD_BLOCK"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "items": {
+                  "properties": {
+                    "type": {
+                      "enum": [
+                        "GROUP",
+                        "GRID",
+                        "CONDITIONAL",
+                        "REPEATER",
+                        "TABLE",
+                        "ACCORDION",
+                        "PARTY_BLOCK",
+                        "PERSON_BLOCK",
+                        "ORGANIZATION_BLOCK",
+                        "REPRESENTATION_BLOCK",
+                        "ADDRESS_BLOCK",
+                        "CONTACT_BLOCK",
+                        "IDENTIFIER_BLOCK",
+                        "PROPERTY_BLOCK",
+                        "PARCEL_BLOCK",
+                        "PAYMENT_BLOCK",
+                        "BANK_ACCOUNT_BLOCK",
+                        "ATTACHMENTS_BLOCK",
+                        "SIGNATURE_BLOCK",
+                        "STAMP_BLOCK",
+                        "ELECTRONIC_SEAL_BLOCK",
+                        "AUTHORITY_BLOCK",
+                        "DELIVERY_BLOCK",
+                        "DECLARATIONS_BLOCK",
+                        "PRIVACY_BLOCK",
+                        "CONSENT_BLOCK",
+                        "OFFICE_BLOCK",
+                        "ANIMAL_BLOCK",
+                        "SPORTS_BLOCK",
+                        "ROAD_BLOCK",
+                        "RENTAL_BLOCK",
+                        "TEXT_FIELD",
+                        "TEXTAREA",
+                        "INTEGER",
+                        "DECIMAL",
+                        "MONEY",
+                        "DATE",
+                        "DATE_TIME",
+                        "TIME",
+                        "MONTH",
+                        "YEAR",
+                        "BOOLEAN",
+                        "CHECKBOX",
+                        "RADIO",
+                        "SELECT",
+                        "MULTI_SELECT",
+                        "DICTIONARY_SELECT",
+                        "TREE_SELECT",
+                        "EMAIL",
+                        "PHONE",
+                        "URL",
+                        "IDENTIFIER",
+                        "POSTAL_CODE",
+                        "FILE_UPLOADER",
+                        "GEO_POINT",
+                        "ENTITY_REFERENCE",
+                        "SIGNATURE_EVIDENCE",
+                        "STAMP_EVIDENCE",
+                        "CALCULATED",
+                        "HIDDEN_METADATA",
+                        "TEXT_BLOCK",
+                        "HEADING",
+                        "HELP",
+                        "NOTICE",
+                        "LEGAL_BASIS",
+                        "PRIVACY_NOTICE",
+                        "DOCUMENT_PREVIEW",
+                        "SUMMARY",
+                        "RECEIPT",
+                        "SAVE_DRAFT",
+                        "PREVIOUS_STEP",
+                        "NEXT_STEP",
+                        "VALIDATE",
+                        "SIGN",
+                        "SUBMIT",
+                        "PRINT"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "PAYMENT_BLOCK"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "items": {
+                  "properties": {
+                    "type": {
+                      "enum": [
+                        "GROUP",
+                        "GRID",
+                        "CONDITIONAL",
+                        "REPEATER",
+                        "TABLE",
+                        "ACCORDION",
+                        "PARTY_BLOCK",
+                        "PERSON_BLOCK",
+                        "ORGANIZATION_BLOCK",
+                        "REPRESENTATION_BLOCK",
+                        "ADDRESS_BLOCK",
+                        "CONTACT_BLOCK",
+                        "IDENTIFIER_BLOCK",
+                        "PROPERTY_BLOCK",
+                        "PARCEL_BLOCK",
+                        "PERIOD_BLOCK",
+                        "BANK_ACCOUNT_BLOCK",
+                        "ATTACHMENTS_BLOCK",
+                        "SIGNATURE_BLOCK",
+                        "STAMP_BLOCK",
+                        "ELECTRONIC_SEAL_BLOCK",
+                        "AUTHORITY_BLOCK",
+                        "DELIVERY_BLOCK",
+                        "DECLARATIONS_BLOCK",
+                        "PRIVACY_BLOCK",
+                        "CONSENT_BLOCK",
+                        "OFFICE_BLOCK",
+                        "ANIMAL_BLOCK",
+                        "SPORTS_BLOCK",
+                        "ROAD_BLOCK",
+                        "RENTAL_BLOCK",
+                        "TEXT_FIELD",
+                        "TEXTAREA",
+                        "INTEGER",
+                        "DECIMAL",
+                        "MONEY",
+                        "DATE",
+                        "DATE_TIME",
+                        "TIME",
+                        "MONTH",
+                        "YEAR",
+                        "BOOLEAN",
+                        "CHECKBOX",
+                        "RADIO",
+                        "SELECT",
+                        "MULTI_SELECT",
+                        "DICTIONARY_SELECT",
+                        "TREE_SELECT",
+                        "EMAIL",
+                        "PHONE",
+                        "URL",
+                        "IDENTIFIER",
+                        "POSTAL_CODE",
+                        "FILE_UPLOADER",
+                        "GEO_POINT",
+                        "ENTITY_REFERENCE",
+                        "SIGNATURE_EVIDENCE",
+                        "STAMP_EVIDENCE",
+                        "CALCULATED",
+                        "HIDDEN_METADATA",
+                        "TEXT_BLOCK",
+                        "HEADING",
+                        "HELP",
+                        "NOTICE",
+                        "LEGAL_BASIS",
+                        "PRIVACY_NOTICE",
+                        "DOCUMENT_PREVIEW",
+                        "SUMMARY",
+                        "RECEIPT",
+                        "SAVE_DRAFT",
+                        "PREVIOUS_STEP",
+                        "NEXT_STEP",
+                        "VALIDATE",
+                        "SIGN",
+                        "SUBMIT",
+                        "PRINT"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "BANK_ACCOUNT_BLOCK"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "items": {
+                  "properties": {
+                    "type": {
+                      "enum": [
+                        "GROUP",
+                        "GRID",
+                        "CONDITIONAL",
+                        "REPEATER",
+                        "TABLE",
+                        "ACCORDION",
+                        "PARTY_BLOCK",
+                        "PERSON_BLOCK",
+                        "ORGANIZATION_BLOCK",
+                        "REPRESENTATION_BLOCK",
+                        "ADDRESS_BLOCK",
+                        "CONTACT_BLOCK",
+                        "IDENTIFIER_BLOCK",
+                        "PROPERTY_BLOCK",
+                        "PARCEL_BLOCK",
+                        "PERIOD_BLOCK",
+                        "PAYMENT_BLOCK",
+                        "ATTACHMENTS_BLOCK",
+                        "SIGNATURE_BLOCK",
+                        "STAMP_BLOCK",
+                        "ELECTRONIC_SEAL_BLOCK",
+                        "AUTHORITY_BLOCK",
+                        "DELIVERY_BLOCK",
+                        "DECLARATIONS_BLOCK",
+                        "PRIVACY_BLOCK",
+                        "CONSENT_BLOCK",
+                        "OFFICE_BLOCK",
+                        "ANIMAL_BLOCK",
+                        "SPORTS_BLOCK",
+                        "ROAD_BLOCK",
+                        "RENTAL_BLOCK",
+                        "TEXT_FIELD",
+                        "TEXTAREA",
+                        "INTEGER",
+                        "DECIMAL",
+                        "MONEY",
+                        "DATE",
+                        "DATE_TIME",
+                        "TIME",
+                        "MONTH",
+                        "YEAR",
+                        "BOOLEAN",
+                        "CHECKBOX",
+                        "RADIO",
+                        "SELECT",
+                        "MULTI_SELECT",
+                        "DICTIONARY_SELECT",
+                        "TREE_SELECT",
+                        "EMAIL",
+                        "PHONE",
+                        "URL",
+                        "IDENTIFIER",
+                        "POSTAL_CODE",
+                        "FILE_UPLOADER",
+                        "GEO_POINT",
+                        "ENTITY_REFERENCE",
+                        "SIGNATURE_EVIDENCE",
+                        "STAMP_EVIDENCE",
+                        "CALCULATED",
+                        "HIDDEN_METADATA",
+                        "TEXT_BLOCK",
+                        "HEADING",
+                        "HELP",
+                        "NOTICE",
+                        "LEGAL_BASIS",
+                        "PRIVACY_NOTICE",
+                        "DOCUMENT_PREVIEW",
+                        "SUMMARY",
+                        "RECEIPT",
+                        "SAVE_DRAFT",
+                        "PREVIOUS_STEP",
+                        "NEXT_STEP",
+                        "VALIDATE",
+                        "SIGN",
+                        "SUBMIT",
+                        "PRINT"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "ATTACHMENTS_BLOCK"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "items": {
+                  "properties": {
+                    "type": {
+                      "enum": [
+                        "GROUP",
+                        "GRID",
+                        "CONDITIONAL",
+                        "REPEATER",
+                        "TABLE",
+                        "ACCORDION",
+                        "PARTY_BLOCK",
+                        "PERSON_BLOCK",
+                        "ORGANIZATION_BLOCK",
+                        "REPRESENTATION_BLOCK",
+                        "ADDRESS_BLOCK",
+                        "CONTACT_BLOCK",
+                        "IDENTIFIER_BLOCK",
+                        "PROPERTY_BLOCK",
+                        "PARCEL_BLOCK",
+                        "PERIOD_BLOCK",
+                        "PAYMENT_BLOCK",
+                        "BANK_ACCOUNT_BLOCK",
+                        "SIGNATURE_BLOCK",
+                        "STAMP_BLOCK",
+                        "ELECTRONIC_SEAL_BLOCK",
+                        "AUTHORITY_BLOCK",
+                        "DELIVERY_BLOCK",
+                        "DECLARATIONS_BLOCK",
+                        "PRIVACY_BLOCK",
+                        "CONSENT_BLOCK",
+                        "OFFICE_BLOCK",
+                        "ANIMAL_BLOCK",
+                        "SPORTS_BLOCK",
+                        "ROAD_BLOCK",
+                        "RENTAL_BLOCK",
+                        "TEXT_FIELD",
+                        "TEXTAREA",
+                        "INTEGER",
+                        "DECIMAL",
+                        "MONEY",
+                        "DATE",
+                        "DATE_TIME",
+                        "TIME",
+                        "MONTH",
+                        "YEAR",
+                        "BOOLEAN",
+                        "CHECKBOX",
+                        "RADIO",
+                        "SELECT",
+                        "MULTI_SELECT",
+                        "DICTIONARY_SELECT",
+                        "TREE_SELECT",
+                        "EMAIL",
+                        "PHONE",
+                        "URL",
+                        "IDENTIFIER",
+                        "POSTAL_CODE",
+                        "FILE_UPLOADER",
+                        "GEO_POINT",
+                        "ENTITY_REFERENCE",
+                        "SIGNATURE_EVIDENCE",
+                        "STAMP_EVIDENCE",
+                        "CALCULATED",
+                        "HIDDEN_METADATA",
+                        "TEXT_BLOCK",
+                        "HEADING",
+                        "HELP",
+                        "NOTICE",
+                        "LEGAL_BASIS",
+                        "PRIVACY_NOTICE",
+                        "DOCUMENT_PREVIEW",
+                        "SUMMARY",
+                        "RECEIPT",
+                        "SAVE_DRAFT",
+                        "PREVIOUS_STEP",
+                        "NEXT_STEP",
+                        "VALIDATE",
+                        "SIGN",
+                        "SUBMIT",
+                        "PRINT"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "SIGNATURE_BLOCK"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "items": {
+                  "properties": {
+                    "type": {
+                      "enum": [
+                        "GROUP",
+                        "GRID",
+                        "CONDITIONAL",
+                        "REPEATER",
+                        "TABLE",
+                        "ACCORDION",
+                        "PARTY_BLOCK",
+                        "PERSON_BLOCK",
+                        "ORGANIZATION_BLOCK",
+                        "REPRESENTATION_BLOCK",
+                        "ADDRESS_BLOCK",
+                        "CONTACT_BLOCK",
+                        "IDENTIFIER_BLOCK",
+                        "PROPERTY_BLOCK",
+                        "PARCEL_BLOCK",
+                        "PERIOD_BLOCK",
+                        "PAYMENT_BLOCK",
+                        "BANK_ACCOUNT_BLOCK",
+                        "ATTACHMENTS_BLOCK",
+                        "STAMP_BLOCK",
+                        "ELECTRONIC_SEAL_BLOCK",
+                        "AUTHORITY_BLOCK",
+                        "DELIVERY_BLOCK",
+                        "DECLARATIONS_BLOCK",
+                        "PRIVACY_BLOCK",
+                        "CONSENT_BLOCK",
+                        "OFFICE_BLOCK",
+                        "ANIMAL_BLOCK",
+                        "SPORTS_BLOCK",
+                        "ROAD_BLOCK",
+                        "RENTAL_BLOCK",
+                        "TEXT_FIELD",
+                        "TEXTAREA",
+                        "INTEGER",
+                        "DECIMAL",
+                        "MONEY",
+                        "DATE",
+                        "DATE_TIME",
+                        "TIME",
+                        "MONTH",
+                        "YEAR",
+                        "BOOLEAN",
+                        "CHECKBOX",
+                        "RADIO",
+                        "SELECT",
+                        "MULTI_SELECT",
+                        "DICTIONARY_SELECT",
+                        "TREE_SELECT",
+                        "EMAIL",
+                        "PHONE",
+                        "URL",
+                        "IDENTIFIER",
+                        "POSTAL_CODE",
+                        "FILE_UPLOADER",
+                        "GEO_POINT",
+                        "ENTITY_REFERENCE",
+                        "SIGNATURE_EVIDENCE",
+                        "STAMP_EVIDENCE",
+                        "CALCULATED",
+                        "HIDDEN_METADATA",
+                        "TEXT_BLOCK",
+                        "HEADING",
+                        "HELP",
+                        "NOTICE",
+                        "LEGAL_BASIS",
+                        "PRIVACY_NOTICE",
+                        "DOCUMENT_PREVIEW",
+                        "SUMMARY",
+                        "RECEIPT",
+                        "SAVE_DRAFT",
+                        "PREVIOUS_STEP",
+                        "NEXT_STEP",
+                        "VALIDATE",
+                        "SIGN",
+                        "SUBMIT",
+                        "PRINT"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "STAMP_BLOCK"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "items": {
+                  "properties": {
+                    "type": {
+                      "enum": [
+                        "GROUP",
+                        "GRID",
+                        "CONDITIONAL",
+                        "REPEATER",
+                        "TABLE",
+                        "ACCORDION",
+                        "PARTY_BLOCK",
+                        "PERSON_BLOCK",
+                        "ORGANIZATION_BLOCK",
+                        "REPRESENTATION_BLOCK",
+                        "ADDRESS_BLOCK",
+                        "CONTACT_BLOCK",
+                        "IDENTIFIER_BLOCK",
+                        "PROPERTY_BLOCK",
+                        "PARCEL_BLOCK",
+                        "PERIOD_BLOCK",
+                        "PAYMENT_BLOCK",
+                        "BANK_ACCOUNT_BLOCK",
+                        "ATTACHMENTS_BLOCK",
+                        "SIGNATURE_BLOCK",
+                        "ELECTRONIC_SEAL_BLOCK",
+                        "AUTHORITY_BLOCK",
+                        "DELIVERY_BLOCK",
+                        "DECLARATIONS_BLOCK",
+                        "PRIVACY_BLOCK",
+                        "CONSENT_BLOCK",
+                        "OFFICE_BLOCK",
+                        "ANIMAL_BLOCK",
+                        "SPORTS_BLOCK",
+                        "ROAD_BLOCK",
+                        "RENTAL_BLOCK",
+                        "TEXT_FIELD",
+                        "TEXTAREA",
+                        "INTEGER",
+                        "DECIMAL",
+                        "MONEY",
+                        "DATE",
+                        "DATE_TIME",
+                        "TIME",
+                        "MONTH",
+                        "YEAR",
+                        "BOOLEAN",
+                        "CHECKBOX",
+                        "RADIO",
+                        "SELECT",
+                        "MULTI_SELECT",
+                        "DICTIONARY_SELECT",
+                        "TREE_SELECT",
+                        "EMAIL",
+                        "PHONE",
+                        "URL",
+                        "IDENTIFIER",
+                        "POSTAL_CODE",
+                        "FILE_UPLOADER",
+                        "GEO_POINT",
+                        "ENTITY_REFERENCE",
+                        "SIGNATURE_EVIDENCE",
+                        "STAMP_EVIDENCE",
+                        "CALCULATED",
+                        "HIDDEN_METADATA",
+                        "TEXT_BLOCK",
+                        "HEADING",
+                        "HELP",
+                        "NOTICE",
+                        "LEGAL_BASIS",
+                        "PRIVACY_NOTICE",
+                        "DOCUMENT_PREVIEW",
+                        "SUMMARY",
+                        "RECEIPT",
+                        "SAVE_DRAFT",
+                        "PREVIOUS_STEP",
+                        "NEXT_STEP",
+                        "VALIDATE",
+                        "SIGN",
+                        "SUBMIT",
+                        "PRINT"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "ELECTRONIC_SEAL_BLOCK"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "items": {
+                  "properties": {
+                    "type": {
+                      "enum": [
+                        "GROUP",
+                        "GRID",
+                        "CONDITIONAL",
+                        "REPEATER",
+                        "TABLE",
+                        "ACCORDION",
+                        "PARTY_BLOCK",
+                        "PERSON_BLOCK",
+                        "ORGANIZATION_BLOCK",
+                        "REPRESENTATION_BLOCK",
+                        "ADDRESS_BLOCK",
+                        "CONTACT_BLOCK",
+                        "IDENTIFIER_BLOCK",
+                        "PROPERTY_BLOCK",
+                        "PARCEL_BLOCK",
+                        "PERIOD_BLOCK",
+                        "PAYMENT_BLOCK",
+                        "BANK_ACCOUNT_BLOCK",
+                        "ATTACHMENTS_BLOCK",
+                        "SIGNATURE_BLOCK",
+                        "STAMP_BLOCK",
+                        "AUTHORITY_BLOCK",
+                        "DELIVERY_BLOCK",
+                        "DECLARATIONS_BLOCK",
+                        "PRIVACY_BLOCK",
+                        "CONSENT_BLOCK",
+                        "OFFICE_BLOCK",
+                        "ANIMAL_BLOCK",
+                        "SPORTS_BLOCK",
+                        "ROAD_BLOCK",
+                        "RENTAL_BLOCK",
+                        "TEXT_FIELD",
+                        "TEXTAREA",
+                        "INTEGER",
+                        "DECIMAL",
+                        "MONEY",
+                        "DATE",
+                        "DATE_TIME",
+                        "TIME",
+                        "MONTH",
+                        "YEAR",
+                        "BOOLEAN",
+                        "CHECKBOX",
+                        "RADIO",
+                        "SELECT",
+                        "MULTI_SELECT",
+                        "DICTIONARY_SELECT",
+                        "TREE_SELECT",
+                        "EMAIL",
+                        "PHONE",
+                        "URL",
+                        "IDENTIFIER",
+                        "POSTAL_CODE",
+                        "FILE_UPLOADER",
+                        "GEO_POINT",
+                        "ENTITY_REFERENCE",
+                        "SIGNATURE_EVIDENCE",
+                        "STAMP_EVIDENCE",
+                        "CALCULATED",
+                        "HIDDEN_METADATA",
+                        "TEXT_BLOCK",
+                        "HEADING",
+                        "HELP",
+                        "NOTICE",
+                        "LEGAL_BASIS",
+                        "PRIVACY_NOTICE",
+                        "DOCUMENT_PREVIEW",
+                        "SUMMARY",
+                        "RECEIPT",
+                        "SAVE_DRAFT",
+                        "PREVIOUS_STEP",
+                        "NEXT_STEP",
+                        "VALIDATE",
+                        "SIGN",
+                        "SUBMIT",
+                        "PRINT"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "AUTHORITY_BLOCK"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "items": {
+                  "properties": {
+                    "type": {
+                      "enum": [
+                        "GROUP",
+                        "GRID",
+                        "CONDITIONAL",
+                        "REPEATER",
+                        "TABLE",
+                        "ACCORDION",
+                        "PARTY_BLOCK",
+                        "PERSON_BLOCK",
+                        "ORGANIZATION_BLOCK",
+                        "REPRESENTATION_BLOCK",
+                        "ADDRESS_BLOCK",
+                        "CONTACT_BLOCK",
+                        "IDENTIFIER_BLOCK",
+                        "PROPERTY_BLOCK",
+                        "PARCEL_BLOCK",
+                        "PERIOD_BLOCK",
+                        "PAYMENT_BLOCK",
+                        "BANK_ACCOUNT_BLOCK",
+                        "ATTACHMENTS_BLOCK",
+                        "SIGNATURE_BLOCK",
+                        "STAMP_BLOCK",
+                        "ELECTRONIC_SEAL_BLOCK",
+                        "DELIVERY_BLOCK",
+                        "DECLARATIONS_BLOCK",
+                        "PRIVACY_BLOCK",
+                        "CONSENT_BLOCK",
+                        "OFFICE_BLOCK",
+                        "ANIMAL_BLOCK",
+                        "SPORTS_BLOCK",
+                        "ROAD_BLOCK",
+                        "RENTAL_BLOCK",
+                        "TEXT_FIELD",
+                        "TEXTAREA",
+                        "INTEGER",
+                        "DECIMAL",
+                        "MONEY",
+                        "DATE",
+                        "DATE_TIME",
+                        "TIME",
+                        "MONTH",
+                        "YEAR",
+                        "BOOLEAN",
+                        "CHECKBOX",
+                        "RADIO",
+                        "SELECT",
+                        "MULTI_SELECT",
+                        "DICTIONARY_SELECT",
+                        "TREE_SELECT",
+                        "EMAIL",
+                        "PHONE",
+                        "URL",
+                        "IDENTIFIER",
+                        "POSTAL_CODE",
+                        "FILE_UPLOADER",
+                        "GEO_POINT",
+                        "ENTITY_REFERENCE",
+                        "SIGNATURE_EVIDENCE",
+                        "STAMP_EVIDENCE",
+                        "CALCULATED",
+                        "HIDDEN_METADATA",
+                        "TEXT_BLOCK",
+                        "HEADING",
+                        "HELP",
+                        "NOTICE",
+                        "LEGAL_BASIS",
+                        "PRIVACY_NOTICE",
+                        "DOCUMENT_PREVIEW",
+                        "SUMMARY",
+                        "RECEIPT",
+                        "SAVE_DRAFT",
+                        "PREVIOUS_STEP",
+                        "NEXT_STEP",
+                        "VALIDATE",
+                        "SIGN",
+                        "SUBMIT",
+                        "PRINT"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "DELIVERY_BLOCK"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "items": {
+                  "properties": {
+                    "type": {
+                      "enum": [
+                        "GROUP",
+                        "GRID",
+                        "CONDITIONAL",
+                        "REPEATER",
+                        "TABLE",
+                        "ACCORDION",
+                        "PARTY_BLOCK",
+                        "PERSON_BLOCK",
+                        "ORGANIZATION_BLOCK",
+                        "REPRESENTATION_BLOCK",
+                        "ADDRESS_BLOCK",
+                        "CONTACT_BLOCK",
+                        "IDENTIFIER_BLOCK",
+                        "PROPERTY_BLOCK",
+                        "PARCEL_BLOCK",
+                        "PERIOD_BLOCK",
+                        "PAYMENT_BLOCK",
+                        "BANK_ACCOUNT_BLOCK",
+                        "ATTACHMENTS_BLOCK",
+                        "SIGNATURE_BLOCK",
+                        "STAMP_BLOCK",
+                        "ELECTRONIC_SEAL_BLOCK",
+                        "AUTHORITY_BLOCK",
+                        "DECLARATIONS_BLOCK",
+                        "PRIVACY_BLOCK",
+                        "CONSENT_BLOCK",
+                        "OFFICE_BLOCK",
+                        "ANIMAL_BLOCK",
+                        "SPORTS_BLOCK",
+                        "ROAD_BLOCK",
+                        "RENTAL_BLOCK",
+                        "TEXT_FIELD",
+                        "TEXTAREA",
+                        "INTEGER",
+                        "DECIMAL",
+                        "MONEY",
+                        "DATE",
+                        "DATE_TIME",
+                        "TIME",
+                        "MONTH",
+                        "YEAR",
+                        "BOOLEAN",
+                        "CHECKBOX",
+                        "RADIO",
+                        "SELECT",
+                        "MULTI_SELECT",
+                        "DICTIONARY_SELECT",
+                        "TREE_SELECT",
+                        "EMAIL",
+                        "PHONE",
+                        "URL",
+                        "IDENTIFIER",
+                        "POSTAL_CODE",
+                        "FILE_UPLOADER",
+                        "GEO_POINT",
+                        "ENTITY_REFERENCE",
+                        "SIGNATURE_EVIDENCE",
+                        "STAMP_EVIDENCE",
+                        "CALCULATED",
+                        "HIDDEN_METADATA",
+                        "TEXT_BLOCK",
+                        "HEADING",
+                        "HELP",
+                        "NOTICE",
+                        "LEGAL_BASIS",
+                        "PRIVACY_NOTICE",
+                        "DOCUMENT_PREVIEW",
+                        "SUMMARY",
+                        "RECEIPT",
+                        "SAVE_DRAFT",
+                        "PREVIOUS_STEP",
+                        "NEXT_STEP",
+                        "VALIDATE",
+                        "SIGN",
+                        "SUBMIT",
+                        "PRINT"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "DECLARATIONS_BLOCK"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "items": {
+                  "properties": {
+                    "type": {
+                      "enum": [
+                        "GROUP",
+                        "GRID",
+                        "CONDITIONAL",
+                        "REPEATER",
+                        "TABLE",
+                        "ACCORDION",
+                        "PARTY_BLOCK",
+                        "PERSON_BLOCK",
+                        "ORGANIZATION_BLOCK",
+                        "REPRESENTATION_BLOCK",
+                        "ADDRESS_BLOCK",
+                        "CONTACT_BLOCK",
+                        "IDENTIFIER_BLOCK",
+                        "PROPERTY_BLOCK",
+                        "PARCEL_BLOCK",
+                        "PERIOD_BLOCK",
+                        "PAYMENT_BLOCK",
+                        "BANK_ACCOUNT_BLOCK",
+                        "ATTACHMENTS_BLOCK",
+                        "SIGNATURE_BLOCK",
+                        "STAMP_BLOCK",
+                        "ELECTRONIC_SEAL_BLOCK",
+                        "AUTHORITY_BLOCK",
+                        "DELIVERY_BLOCK",
+                        "PRIVACY_BLOCK",
+                        "CONSENT_BLOCK",
+                        "OFFICE_BLOCK",
+                        "ANIMAL_BLOCK",
+                        "SPORTS_BLOCK",
+                        "ROAD_BLOCK",
+                        "RENTAL_BLOCK",
+                        "TEXT_FIELD",
+                        "TEXTAREA",
+                        "INTEGER",
+                        "DECIMAL",
+                        "MONEY",
+                        "DATE",
+                        "DATE_TIME",
+                        "TIME",
+                        "MONTH",
+                        "YEAR",
+                        "BOOLEAN",
+                        "CHECKBOX",
+                        "RADIO",
+                        "SELECT",
+                        "MULTI_SELECT",
+                        "DICTIONARY_SELECT",
+                        "TREE_SELECT",
+                        "EMAIL",
+                        "PHONE",
+                        "URL",
+                        "IDENTIFIER",
+                        "POSTAL_CODE",
+                        "FILE_UPLOADER",
+                        "GEO_POINT",
+                        "ENTITY_REFERENCE",
+                        "SIGNATURE_EVIDENCE",
+                        "STAMP_EVIDENCE",
+                        "CALCULATED",
+                        "HIDDEN_METADATA",
+                        "TEXT_BLOCK",
+                        "HEADING",
+                        "HELP",
+                        "NOTICE",
+                        "LEGAL_BASIS",
+                        "PRIVACY_NOTICE",
+                        "DOCUMENT_PREVIEW",
+                        "SUMMARY",
+                        "RECEIPT",
+                        "SAVE_DRAFT",
+                        "PREVIOUS_STEP",
+                        "NEXT_STEP",
+                        "VALIDATE",
+                        "SIGN",
+                        "SUBMIT",
+                        "PRINT"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "PRIVACY_BLOCK"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "items": {
+                  "properties": {
+                    "type": {
+                      "enum": [
+                        "GROUP",
+                        "GRID",
+                        "CONDITIONAL",
+                        "REPEATER",
+                        "TABLE",
+                        "ACCORDION",
+                        "PARTY_BLOCK",
+                        "PERSON_BLOCK",
+                        "ORGANIZATION_BLOCK",
+                        "REPRESENTATION_BLOCK",
+                        "ADDRESS_BLOCK",
+                        "CONTACT_BLOCK",
+                        "IDENTIFIER_BLOCK",
+                        "PROPERTY_BLOCK",
+                        "PARCEL_BLOCK",
+                        "PERIOD_BLOCK",
+                        "PAYMENT_BLOCK",
+                        "BANK_ACCOUNT_BLOCK",
+                        "ATTACHMENTS_BLOCK",
+                        "SIGNATURE_BLOCK",
+                        "STAMP_BLOCK",
+                        "ELECTRONIC_SEAL_BLOCK",
+                        "AUTHORITY_BLOCK",
+                        "DELIVERY_BLOCK",
+                        "DECLARATIONS_BLOCK",
+                        "CONSENT_BLOCK",
+                        "OFFICE_BLOCK",
+                        "ANIMAL_BLOCK",
+                        "SPORTS_BLOCK",
+                        "ROAD_BLOCK",
+                        "RENTAL_BLOCK",
+                        "TEXT_FIELD",
+                        "TEXTAREA",
+                        "INTEGER",
+                        "DECIMAL",
+                        "MONEY",
+                        "DATE",
+                        "DATE_TIME",
+                        "TIME",
+                        "MONTH",
+                        "YEAR",
+                        "BOOLEAN",
+                        "CHECKBOX",
+                        "RADIO",
+                        "SELECT",
+                        "MULTI_SELECT",
+                        "DICTIONARY_SELECT",
+                        "TREE_SELECT",
+                        "EMAIL",
+                        "PHONE",
+                        "URL",
+                        "IDENTIFIER",
+                        "POSTAL_CODE",
+                        "FILE_UPLOADER",
+                        "GEO_POINT",
+                        "ENTITY_REFERENCE",
+                        "SIGNATURE_EVIDENCE",
+                        "STAMP_EVIDENCE",
+                        "CALCULATED",
+                        "HIDDEN_METADATA",
+                        "TEXT_BLOCK",
+                        "HEADING",
+                        "HELP",
+                        "NOTICE",
+                        "LEGAL_BASIS",
+                        "PRIVACY_NOTICE",
+                        "DOCUMENT_PREVIEW",
+                        "SUMMARY",
+                        "RECEIPT",
+                        "SAVE_DRAFT",
+                        "PREVIOUS_STEP",
+                        "NEXT_STEP",
+                        "VALIDATE",
+                        "SIGN",
+                        "SUBMIT",
+                        "PRINT"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "CONSENT_BLOCK"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "items": {
+                  "properties": {
+                    "type": {
+                      "enum": [
+                        "GROUP",
+                        "GRID",
+                        "CONDITIONAL",
+                        "REPEATER",
+                        "TABLE",
+                        "ACCORDION",
+                        "PARTY_BLOCK",
+                        "PERSON_BLOCK",
+                        "ORGANIZATION_BLOCK",
+                        "REPRESENTATION_BLOCK",
+                        "ADDRESS_BLOCK",
+                        "CONTACT_BLOCK",
+                        "IDENTIFIER_BLOCK",
+                        "PROPERTY_BLOCK",
+                        "PARCEL_BLOCK",
+                        "PERIOD_BLOCK",
+                        "PAYMENT_BLOCK",
+                        "BANK_ACCOUNT_BLOCK",
+                        "ATTACHMENTS_BLOCK",
+                        "SIGNATURE_BLOCK",
+                        "STAMP_BLOCK",
+                        "ELECTRONIC_SEAL_BLOCK",
+                        "AUTHORITY_BLOCK",
+                        "DELIVERY_BLOCK",
+                        "DECLARATIONS_BLOCK",
+                        "PRIVACY_BLOCK",
+                        "OFFICE_BLOCK",
+                        "ANIMAL_BLOCK",
+                        "SPORTS_BLOCK",
+                        "ROAD_BLOCK",
+                        "RENTAL_BLOCK",
+                        "TEXT_FIELD",
+                        "TEXTAREA",
+                        "INTEGER",
+                        "DECIMAL",
+                        "MONEY",
+                        "DATE",
+                        "DATE_TIME",
+                        "TIME",
+                        "MONTH",
+                        "YEAR",
+                        "BOOLEAN",
+                        "CHECKBOX",
+                        "RADIO",
+                        "SELECT",
+                        "MULTI_SELECT",
+                        "DICTIONARY_SELECT",
+                        "TREE_SELECT",
+                        "EMAIL",
+                        "PHONE",
+                        "URL",
+                        "IDENTIFIER",
+                        "POSTAL_CODE",
+                        "FILE_UPLOADER",
+                        "GEO_POINT",
+                        "ENTITY_REFERENCE",
+                        "SIGNATURE_EVIDENCE",
+                        "STAMP_EVIDENCE",
+                        "CALCULATED",
+                        "HIDDEN_METADATA",
+                        "TEXT_BLOCK",
+                        "HEADING",
+                        "HELP",
+                        "NOTICE",
+                        "LEGAL_BASIS",
+                        "PRIVACY_NOTICE",
+                        "DOCUMENT_PREVIEW",
+                        "SUMMARY",
+                        "RECEIPT",
+                        "SAVE_DRAFT",
+                        "PREVIOUS_STEP",
+                        "NEXT_STEP",
+                        "VALIDATE",
+                        "SIGN",
+                        "SUBMIT",
+                        "PRINT"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "OFFICE_BLOCK"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "items": {
+                  "properties": {
+                    "type": {
+                      "enum": [
+                        "GROUP",
+                        "GRID",
+                        "CONDITIONAL",
+                        "REPEATER",
+                        "TABLE",
+                        "ACCORDION",
+                        "PARTY_BLOCK",
+                        "PERSON_BLOCK",
+                        "ORGANIZATION_BLOCK",
+                        "REPRESENTATION_BLOCK",
+                        "ADDRESS_BLOCK",
+                        "CONTACT_BLOCK",
+                        "IDENTIFIER_BLOCK",
+                        "PROPERTY_BLOCK",
+                        "PARCEL_BLOCK",
+                        "PERIOD_BLOCK",
+                        "PAYMENT_BLOCK",
+                        "BANK_ACCOUNT_BLOCK",
+                        "ATTACHMENTS_BLOCK",
+                        "SIGNATURE_BLOCK",
+                        "STAMP_BLOCK",
+                        "ELECTRONIC_SEAL_BLOCK",
+                        "AUTHORITY_BLOCK",
+                        "DELIVERY_BLOCK",
+                        "DECLARATIONS_BLOCK",
+                        "PRIVACY_BLOCK",
+                        "CONSENT_BLOCK",
+                        "ANIMAL_BLOCK",
+                        "SPORTS_BLOCK",
+                        "ROAD_BLOCK",
+                        "RENTAL_BLOCK",
+                        "TEXT_FIELD",
+                        "TEXTAREA",
+                        "INTEGER",
+                        "DECIMAL",
+                        "MONEY",
+                        "DATE",
+                        "DATE_TIME",
+                        "TIME",
+                        "MONTH",
+                        "YEAR",
+                        "BOOLEAN",
+                        "CHECKBOX",
+                        "RADIO",
+                        "SELECT",
+                        "MULTI_SELECT",
+                        "DICTIONARY_SELECT",
+                        "TREE_SELECT",
+                        "EMAIL",
+                        "PHONE",
+                        "URL",
+                        "IDENTIFIER",
+                        "POSTAL_CODE",
+                        "FILE_UPLOADER",
+                        "GEO_POINT",
+                        "ENTITY_REFERENCE",
+                        "SIGNATURE_EVIDENCE",
+                        "STAMP_EVIDENCE",
+                        "CALCULATED",
+                        "HIDDEN_METADATA",
+                        "TEXT_BLOCK",
+                        "HEADING",
+                        "HELP",
+                        "NOTICE",
+                        "LEGAL_BASIS",
+                        "PRIVACY_NOTICE",
+                        "DOCUMENT_PREVIEW",
+                        "SUMMARY",
+                        "RECEIPT",
+                        "SAVE_DRAFT",
+                        "PREVIOUS_STEP",
+                        "NEXT_STEP",
+                        "VALIDATE",
+                        "SIGN",
+                        "SUBMIT",
+                        "PRINT"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "ANIMAL_BLOCK"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "items": {
+                  "properties": {
+                    "type": {
+                      "enum": [
+                        "GROUP",
+                        "GRID",
+                        "CONDITIONAL",
+                        "REPEATER",
+                        "TABLE",
+                        "ACCORDION",
+                        "PARTY_BLOCK",
+                        "PERSON_BLOCK",
+                        "ORGANIZATION_BLOCK",
+                        "REPRESENTATION_BLOCK",
+                        "ADDRESS_BLOCK",
+                        "CONTACT_BLOCK",
+                        "IDENTIFIER_BLOCK",
+                        "PROPERTY_BLOCK",
+                        "PARCEL_BLOCK",
+                        "PERIOD_BLOCK",
+                        "PAYMENT_BLOCK",
+                        "BANK_ACCOUNT_BLOCK",
+                        "ATTACHMENTS_BLOCK",
+                        "SIGNATURE_BLOCK",
+                        "STAMP_BLOCK",
+                        "ELECTRONIC_SEAL_BLOCK",
+                        "AUTHORITY_BLOCK",
+                        "DELIVERY_BLOCK",
+                        "DECLARATIONS_BLOCK",
+                        "PRIVACY_BLOCK",
+                        "CONSENT_BLOCK",
+                        "OFFICE_BLOCK",
+                        "SPORTS_BLOCK",
+                        "ROAD_BLOCK",
+                        "RENTAL_BLOCK",
+                        "TEXT_FIELD",
+                        "TEXTAREA",
+                        "INTEGER",
+                        "DECIMAL",
+                        "MONEY",
+                        "DATE",
+                        "DATE_TIME",
+                        "TIME",
+                        "MONTH",
+                        "YEAR",
+                        "BOOLEAN",
+                        "CHECKBOX",
+                        "RADIO",
+                        "SELECT",
+                        "MULTI_SELECT",
+                        "DICTIONARY_SELECT",
+                        "TREE_SELECT",
+                        "EMAIL",
+                        "PHONE",
+                        "URL",
+                        "IDENTIFIER",
+                        "POSTAL_CODE",
+                        "FILE_UPLOADER",
+                        "GEO_POINT",
+                        "ENTITY_REFERENCE",
+                        "SIGNATURE_EVIDENCE",
+                        "STAMP_EVIDENCE",
+                        "CALCULATED",
+                        "HIDDEN_METADATA",
+                        "TEXT_BLOCK",
+                        "HEADING",
+                        "HELP",
+                        "NOTICE",
+                        "LEGAL_BASIS",
+                        "PRIVACY_NOTICE",
+                        "DOCUMENT_PREVIEW",
+                        "SUMMARY",
+                        "RECEIPT",
+                        "SAVE_DRAFT",
+                        "PREVIOUS_STEP",
+                        "NEXT_STEP",
+                        "VALIDATE",
+                        "SIGN",
+                        "SUBMIT",
+                        "PRINT"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "SPORTS_BLOCK"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "items": {
+                  "properties": {
+                    "type": {
+                      "enum": [
+                        "GROUP",
+                        "GRID",
+                        "CONDITIONAL",
+                        "REPEATER",
+                        "TABLE",
+                        "ACCORDION",
+                        "PARTY_BLOCK",
+                        "PERSON_BLOCK",
+                        "ORGANIZATION_BLOCK",
+                        "REPRESENTATION_BLOCK",
+                        "ADDRESS_BLOCK",
+                        "CONTACT_BLOCK",
+                        "IDENTIFIER_BLOCK",
+                        "PROPERTY_BLOCK",
+                        "PARCEL_BLOCK",
+                        "PERIOD_BLOCK",
+                        "PAYMENT_BLOCK",
+                        "BANK_ACCOUNT_BLOCK",
+                        "ATTACHMENTS_BLOCK",
+                        "SIGNATURE_BLOCK",
+                        "STAMP_BLOCK",
+                        "ELECTRONIC_SEAL_BLOCK",
+                        "AUTHORITY_BLOCK",
+                        "DELIVERY_BLOCK",
+                        "DECLARATIONS_BLOCK",
+                        "PRIVACY_BLOCK",
+                        "CONSENT_BLOCK",
+                        "OFFICE_BLOCK",
+                        "ANIMAL_BLOCK",
+                        "ROAD_BLOCK",
+                        "RENTAL_BLOCK",
+                        "TEXT_FIELD",
+                        "TEXTAREA",
+                        "INTEGER",
+                        "DECIMAL",
+                        "MONEY",
+                        "DATE",
+                        "DATE_TIME",
+                        "TIME",
+                        "MONTH",
+                        "YEAR",
+                        "BOOLEAN",
+                        "CHECKBOX",
+                        "RADIO",
+                        "SELECT",
+                        "MULTI_SELECT",
+                        "DICTIONARY_SELECT",
+                        "TREE_SELECT",
+                        "EMAIL",
+                        "PHONE",
+                        "URL",
+                        "IDENTIFIER",
+                        "POSTAL_CODE",
+                        "FILE_UPLOADER",
+                        "GEO_POINT",
+                        "ENTITY_REFERENCE",
+                        "SIGNATURE_EVIDENCE",
+                        "STAMP_EVIDENCE",
+                        "CALCULATED",
+                        "HIDDEN_METADATA",
+                        "TEXT_BLOCK",
+                        "HEADING",
+                        "HELP",
+                        "NOTICE",
+                        "LEGAL_BASIS",
+                        "PRIVACY_NOTICE",
+                        "DOCUMENT_PREVIEW",
+                        "SUMMARY",
+                        "RECEIPT",
+                        "SAVE_DRAFT",
+                        "PREVIOUS_STEP",
+                        "NEXT_STEP",
+                        "VALIDATE",
+                        "SIGN",
+                        "SUBMIT",
+                        "PRINT"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "ROAD_BLOCK"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "items": {
+                  "properties": {
+                    "type": {
+                      "enum": [
+                        "GROUP",
+                        "GRID",
+                        "CONDITIONAL",
+                        "REPEATER",
+                        "TABLE",
+                        "ACCORDION",
+                        "PARTY_BLOCK",
+                        "PERSON_BLOCK",
+                        "ORGANIZATION_BLOCK",
+                        "REPRESENTATION_BLOCK",
+                        "ADDRESS_BLOCK",
+                        "CONTACT_BLOCK",
+                        "IDENTIFIER_BLOCK",
+                        "PROPERTY_BLOCK",
+                        "PARCEL_BLOCK",
+                        "PERIOD_BLOCK",
+                        "PAYMENT_BLOCK",
+                        "BANK_ACCOUNT_BLOCK",
+                        "ATTACHMENTS_BLOCK",
+                        "SIGNATURE_BLOCK",
+                        "STAMP_BLOCK",
+                        "ELECTRONIC_SEAL_BLOCK",
+                        "AUTHORITY_BLOCK",
+                        "DELIVERY_BLOCK",
+                        "DECLARATIONS_BLOCK",
+                        "PRIVACY_BLOCK",
+                        "CONSENT_BLOCK",
+                        "OFFICE_BLOCK",
+                        "ANIMAL_BLOCK",
+                        "SPORTS_BLOCK",
+                        "RENTAL_BLOCK",
+                        "TEXT_FIELD",
+                        "TEXTAREA",
+                        "INTEGER",
+                        "DECIMAL",
+                        "MONEY",
+                        "DATE",
+                        "DATE_TIME",
+                        "TIME",
+                        "MONTH",
+                        "YEAR",
+                        "BOOLEAN",
+                        "CHECKBOX",
+                        "RADIO",
+                        "SELECT",
+                        "MULTI_SELECT",
+                        "DICTIONARY_SELECT",
+                        "TREE_SELECT",
+                        "EMAIL",
+                        "PHONE",
+                        "URL",
+                        "IDENTIFIER",
+                        "POSTAL_CODE",
+                        "FILE_UPLOADER",
+                        "GEO_POINT",
+                        "ENTITY_REFERENCE",
+                        "SIGNATURE_EVIDENCE",
+                        "STAMP_EVIDENCE",
+                        "CALCULATED",
+                        "HIDDEN_METADATA",
+                        "TEXT_BLOCK",
+                        "HEADING",
+                        "HELP",
+                        "NOTICE",
+                        "LEGAL_BASIS",
+                        "PRIVACY_NOTICE",
+                        "DOCUMENT_PREVIEW",
+                        "SUMMARY",
+                        "RECEIPT",
+                        "SAVE_DRAFT",
+                        "PREVIOUS_STEP",
+                        "NEXT_STEP",
+                        "VALIDATE",
+                        "SIGN",
+                        "SUBMIT",
+                        "PRINT"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "RENTAL_BLOCK"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "items": {
+                  "properties": {
+                    "type": {
+                      "enum": [
+                        "GROUP",
+                        "GRID",
+                        "CONDITIONAL",
+                        "REPEATER",
+                        "TABLE",
+                        "ACCORDION",
+                        "PARTY_BLOCK",
+                        "PERSON_BLOCK",
+                        "ORGANIZATION_BLOCK",
+                        "REPRESENTATION_BLOCK",
+                        "ADDRESS_BLOCK",
+                        "CONTACT_BLOCK",
+                        "IDENTIFIER_BLOCK",
+                        "PROPERTY_BLOCK",
+                        "PARCEL_BLOCK",
+                        "PERIOD_BLOCK",
+                        "PAYMENT_BLOCK",
+                        "BANK_ACCOUNT_BLOCK",
+                        "ATTACHMENTS_BLOCK",
+                        "SIGNATURE_BLOCK",
+                        "STAMP_BLOCK",
+                        "ELECTRONIC_SEAL_BLOCK",
+                        "AUTHORITY_BLOCK",
+                        "DELIVERY_BLOCK",
+                        "DECLARATIONS_BLOCK",
+                        "PRIVACY_BLOCK",
+                        "CONSENT_BLOCK",
+                        "OFFICE_BLOCK",
+                        "ANIMAL_BLOCK",
+                        "SPORTS_BLOCK",
+                        "ROAD_BLOCK",
+                        "TEXT_FIELD",
+                        "TEXTAREA",
+                        "INTEGER",
+                        "DECIMAL",
+                        "MONEY",
+                        "DATE",
+                        "DATE_TIME",
+                        "TIME",
+                        "MONTH",
+                        "YEAR",
+                        "BOOLEAN",
+                        "CHECKBOX",
+                        "RADIO",
+                        "SELECT",
+                        "MULTI_SELECT",
+                        "DICTIONARY_SELECT",
+                        "TREE_SELECT",
+                        "EMAIL",
+                        "PHONE",
+                        "URL",
+                        "IDENTIFIER",
+                        "POSTAL_CODE",
+                        "FILE_UPLOADER",
+                        "GEO_POINT",
+                        "ENTITY_REFERENCE",
+                        "SIGNATURE_EVIDENCE",
+                        "STAMP_EVIDENCE",
+                        "CALCULATED",
+                        "HIDDEN_METADATA",
+                        "TEXT_BLOCK",
+                        "HEADING",
+                        "HELP",
+                        "NOTICE",
+                        "LEGAL_BASIS",
+                        "PRIVACY_NOTICE",
+                        "DOCUMENT_PREVIEW",
+                        "SUMMARY",
+                        "RECEIPT",
+                        "SAVE_DRAFT",
+                        "PREVIOUS_STEP",
+                        "NEXT_STEP",
+                        "VALIDATE",
+                        "SIGN",
+                        "SUBMIT",
+                        "PRINT"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "TEXT_FIELD"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "maxItems": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "TEXTAREA"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "maxItems": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "INTEGER"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "maxItems": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "DECIMAL"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "maxItems": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "MONEY"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "maxItems": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "DATE"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "maxItems": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "DATE_TIME"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "maxItems": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "TIME"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "maxItems": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "MONTH"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "maxItems": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "YEAR"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "maxItems": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "BOOLEAN"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "maxItems": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "CHECKBOX"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "maxItems": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "RADIO"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "maxItems": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "SELECT"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "maxItems": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "MULTI_SELECT"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "maxItems": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "DICTIONARY_SELECT"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "maxItems": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "TREE_SELECT"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "maxItems": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "EMAIL"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "maxItems": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "PHONE"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "maxItems": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "URL"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "maxItems": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "IDENTIFIER"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "maxItems": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "POSTAL_CODE"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "maxItems": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "FILE_UPLOADER"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "maxItems": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "GEO_POINT"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "maxItems": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "ENTITY_REFERENCE"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "maxItems": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "SIGNATURE_EVIDENCE"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "maxItems": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "STAMP_EVIDENCE"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "maxItems": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "CALCULATED"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "maxItems": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "HIDDEN_METADATA"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "maxItems": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "TEXT_BLOCK"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "maxItems": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "HEADING"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "maxItems": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "HELP"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "maxItems": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "NOTICE"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "maxItems": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "LEGAL_BASIS"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "maxItems": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "PRIVACY_NOTICE"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "maxItems": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "DOCUMENT_PREVIEW"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "maxItems": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "SUMMARY"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "maxItems": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "RECEIPT"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "maxItems": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "SAVE_DRAFT"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "maxItems": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "PREVIOUS_STEP"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "maxItems": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "NEXT_STEP"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "maxItems": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "VALIDATE"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "maxItems": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "SIGN"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "maxItems": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "SUBMIT"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "maxItems": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "PRINT"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "children": {
+                "maxItems": 0
+              }
+            }
+          }
+        }
+      ]
+    },
+    "rule": {
+      "type": "object",
+      "required": [
+        "id",
+        "target",
+        "property",
+        "expression",
+        "reason",
+        "sourceRefs",
+        "evaluationScope",
+        "unknownPolicy"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_.:-]*$",
+          "minLength": 1
+        },
+        "target": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_.:-]*$",
+          "minLength": 1
+        },
+        "property": {
+          "enum": [
+            "active",
+            "required",
+            "enabled",
+            "options",
+            "value"
+          ]
+        },
+        "expression": {
+          "$ref": "#/$defs/expression"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "sourceRefs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "evaluationScope": {
+          "enum": [
+            "root",
+            "item"
+          ]
+        },
+        "unknownPolicy": {
+          "enum": [
+            "inactive_and_review",
+            "pending_blocks_submission",
+            "null_and_review"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "predicate": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "op",
+            "field",
+            "value"
+          ],
+          "properties": {
+            "op": {
+              "enum": [
+                "eq",
+                "neq",
+                "gt"
+              ]
+            },
+            "field": {
+              "type": "string"
+            },
+            "value": {
+              "type": [
+                "string",
+                "number",
+                "boolean"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "op",
+            "args"
+          ],
+          "properties": {
+            "op": {
+              "enum": [
+                "all",
+                "any"
+              ]
+            },
+            "args": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/$defs/predicate"
+              }
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "semanticCandidate": {
+      "type": "object",
+      "required": [
+        "key",
+        "label",
+        "widget",
+        "section",
+        "decision",
+        "origin",
+        "activeWhen",
+        "requiredWhen",
+        "evidence",
+        "legalRuleIds",
+        "valueType"
+      ],
+      "properties": {
+        "key": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]*$"
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "widget": {
+          "enum": [
+            "TEXT_FIELD",
+            "RADIO",
+            "SELECT",
+            "TEXTAREA",
+            "NUMBER",
+            "FILE_UPLOADER",
+            "TEXT_BLOCK"
+          ]
+        },
+        "section": {
+          "type": "string"
+        },
+        "decision": {
+          "enum": [
+            "AUTO",
+            "CONDITIONAL",
+            "REVIEW",
+            "REJECT"
+          ]
+        },
+        "origin": {
+          "enum": [
+            "DOCUMENT",
+            "LEGAL_PROFILE",
+            "UX_EXTENSION",
+            "LLM_EXTENSION"
+          ]
+        },
+        "activeWhen": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/predicate"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "requiredWhen": {
+          "type": [
+            "boolean",
+            "string"
+          ]
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "legalRuleIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "reviewReason": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "valueType": {
+          "type": "string"
+        },
+        "options": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "value",
+              "label"
+            ],
+            "properties": {
+              "value": {
+                "type": "string"
+              },
+              "label": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "optionConstraints": {
+          "type": "object",
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/predicate"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "properties": {
+    "schemaVersion": {
+      "const": "1.0.0",
+      "default": "1.0.0",
+      "title": "Schemaversion",
+      "type": "string"
+    },
+    "procedure": {
+      "$ref": "#/$defs/Assessment"
+    },
+    "form": {
+      "$ref": "#/$defs/node",
+      "properties": {
+        "type": {
+          "const": "FORM"
+        }
+      }
+    },
+    "rules": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/rule"
+      }
+    },
+    "review": {
+      "items": {
+        "$ref": "#/$defs/ReviewItem"
+      },
+      "title": "Review",
+      "type": "array"
+    },
+    "evidence": {
+      "items": {
+        "$ref": "#/$defs/Evidence"
+      },
+      "title": "Evidence",
+      "type": "array"
+    },
+    "participantRoles": {
+      "items": {
+        "$ref": "#/$defs/ParticipantRole"
+      },
+      "title": "Participantroles",
+      "type": "array"
+    },
+    "sourceFields": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "actor": {
+            "type": "string"
+          },
+          "key": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "note": {
+            "type": "string"
+          },
+          "pages": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "proposed_semantic_type": {
+            "type": "string"
+          },
+          "source_requirement": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "actor",
+          "key",
+          "label",
+          "pages",
+          "proposed_semantic_type",
+          "source_requirement"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "extended": {
+      "type": "object",
+      "required": [
+        "mode",
+        "status",
+        "profileId",
+        "version",
+        "asOf",
+        "candidates",
+        "legalRules",
+        "sources",
+        "publicationBlockedBy"
+      ],
+      "properties": {
+        "profileId": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        },
+        "mode": {
+          "const": "EXTENDED"
+        },
+        "status": {
+          "const": "DRAFT_NOT_FOR_SUBMISSION"
+        },
+        "asOf": {
+          "type": "string",
+          "format": "date"
+        },
+        "candidates": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/semanticCandidate"
+          }
+        },
+        "publicationBlockedBy": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "legalRules": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "basis",
+              "sources"
+            ]
+          }
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "sourceId"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "procedure",
+    "form",
+    "rules",
+    "review",
+    "evidence",
+    "participantRoles",
+    "sourceFields"
+  ],
+  "title": "FormIR",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false
+}

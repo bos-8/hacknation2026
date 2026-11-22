@@ -2,7 +2,7 @@ import "server-only";
 import { createDatabaseClient, type PrismaClient } from "@formiq/database";
 
 // Bump with generated schema changes that invalidate the DEV HMR singleton.
-const schemaVersion = "image-ocr-v13";
+const schemaVersion = "image-ocr-form-processing-v18";
 const databaseGlobal = globalThis as typeof globalThis & { formiqDatabase?: PrismaClient; formiqDatabaseSchema?: string };
 let database: PrismaClient | undefined;
 

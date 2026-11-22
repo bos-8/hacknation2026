@@ -128,6 +128,11 @@
       "resize": "Resize side panel"
     },
     "notifications": {
+      "progressLabel": "Analysis progress",
+      "progressElapsed": "Elapsed {time}",
+      "progressEta": "About {time} left",
+      "progressDeadline": "Time limit in {time}",
+      "progressEstimating": "Estimating time remaining…",
       "label": "Notifications",
       "labelWithCount": "Notifications: {count}",
       "title": "Notifications",
@@ -137,6 +142,7 @@
       "clear": "Clear notifications",
       "close": "Close notifications panel",
       "persistent": "Until dismissed",
+      "receivedAt": "Received <time></time>",
       "expiresIn": "Closes in {seconds}s",
       "protected": "Until the operation finishes",
       "collapse": "Collapse notifications panel",
@@ -209,7 +215,6 @@
       "privacy": "Privacy policy",
       "browserStorage": "Browser storage",
       "description": "A shared foundation for business applications.",
-      "license": "License",
       "backToTop": "Back to top",
       "version": "Version {version}",
       "status": {
@@ -833,6 +838,9 @@
         "actions": "File list actions",
         "addFile": "Add file",
         "chooseFile": "Choose a file",
+        "chooseFiles": "Choose files",
+        "dropFiles": "Drag files here or choose from your device",
+        "dropFilesHere": "Drop files here",
         "search": "Search",
         "searchLabel": "Search the catalog by name",
         "searchPlaceholder": "File name in the catalog",

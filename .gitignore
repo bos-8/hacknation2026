@@ -16,6 +16,8 @@ coverage/
 
 # Python environments and caches
 .venv/
+apps/pyworker/.models/
+apps/pyworker/legacy-word/target/
 __pycache__/
 *.py[cod]
 .pytest_cache/

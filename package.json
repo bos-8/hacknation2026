@@ -4,7 +4,6 @@
   "private": true,
   "description": "Minimal reusable PoC with Next.js, PostgreSQL, Keycloak and SeaweedFS.",
   "type": "module",
-  "license": "SEE LICENSE IN LICENSE.md",
   "packageManager": "pnpm@12.15.0",
   "scripts": {
     "test:dev:infra:integration": "node tests/infra/dev-lifecycle.integration.mjs",

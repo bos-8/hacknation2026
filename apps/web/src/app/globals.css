@@ -511,3 +511,71 @@ body:has([data-navbar-chat]) [data-shell-footer] { display: none; }
 @keyframes table-data-enter { from { opacity: 0; } to { opacity: 1; } }
 .table-data-enter { animation: table-data-enter var(--table-motion-duration, 100ms) var(--table-motion-easing, ease-out); }
 @media (prefers-reduced-motion: reduce) { .table-data-enter { animation: none; } }
+
+.form-action-blue {
+  --action-color: var(--primary);
+  --action-foreground: var(--primary-foreground);
+}
+
+.form-action-green {
+  --action-color: var(--success);
+  --action-foreground: var(--success-foreground);
+}
+
+.form-action-gold {
+  --action-color: var(--warning);
+  --action-foreground: var(--warning-foreground);
+}
+
+.form-action-red {
+  --action-color: var(--error);
+  --action-foreground: var(--error-foreground);
+}
+
+.form-action-sky {
+  --action-color: 199 100% 32%;
+  --action-foreground: 0 0% 100%;
+}
+
+.form-action-orange {
+  --action-color: 25 100% 35%;
+  --action-foreground: 0 0% 100%;
+}
+
+:root[data-theme="dark"] :is(.form-action-sky, .form-action-orange) {
+  --action-foreground: 0 0% 4%;
+}
+
+:root[data-theme="dark"] .form-action-sky {
+  --action-color: 199 92% 72%;
+}
+
+:root[data-theme="dark"] .form-action-orange {
+  --action-color: 25 94% 72%;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]):not([data-theme="dark"]) :is(.form-action-sky, .form-action-orange) {
+    --action-foreground: 0 0% 4%;
+  }
+
+  :root:not([data-theme="light"]):not([data-theme="dark"]) .form-action-sky {
+    --action-color: 199 92% 72%;
+  }
+
+  :root:not([data-theme="light"]):not([data-theme="dark"]) .form-action-orange {
+    --action-color: 25 94% 72%;
+  }
+}
+
+.form-action-outline.form-action-outline {
+  border: 1px solid hsl(var(--action-color));
+  background-color: transparent;
+  color: hsl(var(--action-color));
+}
+
+.form-action-outline.form-action-outline:is(:any-link, :enabled):is(:hover, :focus-visible),
+.form-action-outline.form-action-info[aria-expanded="true"] {
+  background-color: hsl(var(--action-color));
+  color: hsl(var(--action-foreground));
+}

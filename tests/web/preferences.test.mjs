@@ -53,15 +53,17 @@ function browserCookies(t, { hostname = 'web.modulon.local', rejectDomain = () =
   return { jar, writes, document, window };
 }
 
-test('footer displays a date-only version and serves an exact license copy', async () => {
+test('footer displays a date-only version and the project brand without a license link', async () => {
   const manifest = JSON.parse(await readFile('package.json', 'utf8'));
   assert.match(APP_VERSION, /^\d+\.\d+\.\d+$/);
   assert.equal(APP_VERSION, manifest.version.split(/[+-]/)[0]);
   const date = /\+(\d{8})(?:\d{6})?$/.exec(manifest.version)?.[1] ?? process.env.APP_BUILD_DATE;
   assert.equal(APP_DISPLAY_VERSION, date ? `${APP_VERSION}+${date}` : APP_VERSION);
   assert.match(APP_DISPLAY_VERSION, /^\d+\.\d+\.\d+(?:\+\d{8})?$/);
-  const digest = (value) => createHash('sha256').update(value).digest('hex');
-  assert.equal(digest(await readFile('apps/web/public/LICENSE.md')), digest(await readFile('LICENSE.md')));
+  const footer = await readFile('apps/web/src/ui/layout/footer.tsx', 'utf8');
+  assert.match(footer, /2026 Feature From Future/);
+  assert.doesNotMatch(footer, /LICENSE\.md/i);
+  await assert.rejects(readFile('apps/web/public/LICENSE.md'), { code: 'ENOENT' });
 });
 
 test('supported locales have metadata and reject untrusted locale values', () => {

@@ -2,6 +2,8 @@ import { randomUUID } from "node:crypto";
 import { S3Client, GetObjectCommand, PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import { pythonEndpoint } from "../../../scripts/lib/pyworker-client.mjs";
 
+import { readObject } from "./read-object.mjs";
+
 const LIMIT = 8 * 1024 * 1024;
 const eligible = { source: { file: { deletingAt: null } } };
 
@@ -275,5 +277,5 @@ export function documentJobs(database, queue, env) {
       }
     }
   }
-  return { process, dispatch, close: () => storage.destroy() };
+  return { process, dispatch, readSource: (key, limit) => readObject(storage, bucket, key, limit), close: () => storage.destroy() };
 }

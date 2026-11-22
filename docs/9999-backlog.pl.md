@@ -7,7 +7,7 @@ tags: [backlog, formularze, hacknation, licencje]
 
 Urzędnik przesyła blankiet wniosku i w odpowiedzi otrzymuje konfigurację JSON gotową do importu w systemie docelowym. Podstawą odbioru są treść blankietu, reguły projektowania formularzy i przykłady dostarczone przez COI. [Materiały referencyjne](../materials/)
 
-Baza techniczna obejmuje Next.js, Better Auth z Keycloak, PostgreSQL z Prisma, SeaweedFS oraz prywatny worker OCR. Poniższe kryteria dotyczą odbioru konkursowego. [Aktualne możliwości i limity](0200-architecture.pl.md)
+Baza techniczna obejmuje Next.js, Better Auth z Keycloak, PostgreSQL z Prisma, SeaweedFS oraz prywatny worker OCR. Poniższe kryteria dotyczą odbioru konkursowego. [Wymagania aplikacji](0203-application-requirements.pl.md) [Aktualne możliwości i limity](0200-architecture.pl.md)
 
 ## 1. Obowiązkowe minimum — od pliku do JSON
 
@@ -56,9 +56,9 @@ Opcjonalny podgląd formularza z naszego JSON-u jest rozszerzeniem konkursowym. 
 
 ## 3. Licencje i praca bez usług zewnętrznych
 
-COI wymaga bibliotek i frameworków open source bez copyleft i bez konieczności zakupu licencji komercyjnej. Zespół przyjął **wyłącznie Apache-2.0 i podobne licencje permisywne**. Dla rozważanego stosu należą do nich MIT, BSD-2-Clause, BSD-3-Clause, PostgreSQL License i PSF License 2.
+COI wymaga bibliotek i frameworków open source bez copyleft i bez konieczności zakupu licencji komercyjnej. Dla FORMIQ obowiązuje dodatkowy cel **wyłącznie Apache-2.0**. Obecny checkout zawiera także MIT, BSD oraz LGPL. [Audyt licencji i inwentarz](0101-license-audit.pl.md)
 
-- [ ] Dobrać biblioteki, frameworki i sterownik bazy zgodnie z zasadą projektu. Dla PostgreSQL uwzględnić `asyncpg` (Apache-2.0). Wykluczyć komponenty wymagające GPL, AGPL lub LGPL.
+- [ ] Usunąć lub przenieść poza wydanie `psycopg`, `psycopg-binary` i `psycopg-pool` na LGPL. Dobrać biblioteki, frameworki i sterownik bazy zgodnie z zasadą projektu. Dla PostgreSQL uwzględnić `asyncpg` (Apache-2.0). Wykluczyć komponenty wymagające GPL, AGPL lub LGPL.
 - [ ] Dla wersji przeznaczonych do wydania sprawdzić zależności bezpośrednie i przechodnie, parsery dokumentów, biblioteki natywne, ikony oraz skład dostarczanych obrazów Docker.
 - [ ] Osobno potwierdzić warunki użycia i redystrybucji silnika OCR, danych językowych, kodu modelu AI i jego wag. Zebrać teksty licencji, informacje o autorach oraz pliki `NOTICE`, gdy licencja tego wymaga.
 - [ ] Uruchomić pełną konwersję lokalnie, bez zależności od zewnętrznych API, MCP, SaaS ani modeli dostępnych wyłącznie przez API. COI dopuszcza takie modele przy projektowaniu, pisaniu i testowaniu kodu.
@@ -145,7 +145,14 @@ Katalog obejmuje 51 par. Nazwy źródeł i atrybutów w JSON zachowują podaną 
 
 Priorytety poniżej dotyczą realizacji projektu. Wymagania organizatora i przypadki referencyjne opisują sekcje 1–6. [Audyt architektury](0202-architecture-audit.pl.md)
 
-### P0 — przed rozbudową panelu
+### P0 — przed oddaniem
+
+- [ ] **Lokalne OCR i LLM (T-05, T-06).** Wybrać, spakować i zweryfikować silnik OCR, dane językowe i lokalny model z wagami. Zbudować tryb konkursowy działający w odizolowanej sieci bez klucza Eden AI. Potwierdzić pełną konwersję na czystym hoście bez internetu oraz brak prób połączeń z usługami zewnętrznymi.
+- [ ] **Jednożądaniowy REST bez trwałego oryginału (F-01, T-04).** Udostępnić konwersję bez udziału panelu, bez wymogu wcześniejszego uploadu do S3 i bez stanu płatności z DEV. Test ma obejmować sukces, błąd, timeout i rozłączenie klienta oraz sprawdzenie, że po żądaniu w S3, PostgreSQL i katalogu roboczym nie pozostała kopia źródła.
+- [ ] **Granice wejścia (T-01–T-03).** Ujednolicić reguły nazwy i formatu na wejściu konkursowym. W aktualnym przepływie limit wynosi 20 MiB na plik, jest stałą, walidator dopuszcza TXT i JSON, a limit długości nazwy wynosi 255 znaków. Sprawdzić 250/251 znaków, każdy zakazany znak, listę formatów i zmianę limitu konfiguracją.
+- [ ] **Wynik do importu (F-03, F-04).** Przekształcić wynik ekstrakcji w pełny kontrakt COI. Szkic Eden AI potwierdza integrację DEV. Odbiór wymaga sprawdzenia treści, schematu, reguł semantycznych oraz importu na wzorcach i nowych blankietach.
+
+### P0 — zadania z audytu
 
 - [ ] **Kontrakt importera.** Pozyskać paczkę referencyjną i dostęp do importera. Uzgodnić z COI rozbieżności z sekcji 1, zachować oryginalny schemat i zapisać rozstrzygnięcia w wersjonowanym profilu eksportu. Kryterium odbioru obejmuje import wyników dla zestawów nr 1 i 5 oraz porównanie znaczenia pól, sekcji i przejść po normalizacji identyfikatorów. Jeśli importer pozostaje niedostępny, oznaczyć zgodność jako otwarty warunek odbioru.
 - [ ] **Dobór parserów.** Przygotować macierz formatów z parserem, licencją, ograniczeniami i sposobem zachowania układu dla każdego wymaganego rozszerzenia. Sprawdzić zwłaszcza binarny DOC, ODS i XLSX oraz PDF łączący tekst i skany. W próbach potwierdzić powiązania etykiet z polami, zachowanie tabel i powtarzalnych grup oraz odrzucenie pliku z niezgodnym rozszerzeniem zgodnie z sekcją 2.
@@ -161,6 +168,24 @@ Priorytety poniżej dotyczą realizacji projektu. Wymagania organizatora i przyp
 - [ ] **Kontrakt HTTP na wejściu HTTPS Next.js.** Opisać w OpenAPI pole multipart, dodatkowe części, limit pliku, odpowiedzi błędów, identyfikator żądania i zasady ponawiania. Rozróżnić zbyt duży plik, nieobsługiwany format, nieprzetwarzalny dokument i brak wolnych zasobów. Potwierdzić odpowiedzi przez serwer HTTPS Next.js, także poniżej limitu, na jego granicy i powyżej, z uwzględnieniem narzutu multipart.
 - [ ] **Wersjonowanie reguł i uprawnienia bazy.** Ustalić właściciela reguł i słowników. Jeżeli edycja w czasie pracy nie jest wymagana, dostarczać je ze schematem jako wersjonowane artefakty tylko do odczytu. Określić zakres bazy aplikacji i oddzielić uprawnienia migracji od uprawnień procesu aplikacji. Sprawdzić, czy z manifestu wydania można ustalić wersje reguł, schematu i modelu użyte do konwersji.
 - [ ] **Powtarzalność wydania i odtworzenie.** Promować z QA manifest obejmujący digesty obrazów oraz sumy kontrolne modelu, OCR i kontraktu COI. Mierzyć czasy etapów, współbieżność, odrzucenia, timeouty i zużycie pamięci. Ustalić dopuszczalną utratę danych i czas odtworzenia, a następnie przećwiczyć odtworzenie baz aplikacji i tożsamości oraz cofnięcie wydania po migracji.
+
+## Stan prób deweloperskich
+
+### Profil nadpłaty podatku (D03)
+
+- [x] Wygenerować ten sam szkic COI z referencyjnych PDF i DOCX. Sprawdzić dobór wersji profilu dla daty czynności oraz skierowanie szkicu do przeglądu dla daty poza zakresem.
+- [x] Sprawdzić zależności PESEL/NIP, reprezentacji i sposobu rozliczenia oraz odrębną regułę uzasadnienia korekty przy kwocie granicznej.
+- [x] Zatwierdzić opcjonalny telefon w panelu, odświeżyć szczegóły i pobrać JSON zawierający dodane pole.
+- [ ] Zweryfikować profil z osobą odpowiedzialną za procedurę, z uwzględnieniem organu, rodzaju podatku, daty czynności i przepisów przejściowych.
+- [ ] Zaimportować eksport D03 w docelowym systemie COI. Przejść warianty reprezentacji i rozliczenia oraz sprawdzić reguły widoczności, wymagane pola i końcową stronę.
+
+[Zachowanie profilu i przykładowe żądanie do ewaluatora](0204-extended-review.pl.md)
+
+### Panel i integracje
+
+- [x] Panel umożliwia wgranie oryginału do S3, wysłanie go do Pyworkera i porównanie oryginału z zapisanym JSON-em.
+- [x] Pyworker ma konfigurację Eden AI dla uploadu, OCR i LLM. Testy z symulowanymi odpowiedziami sprawdzają ścieżkę OCR → LLM, tekst bez OCR i odrzucanie niepoprawnego wyniku.
+- [ ] Wykonać próbę z rzeczywistym kluczem Eden AI na testowym blankiecie. Wynik tej próby dotyczy wyłącznie DEV.
 
 ## Kryteria oceny COI
 

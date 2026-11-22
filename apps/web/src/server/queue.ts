@@ -1,7 +1,7 @@
 import "server-only";
 import { JobQueue } from "@formiq/queue";
 
-const clientVersion = 'dashboard-summary-v4';
+const clientVersion = 'form-process-v5';
 const shared = globalThis as typeof globalThis & { formiqJobQueue?: JobQueue; formiqJobQueueVersion?: string };
 /** Web may produce/read jobs; schema changes and consumption belong to setup/worker. */
 export function getJobQueue() {

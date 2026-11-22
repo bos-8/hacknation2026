@@ -32,7 +32,7 @@ Execution date: [complete]. The effective transfer event is the last required
 party's valid signature, unless the parties expressly specify another event
 here: [complete or state last signature].
 
-The parties attach and incorporate the accepted root [LICENSE.md](../LICENSE.md), version 2.1,
+The parties attach and incorporate the accepted execution copy of the license, version 2.1,
 entitled Proprietary Repository License, Confidentiality, Contributor Rights
 and Owner Relicensing Terms. The attached execution copy, not a later repository
 edit, is the incorporated text. This signed agreement controls an express

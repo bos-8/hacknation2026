@@ -1,11 +1,13 @@
 ---
-brief: Licencja repozytorium, rejestr komponentów oraz dokumentacja wkładów.
+brief: Rejestr komponentów oraz dokumentacja wkładów.
 tags: [licencje, zależności, dokumentacja]
 ---
 
 # Licencje i wkłady
 
-Warunki dla materiałów właściciela są w głównej [licencji repozytorium](../LICENSE.md). Do dokumentowania konkretnych wkładów służy angielski [wzór umowy z projektu bazowego](0103-contribution-assignment-template.md). Jest to niewypełniony formularz. Wskazuje strony, konkretne wkłady, materiały wcześniejsze i cudze, wynagrodzenie oraz podpisy. Podpisane dokumenty z danymi osobowymi przechowuje się poza publicznym drzewem kodu.
+[Audyt licencji i lista zależności](0101-license-audit.pl.md)
+
+Do dokumentowania konkretnych wkładów służy angielski [wzór umowy z projektu bazowego](0103-contribution-assignment-template.md). Jest to niewypełniony formularz. Wskazuje strony, konkretne wkłady, materiały wcześniejsze i cudze, wynagrodzenie oraz podpisy. Podpisane dokumenty z danymi osobowymi przechowuje się poza publicznym drzewem kodu.
 
 ## Inwentarz do przygotowania wydania
 

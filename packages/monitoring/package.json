@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "license": "SEE LICENSE IN ../../LICENSE.md",
   "exports": {
     ".": { "browser": null, "types": "./dist/index.d.ts", "import": "./dist/index.js" },
     "./contracts": { "types": "./dist/contracts.d.ts", "default": "./dist/contracts.js" }

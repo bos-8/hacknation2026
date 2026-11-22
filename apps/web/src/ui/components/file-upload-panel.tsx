@@ -6,9 +6,9 @@ import { FileEarmarkArrowUp, X } from "react-bootstrap-icons";
 import { Button } from "@/ui/basic";
 import { cx } from "@/ui/basic/styles";
 
-export function UploadFields({ formId, inline = false, disabled, extensions, onSelect, file, hint, error }: {
+export function UploadFields({ formId, inline = false, disabled, extensions, onSelect, files, multiple = false, hint, error }: {
   formId: string; inline?: boolean; disabled: boolean; extensions?: readonly string[];
-  onSelect: (files: FileList | null) => void; file: File | null; hint: string; error?: string | null;
+  onSelect: (files: FileList | null) => void; files: readonly File[]; multiple?: boolean; hint: string; error?: string | null;
 }) {
   const t = useTranslations("common.admin.files");
   const [dragging, setDragging] = useState(false);
@@ -39,9 +39,9 @@ export function UploadFields({ formId, inline = false, disabled, extensions, onS
           event.preventDefault();
           dragDepth.current = 0;
           setDragging(false);
-          onSelect(event.dataTransfer.files);
+          if (!disabled) onSelect(event.dataTransfer.files);
         }}>
-        <input id={`${formId}-file`} type="file" name="file" accept={extensions?.join(",")} disabled={disabled} className="sr-only"
+        <input id={`${formId}-file`} type="file" name="file" multiple={multiple} accept={extensions?.join(",")} disabled={disabled} className="sr-only"
           aria-describedby={`${formId}-limit ${formId}-selection${error ? ` ${formId}-error` : ""}`}
           aria-invalid={error ? true : undefined}
           onChange={event => {
@@ -49,12 +49,14 @@ export function UploadFields({ formId, inline = false, disabled, extensions, onS
             event.currentTarget.value = "";
           }} />
         <FileEarmarkArrowUp aria-hidden="true" className={inline ? "size-5 text-primary" : "size-7 text-primary"} />
-        <span className="text-sm font-medium">{t(dragging ? "dropFileHere" : "dropFile")}</span>
-        <span className="rounded-md border border-button-border bg-button px-3 py-1 text-sm font-semibold text-button-foreground">{t("chooseFile")}</span>
+        <span className="text-sm font-medium">{multiple ? t(dragging ? "dropFilesHere" : "dropFiles") : t(dragging ? "dropFileHere" : "dropFile")}</span>
+        <span className="rounded-md border border-button-border bg-button px-3 py-1 text-sm font-semibold text-button-foreground">{t(multiple ? "chooseFiles" : "chooseFile")}</span>
       </label>
-      <p id={`${formId}-selection`} role="status" className="break-all text-sm">{file?.name}</p>
+      <div id={`${formId}-selection`} role="status" className="break-all text-sm">
+        {files.length > 0 && <ul>{files.map((file, index) => <li key={index}>{file.name}</li>)}</ul>}
+      </div>
       <p id={`${formId}-limit`} className="text-xs text-muted-foreground">{hint}</p>
-      {error && <p id={`${formId}-error`} role="alert" className="text-sm text-error">{error}</p>}
+      {error && <p id={`${formId}-error`} role="alert" className="whitespace-pre-line break-words text-sm text-error">{error}</p>}
   </>;
 }
 

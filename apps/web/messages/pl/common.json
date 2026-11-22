@@ -128,6 +128,11 @@
       "resize": "Zmień szerokość panelu"
     },
     "notifications": {
+      "progressLabel": "Postęp analizy",
+      "progressElapsed": "Upłynęło {time}",
+      "progressEta": "Pozostało około {time}",
+      "progressDeadline": "Do limitu czasu {time}",
+      "progressEstimating": "Szacowanie czasu do końca…",
       "label": "Powiadomienia",
       "labelWithCount": "Powiadomienia: {count}",
       "title": "Powiadomienia",
@@ -137,6 +142,7 @@
       "clear": "Wyczyść powiadomienia",
       "close": "Zamknij panel powiadomień",
       "persistent": "Do zamknięcia",
+      "receivedAt": "Otrzymano <time></time>",
       "expiresIn": "Zamknie się za {seconds} s",
       "protected": "Do zakończenia operacji",
       "collapse": "Zwiń panel powiadomień",
@@ -209,7 +215,6 @@
       "privacy": "Polityka prywatności",
       "browserStorage": "Pamięć przeglądarki",
       "description": "Wspólny fundament aplikacji biznesowych.",
-      "license": "Licencja",
       "backToTop": "Wróć na początek strony",
       "version": "Wersja {version}",
       "status": {
@@ -766,6 +771,9 @@
         "actions": "Akcje listy plików",
         "addFile": "Dodaj plik",
         "chooseFile": "Wybierz plik",
+        "chooseFiles": "Wybierz pliki",
+        "dropFiles": "Przeciągnij pliki tutaj lub wybierz z dysku",
+        "dropFilesHere": "Upuść pliki tutaj",
         "search": "Szukaj",
         "searchLabel": "Szukaj nazwy w katalogu",
         "searchPlaceholder": "Nazwa pliku w katalogu",

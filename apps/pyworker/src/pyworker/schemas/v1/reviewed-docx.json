@@ -1,0 +1,69 @@
+{
+  "5d77a198afe8315d9492e0a4924c40245746e3af42d3fd1ed2469e816845ad0e": {
+    "file": "formularze/01-numer-nieruchomosci/Wniosek o ustalenie numeru porządkowego nieruchomości – wizualizacja formularza po cyfryzacji .docx",
+    "kind": "visualization",
+    "documentId": "D04"
+  },
+  "d26d86aea213ea09653381c987a5c12a3e1c20be4dfd6a3370613c8f04184c48": {
+    "file": "formularze/01-numer-nieruchomosci/Wniosek o ustalenie numeru porządkowego nieruchomości.docx",
+    "kind": "form",
+    "documentId": "D04"
+  },
+  "3552082dba95f10824cbe113d0238bdc8281ac37316f557b99da43d0fcda0d48": {
+    "file": "formularze/02-zwrot-oplaty/Wniosek o zwrot opłaty skarbowej.docx",
+    "kind": "form",
+    "documentId": "D08"
+  },
+  "e4aef6daff830e86b4d5d69c2ed98ab9496079b5542e831be286478aad84ebb1": {
+    "file": "formularze/03-zaswiadczenie/Wniosek o wydanie zaświadczenia.docx",
+    "kind": "form",
+    "documentId": "D05"
+  },
+  "5c80f453ad5d69cb4f2541291ef435b4c6f4ab51404079a4126f5d3554f35e24": {
+    "file": "formularze/04-swietlica/Wniosek o wynajęcie świetlicy.docx",
+    "kind": "form",
+    "documentId": "D07"
+  },
+  "8c0b29fcb2802cdfde75e581155793ae075b476fd5197be75048c191dbfe6179": {
+    "file": "formularze/05-nadplata-podatku/Wniosek o stwierdzenie nadpłaty podatku - wizualizacja formularza cyfrowego (1).docx",
+    "kind": "visualization",
+    "documentId": "D03"
+  },
+  "f551277f2e57b3e042b54ecb5de7d0285dbadd60579cc475ce08a1b073128aa0": {
+    "file": "formularze/05-nadplata-podatku/Wniosek o stwierdzenie nadpłaty podatku.docx",
+    "kind": "form",
+    "documentId": "D03"
+  },
+  "a6f5f41e459a1dba2c9c02ad24cb496870e32340ecb4cde96d990b446268cbc9": {
+    "file": "formularze/06-pas-drogowy/Wniosek o wydanie zezwolenia na zajęcie pasa drogowego.docx",
+    "kind": "form",
+    "documentId": "D06"
+  },
+  "8563c1a84e99f22b2f9dc0724a54137206ec11263b774ae7922261081f9d447c": {
+    "file": "formularze/07-psy-agresywne/formularz.docx",
+    "kind": "form",
+    "documentId": "D09"
+  },
+  "2d584a9a1d04805417149b845d6267c9f577396207577660ac2854985e282921": {
+    "file": "formularze/08-odpady/Deklaracja o wysokości opłaty.docx",
+    "kind": "form",
+    "documentId": "D01"
+  },
+  "b0665d0f9621e53118fcac0662b2230981c5e0258e3e122e37929b94a76f159f": {
+    "file": "formularze/09-swiadczenia-sportowe/Wniosek o przyznanie stypendium.docx",
+    "kind": "form",
+    "documentId": "D02"
+  },
+  "f6a1976fadf4d0b57da0cba42e06b12b5d1084f35d0e249b970376a9ba592c22": {
+    "file": "materialy/opis-importu.docx",
+    "kind": "technical"
+  },
+  "4e71bb091a47816874edc79ab11962bba665a787129631ba6b460cb569577bad": {
+    "file": "materialy/reguly-techniczne.docx",
+    "kind": "technical"
+  },
+  "d81043275e45a6b2a4b6a382fe2ec8e57b5e1473f17dad421fd8de8963c17cd0": {
+    "file": "materialy/slowniki.docx",
+    "kind": "technical"
+  }
+}
