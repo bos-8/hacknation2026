@@ -171,6 +171,18 @@ Priorytety poniżej dotyczą realizacji projektu. Wymagania organizatora i przyp
 
 ## Stan prób deweloperskich
 
+### Profil nadpłaty podatku (D03)
+
+- [x] Wygenerować ten sam szkic COI z referencyjnych PDF i DOCX. Sprawdzić dobór wersji profilu dla daty czynności oraz skierowanie szkicu do przeglądu dla daty poza zakresem.
+- [x] Sprawdzić zależności PESEL/NIP, reprezentacji i sposobu rozliczenia oraz odrębną regułę uzasadnienia korekty przy kwocie granicznej.
+- [x] Zatwierdzić opcjonalny telefon w panelu, odświeżyć szczegóły i pobrać JSON zawierający dodane pole.
+- [ ] Zweryfikować profil z osobą odpowiedzialną za procedurę, z uwzględnieniem organu, rodzaju podatku, daty czynności i przepisów przejściowych.
+- [ ] Zaimportować eksport D03 w docelowym systemie COI. Przejść warianty reprezentacji i rozliczenia oraz sprawdzić reguły widoczności, wymagane pola i końcową stronę.
+
+[Zachowanie profilu i przykładowe żądanie do ewaluatora](0204-extended-review.pl.md)
+
+### Panel i integracje
+
 - [x] Panel umożliwia wgranie oryginału do S3, wysłanie go do Pyworkera i porównanie oryginału z zapisanym JSON-em.
 - [x] Pyworker ma konfigurację Eden AI dla uploadu, OCR i LLM. Testy z symulowanymi odpowiedziami sprawdzają ścieżkę OCR → LLM, tekst bez OCR i odrzucanie niepoprawnego wyniku.
 - [ ] Wykonać próbę z rzeczywistym kluczem Eden AI na testowym blankiecie. Wynik tej próby dotyczy wyłącznie DEV.

@@ -1,5 +1,6 @@
 import "server-only";
-import { DeleteObjectCommand, GetObjectCommand, paginateListObjectsV2, PutObjectCommand } from "@aws-sdk/client-s3";
+import { readObject } from "../../scripts/read-object.mjs";
+import { DeleteObjectCommand, paginateListObjectsV2, PutObjectCommand } from "@aws-sdk/client-s3";
 import { z } from "zod";
 import { parseConfig } from "../config/parse.ts";
 import { createS3Client, s3BucketSchema, s3EndpointSchema } from "./s3.ts";
@@ -53,25 +54,7 @@ export function fileStore(config: ReturnType<typeof getFilesConfig>) {
     },
     async get(key: string, maxBytes = 8 * 1024 * 1024) {
       z.number().int().min(1).max(20 * 1024 * 1024).parse(maxBytes);
-      const result = await client.send(new GetObjectCommand({ Bucket: config.S3_BUCKET, Key: z.uuid().parse(key) }),
-        { abortSignal: AbortSignal.timeout(15000) });
-      if (!result.Body) throw new Error("File storage returned no data");
-      const reader = result.Body.transformToWebStream().getReader();
-      try {
-        if ((result.ContentLength ?? Infinity) > maxBytes) throw new Error("Stored file exceeds preview limit");
-        const chunks: Uint8Array[] = [];
-        let size = 0;
-        while (true) {
-          const { value, done } = await reader.read();
-          if (done) break;
-          size += value.byteLength;
-          if (size > maxBytes) throw new Error("Stored file exceeds preview limit");
-          chunks.push(value);
-        }
-        return new Uint8Array(Buffer.concat(chunks, size));
-      } finally {
-        try { await reader.cancel(); } finally { reader.releaseLock(); }
-      }
+      return readObject(client, config.S3_BUCKET, z.uuid().parse(key), maxBytes);
     },
     async put(key: string, body: Uint8Array) {
       await client.send(new PutObjectCommand({

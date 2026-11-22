@@ -11,10 +11,13 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from fastapi.security import HTTPBearer
 
+from pyworker.answer_checks import router as answer_router
 from pyworker.config import Settings
 from pyworker.contracts import CheckRequest, CheckResponse
 from pyworker.dispatcher import Dispatcher
 from pyworker.forms import router as forms_router
+from pyworker.geography import router as geography_router
+from pyworker.profile_api import router as profile_router
 from pyworker.tasks.diagnostic import run_check
 from pyworker.transport import TaskBoundary
 
@@ -46,6 +49,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         redoc_url=None,
     )
     app.include_router(forms_router)
+    app.include_router(profile_router)
+    app.include_router(answer_router)
+    app.include_router(geography_router)
     app.state.eden = settings.eden
     app.state.pipeline = settings.pipeline
     app.state.form_timings = {}

@@ -39,7 +39,7 @@ async function handle(request: Request, context: RouteContext<"/api/v1/forms/[id
       });
       const result = formProcessingResult.safeParse(form?.processingJson).data;
       if (!form || !result || !hasFormResult(result)) return jsonNoStore({}, 404);
-      return new Response(formatFormResult(result), { headers: {
+      return new Response(formatFormResult(result, params.get("answers") === "1"), { headers: {
         "Content-Type": "application/json; charset=utf-8",
         "Content-Disposition": disposition(`${form.file.name}.json`),
         "Cache-Control": "private, no-store", "X-Content-Type-Options": "nosniff",

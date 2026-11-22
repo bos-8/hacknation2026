@@ -1,6 +1,7 @@
 """Extract locally, run Qwen with a structured schema, and assemble COI JSON."""
 
 import asyncio
+import hashlib
 import json
 import os
 import re
@@ -19,9 +20,10 @@ from pyworker.coi import (
     CoiResult,
     Extraction,
     ReadDocument,
-    convert_to_coi,
 )
 from pyworker.eden import EdenFailure, request_json
+from pyworker.form_compiler import convert_to_coi
+from pyworker.reader_loop import with_reader_pipes
 
 MAX_READER_OUTPUT = 1_200_000
 MAX_PROMPT_BYTES = 64 * 1024
@@ -206,6 +208,8 @@ async def run_pipeline(
     file: UploadFile,
     form_id: UUID,
     report: Callable[[str], None] | None = None,
+    semantic_mode="EXTENDED",
+    as_of=None,
 ) -> tuple[CoiResult, bool]:
     phase = "extracting"
 
@@ -228,8 +232,16 @@ async def run_pipeline(
         ):
             advance(phase)
             await file.seek(0)
-            document = await read_local_document(
-                settings, await file.read(), PurePath(file.filename or "").suffix.lower(), advance
+            data = await file.read()
+            loop = asyncio.get_running_loop()
+            extension = PurePath(file.filename or "").suffix.lower()
+            document = await with_reader_pipes(
+                lambda: read_local_document(
+                    settings,
+                    data,
+                    extension,
+                    lambda stage: loop.call_soon_threadsafe(advance, stage),
+                )
             )
             source = document.model_dump_json(exclude_none=True)
             if not any(block.text for block in document.blocks) or len(source) > 220_000:
@@ -274,7 +286,10 @@ async def run_pipeline(
                 if choice.get("finish_reason") != "stop":
                     raise ValueError("Incomplete model response")
                 extraction = Extraction.model_validate_json(choice["message"]["content"])
-                coi = convert_to_coi(extraction, document, form_id)
+                document.sha256 = hashlib.sha256(data).hexdigest()
+                coi = convert_to_coi(
+                    extraction, document, form_id, semantic_mode=semantic_mode, as_of=as_of
+                )
             except (
                 ValidationError,
                 KeyError,

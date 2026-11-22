@@ -1,21 +1,34 @@
 """Eden AI document conversion. Provider responses and document text stay out of logs."""
 
 import asyncio
+import hashlib
 import json
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from html import escape
+from io import BytesIO
 from uuid import UUID
 from xml.etree.ElementTree import ParseError
 from zipfile import BadZipFile
+from zlib import error as ZlibError
 
 import httpx2
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, model_validator
 from starlette.datastructures import UploadFile
 
-from pyworker.coi import Block, CoiResult, Extraction, ReadDocument, convert_to_coi
-from pyworker.docx import docx_text
+from pyworker.coi import Block, CoiResult, Extraction, ReadDocument
+from pyworker.docx import docx_source_blocks
+from pyworker.form_compiler import convert_to_coi
+from pyworker.form_ir import ActorRole, DomainBlock, SemanticType
 from pyworker.ocr_form import form_from_text
+from pyworker.ocr_image import ocr_upload
+from pyworker.pdf_text import native_pdf_pages
+from pyworker.reader_loop import with_reader_pipes
+from pyworker.spreadsheet import SHEET_FORMATS, detection_text, spreadsheet_blocks
+from pyworker.table_geometry import align_cells, markdown_tables
+from pyworker.vision import MODEL as DEFAULT_QWEN_MODEL
+from pyworker.vision import NoVisualFields, VisualPage, compile_pages, messages
+from pyworker.vision_pages import render_pages
 
 DOCX = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
 MAX_PROVIDER_RESPONSE = 2 * 1024 * 1024
@@ -28,15 +41,19 @@ class EdenSettings:
     upload_url: str = "https://api.edenai.run/v3/upload"
     ocr_url: str = "https://api.edenai.run/v3/universal-ai"
     llm_url: str = "https://api.edenai.run/v3/chat/completions"
-    ocr_model: str = "ocr/ocr/google"
-    pdf_ocr_model: str = "ocr/ocr_async/mistral"
-    llm_model: str = "qwen3.8-27b"
+    ocr_model: str = "ocr/ocr/mistral/mistral-ocr-4-1"
+    pdf_ocr_model: str = "ocr/ocr_async/mistral/mistral-ocr-4-1"
+    llm_model: str = DEFAULT_QWEN_MODEL
     timeout_seconds: int = 300
     max_input_chars: int = 200_000
     max_output_tokens: int = 16_384
     local_llm_url: str = ""
     local_llm_model: str = "Qwen/Qwen3-4B-Instruct-2507"
     ocr_only: bool = False
+    vision_model: str = ""
+
+    def uses_vision(self, mime: str) -> bool:
+        return bool(self.vision_model) and (mime == "application/pdf" or mime.startswith("image/"))
 
     def __post_init__(self):
         if type(self.timeout_seconds) is not int or not 1 <= self.timeout_seconds <= 300:
@@ -228,9 +245,7 @@ async def read_ocr(client, settings: EdenSettings, file_id: str, mime: str, head
     return bounded_text(text, settings.max_input_chars)
 
 
-def parse_draft(
-    result: dict, model: type[GeneratedDraft] | type[Extraction] = GeneratedDraft
-) -> GeneratedDraft | Extraction:
+def parse_draft(result: dict, model: type[BaseModel] = GeneratedDraft):
     try:
         choice = result["choices"][0]
         finish = choice.get("finish_reason")
@@ -245,6 +260,39 @@ def parse_draft(
         raise EdenFailure("eden_llm_invalid_json", reason="invalid_response") from error
 
 
+async def read_visual_pages(client, settings, headers, images):
+    slots = asyncio.Semaphore(2)
+
+    async def inspect(image, native, spans):
+        async with slots:
+            payload = {
+                "model": settings.vision_model,
+                "reasoning_effort": "none",
+                "messages": messages(image, native),
+                "temperature": 0,
+                "max_tokens": settings.max_output_tokens,
+                "response_format": {"type": "json_object"},
+            }
+            response = await request_json(
+                client, settings.llm_url, "eden_llm_failed", headers=headers, json=payload
+            )
+            page = parse_draft(response, VisualPage)
+            try:
+                await asyncio.to_thread(align_cells, page, image, spans)
+            except ValueError as error:
+                raise EdenFailure("eden_invalid_text", 422, reason="document_context") from error
+            return page, native
+
+    tasks = [asyncio.create_task(inspect(*rendered)) for rendered in images]
+    try:
+        return await asyncio.gather(*tasks)
+    finally:
+        for task in tasks:
+            if not task.done():
+                task.cancel()
+        await asyncio.gather(*tasks, return_exceptions=True)
+
+
 async def convert_document(
     settings: EdenSettings,
     file: UploadFile,
@@ -253,19 +301,19 @@ async def convert_document(
     *,
     ocr_form_id: UUID | None = None,
     coi_form_id: UUID | None = None,
+    semantic_mode="EXTENDED",
+    as_of=None,
 ) -> tuple[GeneratedDraft | CoiResult, bool]:
     use_ocr = mime == "application/pdf" or mime.startswith("image/")
     use_text = mime in {"text/plain", "application/json"}
     use_docx = mime == DOCX
+    sheet_extension = SHEET_FORMATS.get(mime)
     ocr_only = ocr_form_id is not None
-    if ocr_only and not (use_text or use_docx or use_ocr):
+    if ocr_only and not (use_text or use_docx or sheet_extension or use_ocr):
         raise EdenFailure("ocr_only_format_unsupported", 415)
     local_llm = not ocr_only and bool(settings.local_llm_url)
-    if local_llm and not (use_text or use_docx or use_ocr):
+    if local_llm and not (use_text or use_docx or sheet_extension or use_ocr):
         raise EdenFailure("local_llm_document_unsupported", 415)
-    requires_eden = use_ocr or (not ocr_only and not local_llm)
-    if requires_eden and (not settings.api_key or settings.api_key == "CHANGE_ME"):
-        raise EdenFailure("eden_not_configured", 503)
     eden_headers = {"Authorization": f"Bearer {settings.api_key}"}
     phase = "validated"
 
@@ -287,13 +335,75 @@ async def convert_document(
                 trust_env=False,
             ) as client,
         ):
-            if use_text or use_docx:
+            data = await file.read()
+            digest = hashlib.sha256(data).hexdigest()
+            await file.seek(0)
+            if settings.uses_vision(mime) and (ocr_form_id or coi_form_id):
+                if not settings.api_key or settings.api_key == "CHANGE_ME":
+                    raise EdenFailure("eden_not_configured", 503)
                 advance("extracting")
-                if use_docx:
+                try:
+                    images = await render_pages(data, mime, settings.max_input_chars)
+                except ValueError as error:
+                    raise EdenFailure(
+                        "document_text_failed", 422, reason="document_reader"
+                    ) from error
+                advance("llm")
+                observations = await read_visual_pages(client, settings, eden_headers, images)
+                advance("validate_result")
+                try:
+                    extraction, document = compile_pages(
+                        observations, digest, settings.max_input_chars
+                    )
+                    return convert_to_coi(
+                        extraction,
+                        document,
+                        ocr_form_id or coi_form_id,
+                        semantic_mode=semantic_mode,
+                        as_of=as_of,
+                        visual=True,
+                    ), True
+                except NoVisualFields as error:
+                    raise EdenFailure("ocr_only_no_fields", 422) from error
+                except ValueError as error:
+                    raise EdenFailure("eden_llm_invalid_json", reason="invalid_response") from error
+            pages = []
+            if mime == "application/pdf" and (ocr_form_id or coi_form_id):
+                advance("extracting")
+                try:
+                    pages = await with_reader_pipes(
+                        lambda: native_pdf_pages(data, settings.max_input_chars)
+                    )
+                except ValueError as error:
+                    raise EdenFailure("eden_invalid_text", 422) from error
+                if pages:
+                    use_ocr = False
+            requires_eden = use_ocr or (not ocr_only and not local_llm)
+            if requires_eden and (not settings.api_key or settings.api_key == "CHANGE_ME"):
+                raise EdenFailure("eden_not_configured", 503)
+            text = ""
+            source_blocks = []
+            if pages:
+                text = "\n".join(pages)
+                content = [{"type": "text", "text": text}]
+            elif use_text or use_docx or sheet_extension:
+                advance("extracting")
+                if use_docx or sheet_extension:
                     try:
-                        text = docx_text(file.file)
+                        if sheet_extension:
+                            source_blocks = await asyncio.to_thread(
+                                spreadsheet_blocks,
+                                BytesIO(data),
+                                sheet_extension,
+                                settings.max_input_chars,
+                            )
+                        else:
+                            source_blocks = docx_source_blocks(file.file)
+                        text = "\n".join(block.text for block in source_blocks)
                     except (
                         BadZipFile,
+                        EOFError,
+                        ZlibError,
                         OSError,
                         RuntimeError,
                         ValueError,
@@ -302,19 +412,26 @@ async def convert_document(
                         RecursionError,
                     ) as error:
                         raise EdenFailure(
-                            "document_text_failed", 422, reason="invalid_docx"
+                            "document_text_failed",
+                            422,
+                            reason="invalid_spreadsheet" if sheet_extension else "invalid_docx",
                         ) from error
                 else:
                     text = (await file.read()).decode("utf-8-sig")
                 content = [{"type": "text", "text": bounded_text(text, settings.max_input_chars)}]
             else:
+                if use_ocr:
+                    advance("extracting")
+                    upload_data = await asyncio.to_thread(ocr_upload, data, mime)
+                else:
+                    upload_data = data
                 advance("provider_upload")
                 upload = await request_json(
                     client,
                     settings.upload_url,
                     "eden_upload_failed",
                     headers=eden_headers,
-                    files={"file": (file.filename, await file.read(), mime)},
+                    files={"file": (file.filename, upload_data, mime)},
                     data={"purpose": "ocr" if use_ocr else "assistants"},
                 )
                 try:
@@ -324,15 +441,61 @@ async def convert_document(
 
                 if use_ocr:
                     advance("ocr")
-                    text = await read_ocr(client, settings, file_id, mime, eden_headers)
+                    try:
+                        text = await read_ocr(client, settings, file_id, mime, eden_headers)
+                    except EdenFailure as error:
+                        if not (ocr_only and error.reason == "ocr_no_text"):
+                            raise
+                        text = ""
                     content = [{"type": "text", "text": text}]
                 else:
                     content = [{"type": "file", "file": {"file_id": file_id}}]
 
+            document = ReadDocument(
+                blocks=source_blocks
+                or [
+                    Block(id=i, page=i, kind="text", text=t)
+                    for i, t in enumerate(pages or [text], 1)
+                ],
+                ocr=use_ocr,
+                sha256=digest,
+            )
             if ocr_form_id is not None:
+                grid_pages = []
+                detection = detection_text(source_blocks) if sheet_extension else text
+                if mime == "application/pdf" or mime.startswith("image/"):
+                    try:
+                        rendered = await render_pages(data, mime, settings.max_input_chars)
+                    except ValueError:
+                        # Keep text from documents that PDFium could not rasterize.
+                        rendered = []
+                    # OCR returns one text stream; only attach it to a page when unambiguous.
+                    tables = markdown_tables(text) if use_ocr and len(rendered) == 1 else ()
+                    for image, _, spans in rendered:
+                        layout = VisualPage(notes=[], fields=[])
+                        try:
+                            consumed = await asyncio.to_thread(
+                                align_cells, layout, image, spans, tables
+                            )
+                            for table_text in consumed:
+                                detection = detection.replace(table_text, "", 1)
+                        except ValueError as error:
+                            raise EdenFailure(
+                                "eden_invalid_text", 422, reason="document_context"
+                            ) from error
+                        grid_pages.append((layout, ""))
                 advance("validate_result")
                 try:
-                    return form_from_text(content[0]["text"], use_ocr, ocr_form_id), use_ocr
+                    return form_from_text(
+                        detection,
+                        use_ocr,
+                        ocr_form_id,
+                        document=document,
+                        grid_pages=grid_pages if any(page.fields for page, _ in grid_pages) else (),
+                        char_limit=settings.max_input_chars,
+                        semantic_mode=semantic_mode,
+                        as_of=as_of,
+                    ), use_ocr
                 except ValueError as error:
                     raise EdenFailure("ocr_only_no_fields", 422) from error
 
@@ -366,6 +529,14 @@ async def convert_document(
                     'only for values printed on the form, and "repeating":true on explicitly '
                     "repeatable sections. Set required only with evidence. Omit evidence IDs, "
                     "validation rules, conditions, system defaults and the final summary tab."
+                    " Optional section.domain must be one of: "
+                    + ", ".join(DomainBlock)
+                    + ". Optional field.semantic_type must be one of: "
+                    + ", ".join(SemanticType)
+                    + ". Optional field.actor_role must be one of: "
+                    + ", ".join(ActorRole)
+                    + ". Use these only with source evidence. Distinguish applicant, beneficiary,"
+                    " representative and authority. Never infer consent from a privacy notice."
                 )
             output_model = Extraction if coi_form_id is not None else GeneratedDraft
             payload = {
@@ -389,7 +560,7 @@ async def convert_document(
                         "schema": provider_draft_schema(),
                     },
                 }
-            elif not local_llm and settings.llm_model == "qwen3.8-27b":
+            elif not local_llm and settings.llm_model in {DEFAULT_QWEN_MODEL, "qwen3.8-27b"}:
                 # This schema extraction needs the generated JSON, without extra reasoning tokens.
                 payload["reasoning_effort"] = "none"
                 payload["routing"] = {"sort": "latency"}
@@ -422,15 +593,14 @@ async def convert_document(
                 advance("validate_result")
                 draft = parse_draft(result, output_model)
             if isinstance(draft, Extraction):
-                document = ReadDocument(
-                    blocks=[Block(id=1, page=1, kind="text", text="")], ocr=use_ocr
-                )
                 for tab in draft.tabs:
                     for section in tab.sections:
                         for spec in section.fields:
                             spec.description = escape(spec.description)
                 try:
-                    return convert_to_coi(draft, document, coi_form_id), use_ocr
+                    return convert_to_coi(
+                        draft, document, coi_form_id, semantic_mode=semantic_mode, as_of=as_of
+                    ), use_ocr
                 except ValueError as error:
                     raise EdenFailure("eden_llm_invalid_json", reason="invalid_response") from error
             return draft, use_ocr

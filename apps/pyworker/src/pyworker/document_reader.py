@@ -4,13 +4,15 @@ import json
 import math
 import os
 import sys
-from collections import defaultdict
 from contextlib import closing
 from functools import cache
 from io import BytesIO
 from pathlib import Path
 
 from pyworker.coi import Block, Box, ReadDocument
+from pyworker.docx import docx_source_blocks
+from pyworker.ocr_image import ocr_image
+from pyworker.spreadsheet import spreadsheet_blocks
 
 MAX_PAGES = 40
 MAX_EDGE = 2800
@@ -136,7 +138,7 @@ def read_image(image, page: int, blocks: list[Block]):
     width, height = image.size
     if width < 32 or height < 32:
         raise ValueError("Image is too small for document OCR")
-    pixels = np.ascontiguousarray(np.asarray(image.convert("RGB"))[:, :, ::-1])
+    pixels = np.ascontiguousarray(np.asarray(ocr_image(image))[:, :, ::-1])
     first = len(blocks)
     layout = paddle_result(paddle_vl(), pixels).get("parsing_res_list", [])
     for item in layout:
@@ -182,7 +184,7 @@ def docling_converter():
         enable_remote_services=False,
     )
     return DocumentConverter(
-        allowed_formats=[InputFormat.PDF, InputFormat.DOCX, InputFormat.XLSX, InputFormat.ODS],
+        allowed_formats=[InputFormat.PDF, InputFormat.DOCX],
         format_options={InputFormat.PDF: PdfFormatOption(pipeline_options=options)},
     )
 
@@ -235,25 +237,6 @@ def append_native_page(document, page_number: int, blocks: list[Block]) -> bool:
     return False
 
 
-def append_spreadsheet(document, blocks: list[Block]) -> None:
-    from docling_core.types.doc import TableItem, TextItem
-
-    for item, _level in document.iterate_items():
-        if isinstance(item, TextItem):
-            append_block(blocks, 1, item.text)
-        elif isinstance(item, TableItem):
-            # Retain nonempty cells and their column positions. Formatting in real
-            # templates can otherwise produce megabytes of empty Markdown cells.
-            rows = defaultdict(list)
-            for cell in item.data.table_cells:
-                value = " ".join(cell.text.split())
-                if value:
-                    rows[cell.start_row_offset_idx].append((cell.start_col_offset_idx, value))
-            for index, cells in sorted(rows.items()):
-                columns = " | ".join(f"K{col + 1}: {value}" for col, value in sorted(cells))
-                append_block(blocks, 1, f"W{index + 1}: {columns}", kind="table")
-
-
 def read_pdf(data: bytes, blocks: list[Block], report) -> bool:
     import pypdfium2 as pdfium
 
@@ -285,6 +268,11 @@ def read_document(data: bytes, extension: str, report) -> ReadDocument:
     used_ocr = False
     if extension == ".pdf":
         used_ocr = read_pdf(data, blocks, report)
+    elif extension == ".docx":
+        report("extracting")
+        blocks = docx_source_blocks(BytesIO(data))
+        if not blocks:
+            append_block(blocks, 1, read_docling(data, extension).export_to_markdown())
     elif extension in {".jpg", ".jpeg", ".png"}:
         from PIL import Image, ImageOps
 
@@ -294,13 +282,13 @@ def read_document(data: bytes, extension: str, report) -> ReadDocument:
                 raise ValueError("Image exceeds the pixel limit")
             read_image(ImageOps.exif_transpose(image), 1, blocks)
         used_ocr = True
+    elif extension in {".ods", ".xlsx"}:
+        report("extracting")
+        blocks = spreadsheet_blocks(BytesIO(data), extension, MAX_EXTRACTED_CHARS)
     else:
         report("extracting")
         document = read_docling(data, extension)
-        if extension in {".xlsx", ".ods"}:
-            append_spreadsheet(document, blocks)
-        else:
-            append_block(blocks, 1, document.export_to_markdown())
+        append_block(blocks, 1, document.export_to_markdown())
     if not any(block.text for block in blocks):
         raise ValueError("No text extracted")
     if sum(len(block.text) for block in blocks) > MAX_EXTRACTED_CHARS:

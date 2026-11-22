@@ -8,6 +8,14 @@ import { DOCUMENT_QUEUE, QUEUE_ACTIONS, queueActionAllowed, type JobActionInput 
 import type { QueueSummary, QueueStateCounts } from './contracts.js';
 type Options = { migrate?: boolean; supervise?: boolean; schedule?: boolean; retryDelaySeconds?: number; pollingIntervalSeconds?: number; preserveQueuePolicy?: boolean };
 const MONITORING_JOBS = ["monitoring.collect", "monitoring.cleanup"] as const;
+const FORM_QUEUE = "form.process";
+const formQueuePolicy = { policy: "exclusive" as const, retryLimit: 2, retryDelay: 10,
+  retryBackoff: true, expireInSeconds: 420, heartbeatSeconds: 30 };
+export type FormJob = {
+  formId: string; actorUuid: string; sender: { name: string; email: string };
+  reanalyze: boolean; asOf: string | null; previousHash: string;
+};
+type FormOutcome = { status: number; body: { mode?: string; error?: string; reason?: string; phase?: string; timeoutSeconds?: number } };
 
 /** Queue-library-owned schema in a separate database. No application Prisma models. */
 export class JobQueue {
@@ -55,6 +63,7 @@ export class JobQueue {
         const policy = { retryLimit: DEFAULT_RETRY_LIMIT, retryDelay: this.options.retryDelaySeconds ?? 5, retryBackoff: true,
           retryDelayMax: 60, expireInSeconds: 60, heartbeatSeconds: 10, retentionSeconds: 7 * 86400, deleteAfterSeconds: 14 * 86400 };
         await this.boss.createQueue(DIAGNOSTIC_QUEUE, policy);
+        await this.boss.createQueue(FORM_QUEUE, formQueuePolicy);
         if (!this.options.preserveQueuePolicy) await this.boss.updateQueue(DIAGNOSTIC_QUEUE, policy);
         await this.pool.query('CREATE INDEX IF NOT EXISTS modulon_job_created_on_idx ON pgboss.job (created_on DESC, id DESC)');
       }
@@ -116,6 +125,32 @@ export class JobQueue {
     await this.boss.work(DOCUMENT_QUEUE, { batchSize: 1, includeMetadata: true }, async jobs => {
       for (const job of jobs) await processDocument(job.id, job.retryCount >= job.retryLimit);
     });
+  }
+  async startForms(processForm: (id: string, data: FormJob, signal: AbortSignal) => Promise<FormOutcome>) {
+    await this.start();
+    await this.boss.createQueue(FORM_QUEUE, formQueuePolicy);
+    await this.boss.work<FormJob>(FORM_QUEUE, { batchSize: 1, pollingIntervalSeconds: 1, perJobResults: true }, async ([job]) => {
+      const output = await processForm(job.id, job.data, job.signal);
+      const transient = output.status === 429 || output.body.error === "worker_disconnected" || output.status === 503 && !output.body.error;
+      return [{ id: job.id, output, status: output.status === 200 ? "completed" : transient ? "failed" : "deadletter" }];
+    });
+  }
+  async formJob(formId: string, actor: string, operation: string | null) {
+    await this.start();
+    const { rows } = await this.pool.query<{ id: string; state: JobRow["state"]; output: FormOutcome | null }>(
+      `SELECT id, state, output FROM pgboss.job WHERE name=$1 AND singleton_key=$2 AND data->>'actorUuid'=$3
+       AND (id=$4::uuid OR ($4 IS NULL AND state <= 'active')) ORDER BY created_on DESC LIMIT 1`,
+      [FORM_QUEUE, formId, actor, operation]);
+    return rows[0];
+  }
+  async enqueueForm(operation: string, data: FormJob) {
+    await this.start();
+    const sent = await this.boss.send(FORM_QUEUE, { ...data, executor: "python" }, { id: operation, singletonKey: data.formId });
+    if (sent) return sent;
+    const existing = await this.formJob(data.formId, data.actorUuid, operation)
+      ?? await this.formJob(data.formId, data.actorUuid, null);
+    if (!existing) throw new Error("Form job was not accepted");
+    return existing.id;
   }
   async dispatchDocument(ticket: string) {
     await this.boss.send(DOCUMENT_QUEUE, { executor: "python" }, { id: ticket });

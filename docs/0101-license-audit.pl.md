@@ -14,7 +14,7 @@ Cały obecny stos nie spełnia zasady **wyłącznie Apache-2.0**. Opis wyzwania 
 | Zakres | Wpisy | Deklaracja Apache-2.0 | Inna deklaracja | Do sprawdzenia |
 | --- | ---: | ---: | ---: | ---: |
 | JavaScript | 782 | 70 | 586 | 126 |
-| Python | 25 | 3 | 20 | 2 |
+| Python | 33 | 3 | 28 | 2 |
 
 Deklaracje odczytano z `package.json` lub `METADATA` zainstalowanych wersji. Wpisy bez wiarygodnej deklaracji, w tym nieobecne warianty platformowe, są otwarte. Paczka PII z własnymi zależnościami przechodnimi, natywne biblioteki wewnątrz wheelów i binariów, lock narzędzi RepoRoute oraz warstwy obrazów wymagają osobnego inwentarza. CSV jest przeglądem checkoutu, a skład konkretnego obrazu wydania trzeba potwierdzić osobnym SBOM.
 
@@ -29,7 +29,7 @@ Deklaracje odczytano z `package.json` lub `METADATA` zainstalowanych wersji. Wpi
 
 ## Lokalny model i OCR
 
-Pyworker może wysłać tekst do lokalnego Qwen3-4B-Instruct-2507 przez interfejs Chat Completions. Konfiguracja jest w `apps/pyworker/.env`. Adres musi wskazywać uruchomiony serwer na pętli zwrotnej. W trybie deweloperskim TXT i JSON trafiają bezpośrednio do LLM, a PNG, JPEG i PDF nadal korzystają z Eden OCR przed lokalnym LLM. DOC, DOCX, ODS i XLSX w lokalnej ścieżce wymagają ekstrakcji tekstu po stronie projektu. Klucz Eden AI jest przekazywany wyłącznie do usług Eden. [Kontrakt serwera vLLM](https://docs.vllm.ai/en/stable/serving/online_serving/openai_compatible_server/)
+Pyworker może wysłać tekst do lokalnego Qwen3-4B-Instruct-2507 przez interfejs Chat Completions. Konfiguracja jest w `apps/pyworker/.env`. Adres musi wskazywać uruchomiony serwer na pętli zwrotnej. W trybie deweloperskim TXT i JSON trafiają bezpośrednio do LLM, a PNG, JPEG i PDF nadal korzystają z Eden OCR przed lokalnym LLM. Pyworker odczytuje tekst DOCX oraz komórki XLSX i ODS lokalnie, przed wywołaniem modelu. Binarny DOC wymaga ścieżki z Apache POI. Klucz Eden AI jest przekazywany wyłącznie do usług Eden. [Kontrakt serwera vLLM](https://docs.vllm.ai/en/stable/serving/online_serving/openai_compatible_server/)
 
 ```dotenv
 PYWORKER_FORM_MODE=eden

@@ -1,0 +1,65 @@
+{
+  "bundleId": "FORMIQ.PL.EU.2026.11.22",
+  "address": {
+    "fieldGroup": "address",
+    "validatorId": "pl.address.prg.v1",
+    "when": {
+      "country": "PL"
+    },
+    "objectFromFields": {
+      "countryCode": "country",
+      "voivodeshipCode": "voivodeship_code",
+      "countyCode": "county_code",
+      "municipalityCode": "municipality",
+      "localityCode": "locality_code",
+      "streetCode": "street_code",
+      "buildingNumber": "building",
+      "unitNumber": "unit",
+      "postalCode": "postal_code",
+      "hasStreet": "has_street"
+    },
+    "omitUnprovidedOptionalKeys": true,
+    "invalidAction": "SHOW_CONFLICT_FOR_CORRECTION_OR_REVIEW",
+    "unverifiedAction": "REVIEW"
+  },
+  "helpers": [
+    {
+      "key": "voivodeship_code",
+      "label": "Województwo",
+      "widget": "SELECT",
+      "id": "167a37f8-f010-5aa1-8f3e-82c65a9d156e"
+    },
+    {
+      "key": "county_code",
+      "label": "Powiat",
+      "widget": "SELECT",
+      "id": "4be148ab-b377-53f3-b49c-5629d833d853"
+    },
+    {
+      "key": "locality_code",
+      "label": "Miejscowość — SIMC z PRG",
+      "widget": "SELECT",
+      "id": "68e9157a-f284-5f97-bf46-b8784b73eae4"
+    },
+    {
+      "key": "street_code",
+      "label": "Ulica — ULIC z PRG",
+      "widget": "SELECT",
+      "id": "febc94a4-b12c-53d4-a0db-a9cf191b91d1"
+    },
+    {
+      "key": "has_street",
+      "label": "Adres ma nazwę ulicy",
+      "widget": "BOOLEAN",
+      "id": "4a51137e-c834-58b8-9ed1-e069004be50f"
+    }
+  ],
+  "fieldValidators": {
+    "pesel": "pl.pesel.v1",
+    "nip": "pl.nip.v1",
+    "application_date": "common.iso_date.v1",
+    "country": "international.country_code.v1",
+    "postal_code": "international.postal_format.v1",
+    "overpayment_amount": "common.money.v1"
+  }
+}

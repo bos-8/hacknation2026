@@ -34,9 +34,10 @@ class EdenTests(unittest.IsolatedAsyncioTestCase):
                 return httpx2.Response(200, json={"file_id": FILE_ID})
             body = json.loads(request.content)
             if request.url.path == "/v3/universal-ai":
+                self.assertEqual(body["model"], "ocr/ocr/mistral/mistral-ocr-4-1")
                 self.assertEqual(body["input"], {"file": FILE_ID})
                 return httpx2.Response(200, json={"output": {"text": "example OCR text"}})
-            self.assertEqual(body["model"], "qwen3.8-27b")
+            self.assertEqual(body["model"], "deepinfra/Qwen/Qwen3-VL-235B-A22B-Instruct")
             self.assertEqual(body["max_tokens"], 16_384)
             self.assertEqual(body["reasoning_effort"], "none")
             self.assertEqual(body["routing"], {"sort": "latency"})
@@ -130,8 +131,7 @@ class EdenTests(unittest.IsolatedAsyncioTestCase):
             for question in tab.questions
             for item in question.field.repeatingSectionGrid
         ]
-        self.assertIn("Imię", [field.title for field in fields])
-        self.assertIn("Nazwisko", [field.title for field in fields])
+        self.assertIn("Imię i nazwisko", [field.title for field in fields])
         self.assertIn("Ulica", [field.title for field in fields])
         self.assertTrue(
             any(field.readOnly and field.defaultValue == "Urząd gminy" for field in fields)
@@ -295,7 +295,7 @@ class EdenTests(unittest.IsolatedAsyncioTestCase):
                 self.assertEqual(
                     json.loads(request.content),
                     {
-                        "model": "ocr/ocr_async/mistral",
+                        "model": "ocr/ocr_async/mistral/mistral-ocr-4-1",
                         "input": {"file": FILE_ID},
                     },
                 )

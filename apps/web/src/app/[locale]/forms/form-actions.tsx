@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useState, useTransition } from "react";
+import { useEffect, useEffectEvent, useId, useRef, useState, useTransition } from "react";
 import { useFormatter, useTranslations } from "next-intl";
 import { ArrowClockwise, CheckCircleFill, DashCircle, Download, FiletypeJson, BoxArrowUpRight, InfoCircle, CashCoin, Send, ChevronDown, Trash } from "react-bootstrap-icons";
 import { Link, useRouter } from "@/i18n/navigation";
@@ -34,62 +34,71 @@ export function FormActions({ entry, active, info, discard }: { entry: FormEntry
   const reanalyze = entry.processingJson !== null;
   const analysisAction = t(reanalyze ? "reanalyze" : "sendForProcessing");
 
-  async function processForm() {
+  const currentPoll = useRef<AbortController | null>(null);
+  const storageKey = "formiq.formJob." + entry.uploaderUuid + "." + entry.id;
+  const resume = useEffectEvent((operation: string) => { void processForm(operation); });
+  useEffect(() => {
+    const operation = sessionStorage.getItem(storageKey);
+    if (operation) resume(operation);
+    return () => currentPoll.current?.abort();
+  }, [storageKey]);
+
+  async function processForm(existing?: string) {
+    const controller = new AbortController();
+    currentPoll.current = controller;
     setProcessing(true);
     const startedAt = Date.now();
     const id = pushNotification({
-      mode: "info", message: t(reanalyze ? "reanalyzePending" : "processingPending"),
+      id: "form-process-" + entry.id, mode: "info", message: t(reanalyze ? "reanalyzePending" : "processingPending"),
       brief: true, pending: true, progress: { percent: 0, startedAt },
     });
-    const operation = crypto.randomUUID();
-    const query = new URLSearchParams({ operation, ...(reanalyze && { reanalyze: "1" }) });
-    const url = `${entry.previewUrl}/process?${query}`;
-    const progressController = new AbortController();
-    let timer: ReturnType<typeof setTimeout>;
+    let operation = existing || crypto.randomUUID();
+    const endpoint = entry.previewUrl + "/process";
     let lastStage: FormAnalysisStage | undefined;
-    let previousEstimate = false;
-    let previousDeadline = false;
-
-    async function readProgress() {
-      const signal = progressController.signal;
-      try {
-        const response = await fetch(url, { signal, cache: "no-store" });
-        if (response.ok && !signal.aborted) {
-          const progress = formAnalysisProgress.safeParse(await response.json());
-          if (!signal.aborted && progress.success) {
-            const { stage, remaining_ms: remaining, timeout_remaining_ms: deadline } = progress.data;
-            const hasEstimate = remaining != null;
-            const hasDeadline = deadline != null;
-            if (stage !== lastStage || hasEstimate !== previousEstimate || hasDeadline !== previousDeadline) {
-              lastStage = stage;
-              previousEstimate = hasEstimate;
-              previousDeadline = hasDeadline;
-              const now = Date.now();
-              const message = t("analysisProgress", { stage: t(`analysisStages.${stage}`) });
-              pushNotification({ id, mode: "info", message, pending: true, brief: true, progress: {
-                percent: formAnalysisPercent[stage],
-                startedAt,
-                estimatedEndAt: hasEstimate ? now + remaining : undefined,
-                deadlineAt: hasDeadline ? now + deadline : undefined,
-              } });
-            }
-          }
-        }
-      } catch {
-        // A progress request can fail independently of the conversion.
-      } finally {
-        if (!signal.aborted) timer = setTimeout(() => void readProgress(), 1200);
-      }
-    }
-
-    timer = setTimeout(() => void readProgress(), 500);
     try {
-      const response = await fetch(url, { method: "POST" });
-      const data = await response.json().catch(() => ({}));
+      const query = new URLSearchParams({ operation, ...(reanalyze && { reanalyze: "1" }) });
+      let response = await fetch(endpoint + "?" + query, {
+        method: existing ? "GET" : "POST", signal: controller.signal, cache: "no-store",
+      });
+      let data = await response.json();
+      if (response.status === 202 || existing) {
+        operation = data.operation ?? operation;
+        sessionStorage.setItem(storageKey, operation);
+        const statusUrl = endpoint + "?operation=" + encodeURIComponent(operation);
+        let misses = 0;
+        while (response.ok && data.state !== "completed" && data.state !== "failed") {
+          const progress = formAnalysisProgress.safeParse(data.stage ? data : {stage:"queued"});
+          if (!progress.success) throw new Error("Invalid progress");
+          const {stage, remaining_ms, timeout_remaining_ms} = progress.data;
+          if (stage !== lastStage || remaining_ms != null || timeout_remaining_ms != null) {
+            const now = Date.now();
+            pushNotification({id, mode:"info", pending:true, brief:true,
+              message:stage === "queued" ? t("analysisStages.queued") : t("analysisProgress",{stage:t(`analysisStages.${stage}`)}),
+              progress:{startedAt,percent:formAnalysisPercent[stage],
+                estimatedEndAt:remaining_ms == null ? undefined : now + remaining_ms,
+                deadlineAt:timeout_remaining_ms == null ? undefined : now + timeout_remaining_ms}});
+            lastStage = stage;
+          }
+          await new Promise(resolve => setTimeout(resolve, 1200));
+          const next = await fetch(statusUrl, {signal:controller.signal,cache:"no-store"}).catch(() => null);
+          controller.signal.throwIfAborted();
+          if (!next) {
+            if (++misses >= 5) throw new Error("Queue status unavailable");
+            continue;
+          }
+          const status = await next.json().catch(() => ({}));
+          if (next.status === 503 && !status.state && ++misses < 5) continue;
+          response = next;
+          data = status;
+          misses = 0;
+        }
+        if (response.ok || data.state === "failed" || response.status === 404) sessionStorage.removeItem(storageKey);
+      }
       const { error, mode } = data;
       const errors = new Map<string, string>([
         ["payment_required", "paymentRequired"], ["invalid_sender", "invalidSender"],
         ["format_mismatch", "formatMismatch"],
+        ["reference_material_not_form", "referenceDocument"],
         ["analysis_changed", "analysisChanged"], ["reanalyze_unavailable", "reanalyzeUnavailable"],
         ["eden_not_configured", "providerNotConfigured"], ["eden_ocr_failed", "providerOcrFailed"],
         ["eden_upload_failed", "providerUploadFailed"], ["eden_llm_failed", "providerLlmFailed"],
@@ -131,18 +140,16 @@ export function FormActions({ entry, active, info, discard }: { entry: FormEntry
           parts.push(t(`analysisReasons.${reason}`));
         }
       }
-      progressController.abort();
       pushNotification({
         id, mode: response.ok ? "success" : "error", message: parts.join(" "), brief: true,
         progress: response.ok ? { percent: 100, startedAt } : undefined,
       });
       if (response.ok || error === "analysis_changed") refreshProcessing(() => router.refresh());
     } catch {
+      if (controller.signal.aborted) return;
       pushNotification({ id, mode: "error", message: t("processingFailed"), brief: true });
     } finally {
-      progressController.abort();
-      clearTimeout(timer);
-      setProcessing(false);
+      if (!controller.signal.aborted) setProcessing(false);
     }
   }
   async function togglePayment() {
@@ -172,7 +179,7 @@ export function FormActions({ entry, active, info, discard }: { entry: FormEntry
       tooltipPlacement="bottom" onClick={togglePayment}>
       <CashCoin aria-hidden="true" />
     </Button>
-    <Button size="icon" tone="ghost" className={`size-7 p-0 form-action-outline form-action-gold`} onClick={processForm}
+    <Button size="icon" tone="ghost" className={`size-7 p-0 form-action-outline form-action-gold`} onClick={() => void processForm()}
       disabled={processing || refreshingProcessing} aria-label={analysisAction}
       tooltip={analysisAction} tooltipPlacement="bottom">
       {processing ? <Throbber size="sm" /> : reanalyze ? <ArrowClockwise aria-hidden="true" /> : <Send aria-hidden="true" />}

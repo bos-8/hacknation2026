@@ -1,0 +1,1642 @@
+[
+  {
+    "profile": {
+      "schemaVersion": "legal-profile/v1",
+      "kind": "LegalProcedureProfile",
+      "profileId": "pl.tax.overpayment.local.2026.10.extended",
+      "version": "1.0.0-draft",
+      "status": "REVIEW_REQUIRED",
+      "jurisdiction": "PL",
+      "asOf": "2026-11-22",
+      "effectiveFrom": "2026-10-01",
+      "effectiveTo": null,
+      "sourceTemplate": "PDF_TAX",
+      "sourceRegistry": [
+        {
+          "sourceId": "PDF_TAX",
+          "kind": "uploaded_document",
+          "filename": "Wniosek o stwierdzenie nadpłaty podatku.PDF",
+          "pageCount": 1,
+          "sha256": "b4874b7d784e4e64045481fe281d683fdbb5060a8a163fec3909d8260091a394"
+        },
+        {
+          "sourceId": "ORD2026",
+          "kind": "legal_consolidation",
+          "url": "https://eli.gov.pl/api/acts/DU/2026/622/text/T/D20260622L.pdf",
+          "asOf": "2026-04-21",
+          "status": "historical_baseline_not_current_standalone"
+        },
+        {
+          "sourceId": "AMEND846",
+          "kind": "legal_amendment",
+          "url": "https://eli.gov.pl/api/acts/DU/2026/846/text/T/D20260846L.pdf",
+          "effectiveFrom": "2026-10-01"
+        },
+        {
+          "sourceId": "MF_PROXY",
+          "kind": "government_guidance",
+          "url": "https://podatki.gov.pl/potrzebuje-pelnomocnictwa",
+          "updated": "2026-11-10"
+        },
+        {
+          "sourceId": "MF_TAXID",
+          "kind": "government_guidance",
+          "url": "https://podatki.gov.pl/mikrorachunek-podatkowy-jak-sprawdzic-numer-i-wplacic-podatek"
+        },
+        {
+          "sourceId": "UODO_CONSENT",
+          "kind": "data_protection_guidance",
+          "url": "https://uodo.gov.pl/pl/701/4467"
+        }
+      ],
+      "warnings": [
+        "Źródło PDF wskazuje Urząd Gminy Ulan-Majorat; właściwość rzeczową i miejscową należy zatwierdzić dla wybranego podatku.",
+        "Art. 75 § 3 i § 3a uchylono z dniem 2026-10-01; nie należy stosować starej reguły obowiązkowego dołączania korekty.",
+        "Inne przepisy podatkowe i przepisy przejściowe mogą zmieniać ścieżkę i wymagane załączniki; profil blokuje publikację do zatwierdzenia.",
+        "Przy rozstrzyganiu sprawy nie wolno obiecywać zwrotu bez uwzględnienia ustawowej kolejności zaliczeń.",
+        "Próg 10 000 zł dotyczy pisemnego uzasadnienia korekty deklaracji, nie automatycznego ukrywania uzasadnienia samego wniosku."
+      ],
+      "dimensions": {
+        "subjectTypes": [
+          "PERSON",
+          "LEGAL_PERSON",
+          "ORGANIZATIONAL_UNIT"
+        ],
+        "roles": [
+          "TAXPAYER",
+          "WITHHOLDING_AGENT",
+          "COLLECTOR",
+          "FORMER_CIVIL_PARTNER",
+          "FORMER_TCG_MEMBER",
+          "FORMER_VAT_GROUP_REP"
+        ],
+        "representation": [
+          "SELF",
+          "STATUTORY",
+          "PROXY_GENERAL",
+          "PROXY_SPECIFIC",
+          "SERVICE_ONLY"
+        ],
+        "procedurePaths": [
+          "APPLICATION",
+          "CORRECTION",
+          "UNRESOLVED"
+        ],
+        "returnChoices": [
+          "FUTURE_CREDIT_REQUEST",
+          "BANK_REFUND_REQUEST"
+        ],
+        "taxIdentifiers": [
+          "PESEL",
+          "NIP",
+          "FOREIGN_OTHER"
+        ]
+      },
+      "legalRules": [
+        {
+          "id": "LP-001",
+          "title": "Uprawnieni do wniosku o stwierdzenie nadpłaty",
+          "basis": "Ordynacja podatkowa art.75 §2-2a (brzmienie po Dz.U.2026 poz.846)",
+          "sources": [
+            "AMEND846"
+          ],
+          "policy": "Rola podatnika, płatnika i inkasenta oraz szczególne przypadki wymagają odrębnej klasyfikacji. Płatnik/inkasent ma szczególne ograniczenie, a przypadki dawnych podmiotów dodatkowe warunki.",
+          "action": "CONDITIONAL"
+        },
+        {
+          "id": "LP-002",
+          "title": "Rozdzielenie wniosku i korekty",
+          "basis": "Dz.U. 2026 poz.846 art.1 pkt16, 22, 54: Ordynacja art.75, 81, 165 §8a",
+          "sources": [
+            "AMEND846"
+          ],
+          "policy": "Nie wymagać automatycznie korekty deklaracji jako załącznika do każdego wniosku; dla korekt dobrać właściwą ścieżkę.",
+          "action": "REVIEW"
+        },
+        {
+          "id": "LP-003",
+          "title": "Uzasadnienie korekty deklaracji powyżej 10 000 zł",
+          "basis": "Ordynacja podatkowa art.81 §2a-2b (po 2026-10-01)",
+          "sources": [
+            "AMEND846"
+          ],
+          "condition": {
+            "op": "all",
+            "args": [
+              {
+                "op": "eq",
+                "field": "procedure_path",
+                "value": "CORRECTION"
+              },
+              {
+                "op": "gt",
+                "field": "correction_overpayment_amount",
+                "value": 10000
+              }
+            ]
+          },
+          "policy": "W ścieżce korekty pisemne uzasadnienie wymagane przy kwocie nadpłaty większej niż 10000 PLN.",
+          "action": "CONDITIONAL"
+        },
+        {
+          "id": "LP-004",
+          "title": "Zaliczenie nadpłaty z urzędu",
+          "basis": "Ordynacja podatkowa art.76 §1",
+          "sources": [
+            "ORD2026"
+          ],
+          "policy": "Preferencja użytkownika nie nadpisuje ustawowej kolejności rozliczenia.",
+          "action": "AUTO"
+        },
+        {
+          "id": "LP-005",
+          "title": "Sposób zwrotu nadpłaty",
+          "basis": "Ordynacja podatkowa art.77b §1",
+          "sources": [
+            "ORD2026"
+          ],
+          "policy": "Dostępne kanały zwrotu zależą od obowiązku posiadania rachunku i miejsca zamieszkania, więc rozszerzenie o kasę/przekaz wymaga profilu i weryfikacji.",
+          "action": "REVIEW"
+        },
+        {
+          "id": "LP-006",
+          "title": "Pełnomocnik ogólny a deklaracja",
+          "basis": "Ordynacja podatkowa art.138a i wyjaśnienia MF o PPO-1 i UPL-1",
+          "sources": [
+            "ORD2026",
+            "MF_PROXY"
+          ],
+          "policy": "Pełnomocnik ogólny może składać pisma i wnioski; samo PPO-1 nie uprawnia do podpisywania deklaracji. Pełnomocnictwo wyłącznie do doręczeń nie upoważnia do złożenia wniosku.",
+          "action": "CONDITIONAL"
+        },
+        {
+          "id": "LP-007",
+          "title": "Identyfikator podatkowy",
+          "basis": "Ustawa o zasadach ewidencji i identyfikacji podatników i płatników art.3, objaśnienia MF",
+          "sources": [
+            "MF_TAXID"
+          ],
+          "policy": "Wybór identyfikatora na podstawie właściwego statusu podatkowego, a nie samego PERSON/ENTITY.",
+          "action": "CONDITIONAL"
+        },
+        {
+          "id": "LP-008",
+          "title": "Zgoda RODO",
+          "basis": "RODO art.6 i zasady UODO",
+          "sources": [
+            "UODO_CONSENT"
+          ],
+          "policy": "Nie tworzyć obowiązkowej zgody na przetwarzanie wymaganych danych, gdy istnieje inna podstawa prawna dla tego samego celu. Oddzielić obowiązek informacyjny.",
+          "action": "REJECT"
+        },
+        {
+          "id": "LP-009",
+          "title": "Właściwość organu",
+          "basis": "Dany typ podatku i reguły właściwości organów; dokument lokalny Ulan-Majorat",
+          "sources": [
+            "PDF_TAX"
+          ],
+          "policy": "Organ z papierowego wzoru jest wartością źródłową, nie uniwersalnym organem dla wszystkich podatków.",
+          "action": "REVIEW"
+        },
+        {
+          "id": "LP-010",
+          "title": "Były wspólnik spółki cywilnej",
+          "basis": "Art.75 §2 i art.81 §1a po zmianie z 2026 r.",
+          "sources": [
+            "AMEND846"
+          ],
+          "policy": "Odrębny profil obsługi umowy spółki aktualnej na dzień rozwiązania i ograniczeń wynikających z chwili złożenia korekty.",
+          "action": "CONDITIONAL"
+        },
+        {
+          "id": "LP-011",
+          "title": "Podpis i pieczęcie",
+          "basis": "Wymogi konkretnego kanału wniesienia i podpisywanego dokumentu",
+          "sources": [
+            "MF_PROXY"
+          ],
+          "policy": "Nie zastępować podpisu elektronicznego TEXT_FIELD, obrazem pieczątki ani napisem w TEXT_BLOCK.",
+          "action": "REVIEW"
+        }
+      ],
+      "publicationGates": [
+        "legal_review_2026_amendments",
+        "local_authority_verification",
+        "adapter_contract_verification",
+        "signed_document_transport_review",
+        "privacy_review"
+      ],
+      "approvedBy": null,
+      "approvedAt": null
+    },
+    "form": {
+      "schema": "formir/v1",
+      "documentId": "doc.tax.overpayment.ulan.majorat.2026",
+      "status": "DRAFT_NOT_FOR_SUBMISSION",
+      "title": "Wniosek o stwierdzenie nadpłaty podatku — tryb EXTENDED",
+      "pipeline": "OCR → LLM → LEGAL_PROFILE → RULE_ENGINE → JSON_COMPILER",
+      "mode": "EXTENDED",
+      "sourceDocuments": [
+        {
+          "sourceId": "PDF_TAX",
+          "kind": "uploaded_document",
+          "filename": "Wniosek o stwierdzenie nadpłaty podatku.PDF",
+          "pageCount": 1,
+          "sha256": "b4874b7d784e4e64045481fe281d683fdbb5060a8a163fec3909d8260091a394"
+        }
+      ],
+      "legalProfileRef": {
+        "profileId": "pl.tax.overpayment.local.2026.10.extended",
+        "version": "1.0.0-draft"
+      },
+      "identityModel": {
+        "subjectEntityKey": "subject_id",
+        "representationRelation": "acts_for",
+        "subjectRoleKey": "case_role",
+        "taxIdentifierKey": "tax_id_kind"
+      },
+      "tabs": [
+        {
+          "key": "Dane",
+          "type": "MAIN",
+          "sections": [
+            {
+              "key": "authority",
+              "title": "Organ i data",
+              "fields": [
+                "authority_name",
+                "application_date"
+              ]
+            },
+            {
+              "key": "applicant",
+              "title": "Wnioskodawca i rola w sprawie",
+              "fields": [
+                "entity_kind",
+                "person_first_name",
+                "person_last_name",
+                "organization_name",
+                "case_role",
+                "payer_not_withheld"
+              ]
+            },
+            {
+              "key": "tax_identifier",
+              "title": "Identyfikacja podatkowa",
+              "fields": [
+                "person_business",
+                "person_vat_registered",
+                "person_is_payer",
+                "tax_id_kind",
+                "pesel",
+                "nip"
+              ]
+            },
+            {
+              "key": "address",
+              "title": "Adres wnioskodawcy",
+              "fields": [
+                "country",
+                "municipality",
+                "city_foreign",
+                "street",
+                "building",
+                "unit",
+                "postal_code"
+              ]
+            },
+            {
+              "key": "contact",
+              "title": "Kontakt (opcjonalnie)",
+              "fields": []
+            },
+            {
+              "key": "representation",
+              "title": "Reprezentacja",
+              "fields": [
+                "representation_mode",
+                "representative_first",
+                "representative_last",
+                "special_poa_document",
+                "general_poa_registry_confirmation"
+              ]
+            }
+          ]
+        },
+        {
+          "key": "Nadpłata",
+          "type": "MAIN",
+          "sections": [
+            {
+              "key": "overpayment",
+              "title": "Przedmiot i uzasadnienie",
+              "fields": [
+                "tax_type",
+                "overpayment_amount",
+                "application_reason"
+              ]
+            },
+            {
+              "key": "settlement",
+              "title": "Wniosek dotyczący rozliczenia",
+              "fields": [
+                "settlement_choice",
+                "future_tax_name",
+                "bank_account",
+                "allocation_notice"
+              ]
+            }
+          ]
+        },
+        {
+          "key": "Dokumenty",
+          "type": "MAIN",
+          "sections": [
+            {
+              "key": "documents",
+              "title": "Załączniki",
+              "fields": [
+                "correction_document",
+                "other_documents"
+              ]
+            }
+          ]
+        },
+        {
+          "key": "Informacje i podpis",
+          "type": "MAIN",
+          "sections": [
+            {
+              "key": "privacy",
+              "title": "Klauzula informacyjna",
+              "fields": []
+            },
+            {
+              "key": "signing",
+              "title": "Podpis",
+              "fields": [
+                "signature_requirement"
+              ]
+            }
+          ]
+        },
+        {
+          "key": "Podsumowanie",
+          "type": "FINISH",
+          "sections": [
+            {
+              "key": "finish",
+              "title": "Podsumowanie",
+              "fields": [
+                "review_document"
+              ]
+            }
+          ]
+        }
+      ],
+      "fields": [
+        {
+          "key": "authority_name",
+          "label": "Nazwa urzędu",
+          "widget": "TEXT_FIELD",
+          "section": "authority",
+          "decision": "AUTO",
+          "origin": "DOCUMENT",
+          "activeWhen": null,
+          "requiredWhen": false,
+          "evidence": [
+            "PDF_TAX:p1:adresat"
+          ],
+          "legalRuleIds": [],
+          "help": "Stała wartość papierowego wzoru, nie potwierdzenie właściwości dla każdego rodzaju podatku.",
+          "reviewReason": null,
+          "valueType": "string",
+          "default": "Urząd Gminy Ulan-Majorat"
+        },
+        {
+          "key": "application_date",
+          "label": "Data sporządzenia",
+          "widget": "TEXT_FIELD",
+          "section": "authority",
+          "decision": "AUTO",
+          "origin": "DOCUMENT",
+          "activeWhen": null,
+          "requiredWhen": false,
+          "evidence": [
+            "PDF_TAX:p1:heading"
+          ],
+          "legalRuleIds": [],
+          "help": "Semantycznie DATE; w adapterze legacy TEXT_FIELD z walidacją backendową. Data podpisu / doręczenia to osobne zdarzenia.",
+          "reviewReason": null,
+          "valueType": "string"
+        },
+        {
+          "key": "entity_kind",
+          "label": "Forma podmiotu",
+          "widget": "RADIO",
+          "section": "applicant",
+          "decision": "AUTO",
+          "origin": "DOCUMENT",
+          "activeWhen": null,
+          "requiredWhen": false,
+          "evidence": [
+            "PDF_TAX:p1:wnioskodawca"
+          ],
+          "legalRuleIds": [],
+          "help": "",
+          "reviewReason": null,
+          "valueType": "enum",
+          "options": [
+            {
+              "value": "PERSON",
+              "label": "Osoba fizyczna"
+            },
+            {
+              "value": "LEGAL_PERSON",
+              "label": "Osoba prawna"
+            },
+            {
+              "value": "ORGANIZATIONAL_UNIT",
+              "label": "Jednostka organizacyjna"
+            }
+          ]
+        },
+        {
+          "key": "person_first_name",
+          "label": "Imię",
+          "widget": "TEXT_FIELD",
+          "section": "applicant",
+          "decision": "CONDITIONAL",
+          "origin": "DOCUMENT",
+          "activeWhen": {
+            "op": "eq",
+            "field": "entity_kind",
+            "value": "PERSON"
+          },
+          "requiredWhen": true,
+          "evidence": [
+            "PDF_TAX:p1:nazwisko_i_imie"
+          ],
+          "legalRuleIds": [],
+          "help": "",
+          "reviewReason": null,
+          "valueType": "string"
+        },
+        {
+          "key": "person_last_name",
+          "label": "Nazwisko",
+          "widget": "TEXT_FIELD",
+          "section": "applicant",
+          "decision": "CONDITIONAL",
+          "origin": "DOCUMENT",
+          "activeWhen": {
+            "op": "eq",
+            "field": "entity_kind",
+            "value": "PERSON"
+          },
+          "requiredWhen": true,
+          "evidence": [
+            "PDF_TAX:p1:nazwisko_i_imie"
+          ],
+          "legalRuleIds": [],
+          "help": "",
+          "reviewReason": null,
+          "valueType": "string"
+        },
+        {
+          "key": "organization_name",
+          "label": "Nazwa podmiotu",
+          "widget": "TEXT_FIELD",
+          "section": "applicant",
+          "decision": "CONDITIONAL",
+          "origin": "DOCUMENT",
+          "activeWhen": {
+            "op": "neq",
+            "field": "entity_kind",
+            "value": "PERSON"
+          },
+          "requiredWhen": true,
+          "evidence": [
+            "PDF_TAX:p1:nazwa_firmy"
+          ],
+          "legalRuleIds": [],
+          "help": "",
+          "reviewReason": null,
+          "valueType": "string"
+        },
+        {
+          "key": "case_role",
+          "label": "Rola w sprawie podatkowej",
+          "widget": "RADIO",
+          "section": "applicant",
+          "decision": "AUTO",
+          "origin": "LEGAL_PROFILE",
+          "activeWhen": null,
+          "requiredWhen": false,
+          "evidence": [
+            "AMEND846:art75:sec2"
+          ],
+          "legalRuleIds": [
+            "LP-001"
+          ],
+          "help": "",
+          "reviewReason": null,
+          "valueType": "enum",
+          "options": [
+            {
+              "value": "TAXPAYER",
+              "label": "Podatnik"
+            },
+            {
+              "value": "WITHHOLDING_AGENT",
+              "label": "Płatnik"
+            },
+            {
+              "value": "COLLECTOR",
+              "label": "Inkasent"
+            }
+          ]
+        },
+        {
+          "key": "payer_not_withheld",
+          "label": "Czy wpłacony podatek nie został pobrany od podatnika?",
+          "widget": "RADIO",
+          "section": "applicant",
+          "decision": "CONDITIONAL",
+          "origin": "LEGAL_PROFILE",
+          "activeWhen": {
+            "op": "any",
+            "args": [
+              {
+                "op": "eq",
+                "field": "case_role",
+                "value": "WITHHOLDING_AGENT"
+              },
+              {
+                "op": "eq",
+                "field": "case_role",
+                "value": "COLLECTOR"
+              }
+            ]
+          },
+          "requiredWhen": true,
+          "evidence": [
+            "LEGAL_PROFILE:LP-001"
+          ],
+          "legalRuleIds": [
+            "LP-001"
+          ],
+          "help": "Warunek dla płatnika/inkasenta z art.75 §2; odpowiedź NIE wymaga odmowy tej ścieżki albo konsultacji właściwego trybu.",
+          "reviewReason": null,
+          "valueType": "enum",
+          "options": [
+            {
+              "value": "YES",
+              "label": "Tak"
+            },
+            {
+              "value": "NO",
+              "label": "Nie"
+            }
+          ]
+        },
+        {
+          "key": "special_case_role",
+          "label": "Szczególna rola podatkowa",
+          "widget": "RADIO",
+          "section": "applicant",
+          "decision": "REVIEW",
+          "origin": "LEGAL_PROFILE",
+          "activeWhen": null,
+          "requiredWhen": false,
+          "evidence": [
+            "LEGAL_PROFILE:LP-001",
+            "LEGAL_PROFILE:LP-010"
+          ],
+          "legalRuleIds": [
+            "LP-001",
+            "LP-010"
+          ],
+          "help": "",
+          "reviewReason": "Wymaga odrębnego profilu, warunków szczególnych i obsługi załączników.",
+          "valueType": "enum",
+          "options": [
+            {
+              "value": "FORMER_CIVIL_PARTNER",
+              "label": "Były wspólnik rozwiązanej spółki cywilnej"
+            },
+            {
+              "value": "FORMER_TCG_MEMBER",
+              "label": "Podmiot z dawnej podatkowej grupy kapitałowej"
+            },
+            {
+              "value": "FORMER_VAT_GROUP_REP",
+              "label": "Przedstawiciel dawnej grupy VAT"
+            }
+          ]
+        },
+        {
+          "key": "person_business",
+          "label": "Czy osoba fizyczna prowadzi działalność gospodarczą?",
+          "widget": "RADIO",
+          "section": "tax_identifier",
+          "decision": "CONDITIONAL",
+          "origin": "LEGAL_PROFILE",
+          "activeWhen": {
+            "op": "eq",
+            "field": "entity_kind",
+            "value": "PERSON"
+          },
+          "requiredWhen": false,
+          "evidence": [
+            "LEGAL_PROFILE:LP-007"
+          ],
+          "legalRuleIds": [
+            "LP-007"
+          ],
+          "help": "",
+          "reviewReason": null,
+          "valueType": "enum",
+          "options": [
+            {
+              "value": "YES",
+              "label": "Tak"
+            },
+            {
+              "value": "NO",
+              "label": "Nie"
+            }
+          ]
+        },
+        {
+          "key": "person_vat_registered",
+          "label": "Czy osoba jest zarejestrowana jako podatnik VAT?",
+          "widget": "RADIO",
+          "section": "tax_identifier",
+          "decision": "CONDITIONAL",
+          "origin": "LEGAL_PROFILE",
+          "activeWhen": {
+            "op": "eq",
+            "field": "entity_kind",
+            "value": "PERSON"
+          },
+          "requiredWhen": false,
+          "evidence": [
+            "LEGAL_PROFILE:LP-007"
+          ],
+          "legalRuleIds": [
+            "LP-007"
+          ],
+          "help": "",
+          "reviewReason": null,
+          "valueType": "enum",
+          "options": [
+            {
+              "value": "YES",
+              "label": "Tak"
+            },
+            {
+              "value": "NO",
+              "label": "Nie"
+            }
+          ]
+        },
+        {
+          "key": "person_is_payer",
+          "label": "Czy osoba jest płatnikiem podatków lub składek?",
+          "widget": "RADIO",
+          "section": "tax_identifier",
+          "decision": "CONDITIONAL",
+          "origin": "LEGAL_PROFILE",
+          "activeWhen": {
+            "op": "eq",
+            "field": "entity_kind",
+            "value": "PERSON"
+          },
+          "requiredWhen": false,
+          "evidence": [
+            "LEGAL_PROFILE:LP-007"
+          ],
+          "legalRuleIds": [
+            "LP-007"
+          ],
+          "help": "",
+          "reviewReason": null,
+          "valueType": "enum",
+          "options": [
+            {
+              "value": "YES",
+              "label": "Tak"
+            },
+            {
+              "value": "NO",
+              "label": "Nie"
+            }
+          ]
+        },
+        {
+          "key": "tax_id_kind",
+          "label": "Rodzaj identyfikatora podatkowego",
+          "widget": "RADIO",
+          "section": "tax_identifier",
+          "decision": "AUTO",
+          "origin": "LEGAL_PROFILE",
+          "activeWhen": null,
+          "requiredWhen": false,
+          "evidence": [
+            "LEGAL_PROFILE:LP-007"
+          ],
+          "legalRuleIds": [
+            "LP-007"
+          ],
+          "help": "Silnik proponuje identyfikator wg statusu; ręczny wybór sprzeczny z regułami wymaga wyjaśnienia.",
+          "reviewReason": null,
+          "valueType": "enum",
+          "options": [
+            {
+              "value": "PESEL",
+              "label": "PESEL"
+            },
+            {
+              "value": "NIP",
+              "label": "NIP"
+            }
+          ],
+          "optionConstraints": {
+            "PESEL": {
+              "op": "all",
+              "args": [
+                {
+                  "op": "eq",
+                  "field": "entity_kind",
+                  "value": "PERSON"
+                },
+                {
+                  "op": "eq",
+                  "field": "person_business",
+                  "value": "NO"
+                },
+                {
+                  "op": "eq",
+                  "field": "person_vat_registered",
+                  "value": "NO"
+                },
+                {
+                  "op": "eq",
+                  "field": "person_is_payer",
+                  "value": "NO"
+                }
+              ]
+            },
+            "NIP": {
+              "op": "any",
+              "args": [
+                {
+                  "op": "neq",
+                  "field": "entity_kind",
+                  "value": "PERSON"
+                },
+                {
+                  "op": "eq",
+                  "field": "person_business",
+                  "value": "YES"
+                },
+                {
+                  "op": "eq",
+                  "field": "person_vat_registered",
+                  "value": "YES"
+                },
+                {
+                  "op": "eq",
+                  "field": "person_is_payer",
+                  "value": "YES"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "key": "pesel",
+          "label": "PESEL",
+          "widget": "TEXT_FIELD",
+          "section": "tax_identifier",
+          "decision": "CONDITIONAL",
+          "origin": "DOCUMENT",
+          "activeWhen": {
+            "op": "eq",
+            "field": "tax_id_kind",
+            "value": "PESEL"
+          },
+          "requiredWhen": true,
+          "evidence": [
+            "PDF_TAX:p1:pesel"
+          ],
+          "legalRuleIds": [
+            "LP-007"
+          ],
+          "help": "",
+          "reviewReason": null,
+          "valueType": "string",
+          "validators": [
+            "pl.pesel"
+          ]
+        },
+        {
+          "key": "nip",
+          "label": "NIP",
+          "widget": "TEXT_FIELD",
+          "section": "tax_identifier",
+          "decision": "CONDITIONAL",
+          "origin": "DOCUMENT",
+          "activeWhen": {
+            "op": "eq",
+            "field": "tax_id_kind",
+            "value": "NIP"
+          },
+          "requiredWhen": true,
+          "evidence": [
+            "PDF_TAX:p1:nip"
+          ],
+          "legalRuleIds": [
+            "LP-007"
+          ],
+          "help": "",
+          "reviewReason": null,
+          "valueType": "string",
+          "validators": [
+            "pl.nip"
+          ]
+        },
+        {
+          "key": "country",
+          "label": "Kraj",
+          "widget": "SELECT",
+          "section": "address",
+          "decision": "AUTO",
+          "origin": "UX_EXTENSION",
+          "activeWhen": null,
+          "requiredWhen": false,
+          "evidence": [
+            "PDF_TAX:p1:adres"
+          ],
+          "legalRuleIds": [],
+          "help": "Rozszerzenie techniczne potrzebne do warunków PL / zagranica.",
+          "reviewReason": null,
+          "valueType": "string",
+          "default": "Polska"
+        },
+        {
+          "key": "municipality",
+          "label": "Gmina / miejscowość (TERYT)",
+          "widget": "SELECT",
+          "section": "address",
+          "decision": "CONDITIONAL",
+          "origin": "UX_EXTENSION",
+          "activeWhen": {
+            "op": "eq",
+            "field": "country",
+            "value": "Polska"
+          },
+          "requiredWhen": false,
+          "evidence": [
+            "PDF_TAX:p1:adres"
+          ],
+          "legalRuleIds": [],
+          "help": "Zależny słownik TERYT; adapter może nie mieć słownika.",
+          "reviewReason": null,
+          "valueType": "string"
+        },
+        {
+          "key": "city_foreign",
+          "label": "Miejscowość zagraniczna",
+          "widget": "TEXT_FIELD",
+          "section": "address",
+          "decision": "CONDITIONAL",
+          "origin": "UX_EXTENSION",
+          "activeWhen": {
+            "op": "neq",
+            "field": "country",
+            "value": "Polska"
+          },
+          "requiredWhen": false,
+          "evidence": [
+            "PDF_TAX:p1:adres"
+          ],
+          "legalRuleIds": [],
+          "help": "",
+          "reviewReason": null,
+          "valueType": "string"
+        },
+        {
+          "key": "street",
+          "label": "Ulica",
+          "widget": "TEXT_FIELD",
+          "section": "address",
+          "decision": "AUTO",
+          "origin": "DOCUMENT",
+          "activeWhen": null,
+          "requiredWhen": false,
+          "evidence": [
+            "PDF_TAX:p1:adres"
+          ],
+          "legalRuleIds": [],
+          "help": "",
+          "reviewReason": null,
+          "valueType": "string"
+        },
+        {
+          "key": "building",
+          "label": "Numer budynku",
+          "widget": "TEXT_FIELD",
+          "section": "address",
+          "decision": "AUTO",
+          "origin": "DOCUMENT",
+          "activeWhen": null,
+          "requiredWhen": false,
+          "evidence": [
+            "PDF_TAX:p1:adres"
+          ],
+          "legalRuleIds": [],
+          "help": "",
+          "reviewReason": null,
+          "valueType": "string"
+        },
+        {
+          "key": "unit",
+          "label": "Numer lokalu",
+          "widget": "TEXT_FIELD",
+          "section": "address",
+          "decision": "AUTO",
+          "origin": "DOCUMENT",
+          "activeWhen": null,
+          "requiredWhen": false,
+          "evidence": [
+            "PDF_TAX:p1:adres"
+          ],
+          "legalRuleIds": [],
+          "help": "",
+          "reviewReason": null,
+          "valueType": "string"
+        },
+        {
+          "key": "postal_code",
+          "label": "Kod pocztowy",
+          "widget": "TEXT_FIELD",
+          "section": "address",
+          "decision": "AUTO",
+          "origin": "DOCUMENT",
+          "activeWhen": null,
+          "requiredWhen": false,
+          "evidence": [
+            "PDF_TAX:p1:adres"
+          ],
+          "legalRuleIds": [],
+          "help": "",
+          "reviewReason": null,
+          "valueType": "string",
+          "validators": [
+            "postcode_by_country"
+          ]
+        },
+        {
+          "key": "contact_phone",
+          "label": "Telefon (opcjonalnie)",
+          "widget": "TEXT_FIELD",
+          "section": "contact",
+          "decision": "REVIEW",
+          "origin": "UX_EXTENSION",
+          "activeWhen": null,
+          "requiredWhen": false,
+          "evidence": [
+            "CATALOG:contact"
+          ],
+          "legalRuleIds": [],
+          "help": "",
+          "reviewReason": "Nie występuje w papierowym źródle; wymaga potwierdzenia zasad minimalizacji i celu użycia.",
+          "valueType": "string"
+        },
+        {
+          "key": "contact_email",
+          "label": "E-mail (opcjonalnie)",
+          "widget": "TEXT_FIELD",
+          "section": "contact",
+          "decision": "REVIEW",
+          "origin": "UX_EXTENSION",
+          "activeWhen": null,
+          "requiredWhen": false,
+          "evidence": [
+            "CATALOG:contact"
+          ],
+          "legalRuleIds": [],
+          "help": "",
+          "reviewReason": "Nie występuje w papierowym źródle; wymaga potwierdzenia zasad kontaktu i doręczeń.",
+          "valueType": "string"
+        },
+        {
+          "key": "representation_mode",
+          "label": "Kto podpisuje/składa wniosek?",
+          "widget": "RADIO",
+          "section": "representation",
+          "decision": "AUTO",
+          "origin": "LEGAL_PROFILE",
+          "activeWhen": null,
+          "requiredWhen": false,
+          "evidence": [
+            "LEGAL_PROFILE:LP-006"
+          ],
+          "legalRuleIds": [
+            "LP-006"
+          ],
+          "help": "",
+          "reviewReason": null,
+          "valueType": "enum",
+          "options": [
+            {
+              "value": "SELF",
+              "label": "Osobiście"
+            },
+            {
+              "value": "STATUTORY",
+              "label": "Osoba uprawniona do reprezentacji"
+            },
+            {
+              "value": "PROXY_GENERAL",
+              "label": "Pełnomocnik ogólny"
+            },
+            {
+              "value": "PROXY_SPECIFIC",
+              "label": "Pełnomocnik szczególny"
+            }
+          ],
+          "optionConstraints": {
+            "SELF": {
+              "op": "eq",
+              "field": "entity_kind",
+              "value": "PERSON"
+            },
+            "STATUTORY": null,
+            "PROXY_GENERAL": null,
+            "PROXY_SPECIFIC": null
+          }
+        },
+        {
+          "key": "representative_first",
+          "label": "Imię osoby reprezentującej",
+          "widget": "TEXT_FIELD",
+          "section": "representation",
+          "decision": "CONDITIONAL",
+          "origin": "LEGAL_PROFILE",
+          "activeWhen": {
+            "op": "neq",
+            "field": "representation_mode",
+            "value": "SELF"
+          },
+          "requiredWhen": true,
+          "evidence": [
+            "LEGAL_PROFILE:LP-006"
+          ],
+          "legalRuleIds": [
+            "LP-006"
+          ],
+          "help": "",
+          "reviewReason": null,
+          "valueType": "string"
+        },
+        {
+          "key": "representative_last",
+          "label": "Nazwisko osoby reprezentującej",
+          "widget": "TEXT_FIELD",
+          "section": "representation",
+          "decision": "CONDITIONAL",
+          "origin": "LEGAL_PROFILE",
+          "activeWhen": {
+            "op": "neq",
+            "field": "representation_mode",
+            "value": "SELF"
+          },
+          "requiredWhen": true,
+          "evidence": [
+            "LEGAL_PROFILE:LP-006"
+          ],
+          "legalRuleIds": [
+            "LP-006"
+          ],
+          "help": "",
+          "reviewReason": null,
+          "valueType": "string"
+        },
+        {
+          "key": "special_poa_document",
+          "label": "Dokument pełnomocnictwa szczególnego",
+          "widget": "FILE_UPLOADER",
+          "section": "representation",
+          "decision": "CONDITIONAL",
+          "origin": "LEGAL_PROFILE",
+          "activeWhen": {
+            "op": "eq",
+            "field": "representation_mode",
+            "value": "PROXY_SPECIFIC"
+          },
+          "requiredWhen": "REVIEW_LEGAL_PROFILE",
+          "evidence": [
+            "LEGAL_PROFILE:LP-006"
+          ],
+          "legalRuleIds": [
+            "LP-006"
+          ],
+          "help": "Sprawdź formę pełnomocnictwa, poświadczenie oraz czy nie jest już w aktach.",
+          "reviewReason": null,
+          "valueType": "array"
+        },
+        {
+          "key": "general_poa_registry_confirmation",
+          "label": "Potwierdzenie wpisu PPO-1 w rejestrze (informacja)",
+          "widget": "TEXT_BLOCK",
+          "section": "representation",
+          "decision": "CONDITIONAL",
+          "origin": "LEGAL_PROFILE",
+          "activeWhen": {
+            "op": "eq",
+            "field": "representation_mode",
+            "value": "PROXY_GENERAL"
+          },
+          "requiredWhen": false,
+          "evidence": [
+            "LEGAL_PROFILE:LP-006"
+          ],
+          "legalRuleIds": [
+            "LP-006"
+          ],
+          "help": "Nie utożsamiać z obowiązkowym uploadem.",
+          "reviewReason": null,
+          "valueType": "string"
+        },
+        {
+          "key": "delivery_only_proxy",
+          "label": "Pełnomocnik tylko do doręczeń jako podpisujący",
+          "widget": "RADIO",
+          "section": "representation",
+          "decision": "REJECT",
+          "origin": "LLM_EXTENSION",
+          "activeWhen": null,
+          "requiredWhen": false,
+          "evidence": [],
+          "legalRuleIds": [
+            "LP-006"
+          ],
+          "help": "",
+          "reviewReason": "Umocowanie do doręczeń samo w sobie nie uprawnia do podpisania i złożenia wniosku.",
+          "valueType": "enum"
+        },
+        {
+          "key": "tax_type",
+          "label": "Rodzaj podatku",
+          "widget": "TEXT_FIELD",
+          "section": "overpayment",
+          "decision": "AUTO",
+          "origin": "DOCUMENT",
+          "activeWhen": null,
+          "requiredWhen": true,
+          "evidence": [
+            "PDF_TAX:p1:rodzaj_podatku"
+          ],
+          "legalRuleIds": [],
+          "help": "",
+          "reviewReason": null,
+          "valueType": "string"
+        },
+        {
+          "key": "tax_period",
+          "label": "Okres, którego dotyczy nadpłata (opcjonalnie)",
+          "widget": "TEXT_FIELD",
+          "section": "overpayment",
+          "decision": "REVIEW",
+          "origin": "UX_EXTENSION",
+          "activeWhen": null,
+          "requiredWhen": false,
+          "evidence": [
+            "COMPONENT_CATALOG"
+          ],
+          "legalRuleIds": [],
+          "help": "",
+          "reviewReason": "Nieobecny bezpośrednio w źródle, może pomóc rozpoznać sprawę; wymaga sprawdzenia profilu podatku.",
+          "valueType": "string"
+        },
+        {
+          "key": "overpayment_amount",
+          "label": "Kwota nadpłaty (PLN)",
+          "widget": "NUMBER",
+          "section": "overpayment",
+          "decision": "AUTO",
+          "origin": "DOCUMENT",
+          "activeWhen": null,
+          "requiredWhen": true,
+          "evidence": [
+            "PDF_TAX:p1:kwota"
+          ],
+          "legalRuleIds": [],
+          "help": "",
+          "reviewReason": null,
+          "valueType": "decimal",
+          "validators": [
+            "money.decimal2",
+            "positive"
+          ]
+        },
+        {
+          "key": "application_reason",
+          "label": "Uzasadnienie wniosku",
+          "widget": "TEXTAREA",
+          "section": "overpayment",
+          "decision": "AUTO",
+          "origin": "DOCUMENT",
+          "activeWhen": null,
+          "requiredWhen": false,
+          "evidence": [
+            "PDF_TAX:p1:uzasadnienie"
+          ],
+          "legalRuleIds": [],
+          "help": "Odrębne od pisemnego uzasadnienia korekty z art.81 §2b.",
+          "reviewReason": null,
+          "valueType": "string"
+        },
+        {
+          "key": "settlement_choice",
+          "label": "Wnioskowany sposób rozliczenia",
+          "widget": "RADIO",
+          "section": "settlement",
+          "decision": "AUTO",
+          "origin": "DOCUMENT",
+          "activeWhen": null,
+          "requiredWhen": true,
+          "evidence": [
+            "PDF_TAX:p1:sposob_rozliczenia"
+          ],
+          "legalRuleIds": [
+            "LP-004"
+          ],
+          "help": "",
+          "reviewReason": null,
+          "valueType": "enum",
+          "options": [
+            {
+              "value": "FUTURE_CREDIT_REQUEST",
+              "label": "Zaliczenie na poczet przyszłego zobowiązania"
+            },
+            {
+              "value": "BANK_REFUND_REQUEST",
+              "label": "Zwrot przelewem na rachunek"
+            }
+          ]
+        },
+        {
+          "key": "future_tax_name",
+          "label": "Rodzaj przyszłego zobowiązania",
+          "widget": "TEXT_FIELD",
+          "section": "settlement",
+          "decision": "CONDITIONAL",
+          "origin": "DOCUMENT",
+          "activeWhen": {
+            "op": "eq",
+            "field": "settlement_choice",
+            "value": "FUTURE_CREDIT_REQUEST"
+          },
+          "requiredWhen": true,
+          "evidence": [
+            "PDF_TAX:p1:future"
+          ],
+          "legalRuleIds": [],
+          "help": "",
+          "reviewReason": null,
+          "valueType": "string"
+        },
+        {
+          "key": "bank_account",
+          "label": "Numer rachunku bankowego",
+          "widget": "TEXT_FIELD",
+          "section": "settlement",
+          "decision": "CONDITIONAL",
+          "origin": "DOCUMENT",
+          "activeWhen": {
+            "op": "eq",
+            "field": "settlement_choice",
+            "value": "BANK_REFUND_REQUEST"
+          },
+          "requiredWhen": true,
+          "evidence": [
+            "PDF_TAX:p1:bank"
+          ],
+          "legalRuleIds": [
+            "LP-005"
+          ],
+          "help": "",
+          "reviewReason": null,
+          "valueType": "string",
+          "validators": [
+            "iban_or_nrb"
+          ]
+        },
+        {
+          "key": "bank_owner",
+          "label": "Dane posiadacza rachunku (opcjonalnie)",
+          "widget": "TEXT_FIELD",
+          "section": "settlement",
+          "decision": "REVIEW",
+          "origin": "UX_EXTENSION",
+          "activeWhen": null,
+          "requiredWhen": false,
+          "evidence": [
+            "COMPONENT_CATALOG"
+          ],
+          "legalRuleIds": [],
+          "help": "",
+          "reviewReason": "Dodatkowe dane mogą być zbędne; poprawność uprawnienia do zwrotu trzeba ustalić prawnie.",
+          "valueType": "string"
+        },
+        {
+          "key": "return_postal_or_cash",
+          "label": "Zwrot przekazem lub w kasie",
+          "widget": "RADIO",
+          "section": "settlement",
+          "decision": "REVIEW",
+          "origin": "LEGAL_PROFILE",
+          "activeWhen": null,
+          "requiredWhen": false,
+          "evidence": [
+            "LEGAL_PROFILE:LP-005"
+          ],
+          "legalRuleIds": [
+            "LP-005"
+          ],
+          "help": "",
+          "reviewReason": "Art.77b przewiduje warianty zależne od statusu; wzór lokalny wskazuje tylko przelew.",
+          "valueType": "enum"
+        },
+        {
+          "key": "allocation_notice",
+          "label": "Informacja o ustawowej kolejności zaliczania nadpłaty",
+          "widget": "TEXT_BLOCK",
+          "section": "settlement",
+          "decision": "AUTO",
+          "origin": "LEGAL_PROFILE",
+          "activeWhen": null,
+          "requiredWhen": false,
+          "evidence": [
+            "LEGAL_PROFILE:LP-004"
+          ],
+          "legalRuleIds": [
+            "LP-004"
+          ],
+          "help": "Preferencja nie gwarantuje zwrotu przed zaliczeniem zaległości.",
+          "reviewReason": null,
+          "valueType": "string"
+        },
+        {
+          "key": "correction_document",
+          "label": "Korekta deklaracji (jeżeli dotyczy)",
+          "widget": "FILE_UPLOADER",
+          "section": "documents",
+          "decision": "AUTO",
+          "origin": "DOCUMENT",
+          "activeWhen": null,
+          "requiredWhen": false,
+          "evidence": [
+            "PDF_TAX:p1:zalaczniki"
+          ],
+          "legalRuleIds": [
+            "LP-002"
+          ],
+          "help": "Po nowelizacji 2026 nie ustawiaj globalnie jako required dla wniosku.",
+          "reviewReason": null,
+          "valueType": "array"
+        },
+        {
+          "key": "other_documents",
+          "label": "Inne załączniki",
+          "widget": "FILE_UPLOADER",
+          "section": "documents",
+          "decision": "AUTO",
+          "origin": "DOCUMENT",
+          "activeWhen": null,
+          "requiredWhen": false,
+          "evidence": [
+            "PDF_TAX:p1:zalaczniki"
+          ],
+          "legalRuleIds": [],
+          "help": "",
+          "reviewReason": null,
+          "valueType": "array"
+        },
+        {
+          "key": "former_partner_contract",
+          "label": "Umowa rozwiązanej spółki cywilnej",
+          "widget": "FILE_UPLOADER",
+          "section": "documents",
+          "decision": "REVIEW",
+          "origin": "LEGAL_PROFILE",
+          "activeWhen": null,
+          "requiredWhen": false,
+          "evidence": [
+            "LEGAL_PROFILE:LP-010"
+          ],
+          "legalRuleIds": [
+            "LP-010"
+          ],
+          "help": "",
+          "reviewReason": "Wyłącznie dla szczególnego profilu byłego wspólnika, z warunkami czasowymi.",
+          "valueType": "array"
+        },
+        {
+          "key": "correction_written_justification",
+          "label": "Pisemne uzasadnienie korekty deklaracji",
+          "widget": "TEXTAREA",
+          "section": "external_correction_flow",
+          "decision": "CONDITIONAL",
+          "origin": "LEGAL_PROFILE",
+          "activeWhen": {
+            "op": "all",
+            "args": [
+              {
+                "op": "eq",
+                "field": "procedure_path",
+                "value": "CORRECTION"
+              },
+              {
+                "op": "gt",
+                "field": "correction_overpayment_amount",
+                "value": 10000
+              }
+            ]
+          },
+          "requiredWhen": true,
+          "evidence": [
+            "LEGAL_PROFILE:LP-003"
+          ],
+          "legalRuleIds": [
+            "LP-003"
+          ],
+          "help": "Pole w osobnym procesie korekty; nie dodawać do bazowego wniosku.",
+          "reviewReason": null,
+          "valueType": "string"
+        },
+        {
+          "key": "mandatory_rodo_consent",
+          "label": "Obowiązkowa zgoda RODO na rozpatrzenie wniosku",
+          "widget": "RADIO",
+          "section": "privacy",
+          "decision": "REJECT",
+          "origin": "LLM_EXTENSION",
+          "activeWhen": null,
+          "requiredWhen": false,
+          "evidence": [],
+          "legalRuleIds": [
+            "LP-008"
+          ],
+          "help": "",
+          "reviewReason": "Błędne utożsamienie obowiązku informacyjnego ze zgodą jako podstawą prawną.",
+          "valueType": "enum"
+        },
+        {
+          "key": "privacy_notice",
+          "label": "Informacja o przetwarzaniu danych",
+          "widget": "TEXT_BLOCK",
+          "section": "privacy",
+          "decision": "REVIEW",
+          "origin": "LEGAL_PROFILE",
+          "activeWhen": null,
+          "requiredWhen": false,
+          "evidence": [
+            "LEGAL_PROFILE:LP-008"
+          ],
+          "legalRuleIds": [
+            "LP-008"
+          ],
+          "help": "",
+          "reviewReason": "Potrzebny zatwierdzony tekst administratora; nie dopisywać fikcyjnej klauzuli.",
+          "valueType": "string"
+        },
+        {
+          "key": "signature_requirement",
+          "label": "Podpis na finalnym dokumencie",
+          "widget": "TEXT_BLOCK",
+          "section": "signing",
+          "decision": "AUTO",
+          "origin": "DOCUMENT",
+          "activeWhen": null,
+          "requiredWhen": false,
+          "evidence": [
+            "PDF_TAX:p1:signature"
+          ],
+          "legalRuleIds": [
+            "LP-011"
+          ],
+          "help": "Pole informacyjne; rzeczywisty podpis realizuje odrębny system kryptograficzny.",
+          "reviewReason": null,
+          "valueType": "string"
+        },
+        {
+          "key": "rubber_stamp_upload",
+          "label": "Obowiązkowe zdjęcie pieczątki firmy",
+          "widget": "FILE_UPLOADER",
+          "section": "signing",
+          "decision": "REJECT",
+          "origin": "LLM_EXTENSION",
+          "activeWhen": null,
+          "requiredWhen": false,
+          "evidence": [],
+          "legalRuleIds": [
+            "LP-011"
+          ],
+          "help": "",
+          "reviewReason": "Papierowy wniosek nie wymaga tego elementu; zdjęcie nie jest podpisem ani pieczęcią elektroniczną.",
+          "valueType": "array"
+        },
+        {
+          "key": "review_document",
+          "label": "Podgląd i kontrola danych",
+          "widget": "TEXT_BLOCK",
+          "section": "finish",
+          "decision": "AUTO",
+          "origin": "UX_EXTENSION",
+          "activeWhen": null,
+          "requiredWhen": false,
+          "evidence": [
+            "COMPONENT_CATALOG"
+          ],
+          "legalRuleIds": [],
+          "help": "Podgląd finalnego dokumentu przed podpisem i wysyłką.",
+          "reviewReason": null,
+          "valueType": "string"
+        }
+      ],
+      "specialProcedurePaths": [
+        {
+          "path": "CORRECTION",
+          "separateFormRequired": true,
+          "legalRuleIds": [
+            "LP-002",
+            "LP-003"
+          ],
+          "status": "REVIEW_REQUIRED"
+        },
+        {
+          "path": "APPLICATION",
+          "legacySourceTemplate": true,
+          "status": "REVIEW_REQUIRED"
+        }
+      ],
+      "fieldPolicy": {
+        "AUTO": "include",
+        "CONDITIONAL": "include_with_runtime_predicate",
+        "REVIEW": "exclude_from_publication_until_approved",
+        "REJECT": "exclude_and_log"
+      },
+      "publicationBlockedBy": [
+        "legal_review_2026_amendments",
+        "local_authority_verification",
+        "adapter_contract_verification",
+        "signed_document_transport_review",
+        "privacy_review"
+      ],
+      "scopeNotes": [
+        "Opcje RADIO mają optionConstraints w FormIR; legacy adapter nie ma potwierdzonego mechanizmu ich warunkowej aktywacji i wymaga kontroli backendowej.",
+        "FormIR to format autorski; nie jest oficjalnym JSON.gov.pl.",
+        "Kompilator legacy stosuje tylko typy widoczne w konfiguracjach referencyjnych.",
+        "Wnioskodawcy z przypadków szczególnych są opisani w audycie, lecz ich pełne gałęzie wymagają profilu prawnego."
+      ]
+    },
+    "findings": [
+      {
+        "severity": "CRITICAL",
+        "code": "LAW_VERSION",
+        "message": "Art.75 §3 i §3a z tekstu jednolitego z kwietnia 2026 uchylono 1.10.2026; wymagane rozdzielenie ścieżki wniosku i korekty."
+      },
+      {
+        "severity": "HIGH",
+        "code": "TAX_IDENTIFIER",
+        "message": "Rodzaj podmiotu nie determinuje PESEL/NIP. Potrzebny status podatkowy i weryfikacja."
+      },
+      {
+        "severity": "HIGH",
+        "code": "AUTHORITY",
+        "message": "Ulan-Majorat nie jest automatycznie organem właściwym dla każdego typu podatku."
+      },
+      {
+        "severity": "HIGH",
+        "code": "CORRECTION_THRESHOLD",
+        "message": "Próg 10000 zł dotyczy pisemnego uzasadnienia korekty, nie uzasadnienia wniosku."
+      },
+      {
+        "severity": "HIGH",
+        "code": "SIGNATURE",
+        "message": "TEXT_BLOCK nie jest podpisem elektronicznym, walidacją certyfikatu ani mechanizmem e-Doręczeń."
+      },
+      {
+        "severity": "MEDIUM",
+        "code": "EXPANSION",
+        "message": "Rozszerzone pola kontaktowe wymagają celu przetwarzania i decyzji administratora."
+      }
+    ]
+  }
+]

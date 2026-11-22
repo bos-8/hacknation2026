@@ -1,11 +1,12 @@
 """Synchronous-in-request form intake. Uploaded data stays in bounded memory."""
 
 import asyncio
+import hashlib
 import json
 import logging
 from collections import deque
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import date, datetime
 from pathlib import PurePath
 from statistics import median
 from time import monotonic
@@ -20,22 +21,26 @@ from starlette.formparsers import MultiPartException, MultiPartParser
 
 from pyworker.coi import CoiForm, CoiResult, FieldConfidence, FieldLocation
 from pyworker.eden import EdenFailure, GeneratedDraft, convert_document
+from pyworker.field_values import ValueCheck, valid_value
 from pyworker.file_structure import (
     ODS,
     PACKAGES,
+    XLSX,
     matches_jpeg,
     matches_package,
     matches_pdf,
     matches_png,
 )
+from pyworker.form_ir import FormIR, catalog, form_validator
 from pyworker.pipeline import run_pipeline
 
 UPLOAD_PATH = "/v1/forms/validate"
 PROCESS_PATH = "/v1/forms/process"
+SCHEMA_PATH = "/v1/forms/schemas/v1"
+VALUE_PATH = "/v1/forms/fields/validate"
 MAX_FILE = 20 * 1024 * 1024
 MAX_BODY = MAX_FILE + 64 * 1024
 DOCX = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-XLSX = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 FORMATS = {
     ".doc": ("application/msword", bytes.fromhex("d0cf11e0a1b11ae1")),
     ".docx": (DOCX, b"PK\x03\x04"),
@@ -124,6 +129,27 @@ async def limited_stream(request):
 
 router = APIRouter(tags=["Forms"])
 logger = logging.getLogger("pyworker")
+
+
+@router.get(SCHEMA_PATH, dependencies=[Depends(HTTPBearer())], summary="Form IR 1.0 JSON Schema")
+def form_ir_schema():
+    return form_validator().schema
+
+
+@router.get(
+    SCHEMA_PATH + "/catalog",
+    dependencies=[Depends(HTTPBearer())],
+    summary="Form IR component catalog and procedure profiles",
+)
+def form_ir_catalog():
+    return catalog()
+
+
+@router.post(
+    VALUE_PATH, dependencies=[Depends(HTTPBearer())], summary="Check a Form IR field value"
+)
+def check_field_value(check: ValueCheck) -> dict[str, bool]:
+    return {"valid": valid_value(check)}
 
 
 @dataclass(slots=True)
@@ -258,6 +284,7 @@ class EdenProcessingResult(BaseModel):
 
 
 class PipelineProcessingResult(BaseModel):
+    source_answers: dict[UUID, str] = Field(default_factory=dict)
     schema_version: Literal[3] = 3
     status: Literal["processed"] = "processed"
     mode: Literal["pipeline"] = "pipeline"
@@ -269,6 +296,7 @@ class PipelineProcessingResult(BaseModel):
     draft: CoiForm
     field_locations: list[FieldLocation]
     field_confidences: list[FieldConfidence]
+    form_ir: FormIR
 
 
 def validate_metadata(raw: object) -> FormMetadata:
@@ -320,11 +348,25 @@ def validate_metadata(raw: object) -> FormMetadata:
         422: {"description": "Invalid metadata, sender or file"},
     },
 )
-async def process_form(request: Request, operation_id: UUID | None = None):
-    return await handle_form(request, process=True, operation_id=operation_id)
+async def process_form(
+    request: Request,
+    operation_id: UUID | None = None,
+    semantic_mode: Literal["EXTENDED", "STANDARD"] = "EXTENDED",
+    as_of: date | None = None,
+):
+    return await handle_form(
+        request, process=True, operation_id=operation_id, semantic_mode=semantic_mode, as_of=as_of
+    )
 
 
-async def handle_form(request: Request, *, process: bool, operation_id: UUID | None = None):
+async def handle_form(
+    request: Request,
+    *,
+    process: bool,
+    operation_id: UUID | None = None,
+    semantic_mode="EXTENDED",
+    as_of=None,
+):
     if not request.app.state.ready:
         raise HTTPException(503, "not_ready")
     slot = request.app.state.upload_slot
@@ -368,6 +410,11 @@ async def handle_form(request: Request, *, process: bool, operation_id: UUID | N
             validated = ValidatedFile(media_type=mime, size_bytes=file.size)
             if metadata is None:
                 return validated
+            if mime == DOCX:
+                digest = hashlib.sha256(await file.read()).hexdigest()
+                await file.seek(0)
+                if digest in catalog()["referenceOnlyDocuments"]:
+                    raise HTTPException(422, "reference_material_not_form")
             if active:
                 active.update("validated")
             pipeline = request.app.state.pipeline
@@ -385,7 +432,12 @@ async def handle_form(request: Request, *, process: bool, operation_id: UUID | N
                 try:
                     if pipeline is not None:
                         coi, used_ocr = await run_pipeline(
-                            pipeline, file, metadata.form_id, report=report
+                            pipeline,
+                            file,
+                            metadata.form_id,
+                            report=report,
+                            semantic_mode=semantic_mode,
+                            as_of=as_of,
                         )
                         draft = coi.draft
                     else:
@@ -394,6 +446,8 @@ async def handle_form(request: Request, *, process: bool, operation_id: UUID | N
                             file,
                             mime,
                             report=report,
+                            semantic_mode=semantic_mode,
+                            as_of=as_of,
                             **(
                                 {"ocr_form_id": metadata.form_id}
                                 if settings.ocr_only
@@ -434,9 +488,13 @@ async def handle_form(request: Request, *, process: bool, operation_id: UUID | N
                 if coi is not None:
                     return PipelineProcessingResult(
                         **result,
-                        llm="bypassed" if pipeline is None and settings.ocr_only else "completed",
+                        llm="bypassed"
+                        if pipeline is None and settings.ocr_only and not settings.uses_vision(mime)
+                        else "completed",
                         field_locations=coi.field_locations,
+                        source_answers=coi.source_answers,
                         field_confidences=coi.field_confidences,
+                        form_ir=coi.form_ir,
                     )
                 return EdenProcessingResult(**result)
             if mime.startswith("image/"):

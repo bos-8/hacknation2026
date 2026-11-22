@@ -114,7 +114,7 @@ export function FileUploadForm({ close, onUploaded, target, inline = false, onUp
 
   const title = t(target ? "addRevision" : "addFile");
   const fields = <UploadFields formId={formId} inline={inline} disabled={pending || disabled}
-    extensions={extensions} onSelect={selectFiles} file={file}
+    extensions={extensions} onSelect={selectFiles} files={file ? [file] : []}
     hint={t("fileLimit", { mib: MAX_FILE_UPLOAD_BYTES / 1024 / 1024 })}
     error={error && t(multipleFiles ? "oneFileOnly" : `uploadErrors.${error}`)} />;
   const actions = <>

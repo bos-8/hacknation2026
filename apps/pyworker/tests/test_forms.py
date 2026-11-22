@@ -178,7 +178,7 @@ class IntakeTests(unittest.TestCase):
             "submitted_at": "2026-11-21T12:01:00Z",
         }
 
-        async def timed_out(_settings, _file, _mime, report, *, coi_form_id):
+        async def timed_out(_settings, _file, _mime, report, *, coi_form_id, semantic_mode, as_of):
             report("llm")
             ready.set()
             await asyncio.to_thread(finish.wait, 4)

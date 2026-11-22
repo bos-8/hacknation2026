@@ -42,7 +42,15 @@ class WorkerTests(unittest.TestCase):
                     "/health/ready",
                     "/v1/tasks/check",
                     "/v1/forms/validate",
+                    "/v1/forms/fields/validate",
+                    "/v1/forms/answers/validate",
+                    "/v1/forms/addresses/choices",
+                    "/v1/forms/profiles",
+                    "/v1/forms/profiles/evaluate",
+                    "/v1/forms/profiles/review",
                     "/v1/forms/process",
+                    "/v1/forms/schemas/v1",
+                    "/v1/forms/schemas/v1/catalog",
                 },
             )
             self.assertEqual(

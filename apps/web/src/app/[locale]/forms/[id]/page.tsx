@@ -3,13 +3,16 @@
 import { useMemo, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import { useFormatter, useTranslations } from "next-intl";
-import { Clipboard } from "react-bootstrap-icons";
+import { Clipboard, Download } from "react-bootstrap-icons";
 import { Link } from "@/i18n/navigation";
-import { formatFormResult, hasFormResult, type FormProcessingResult } from "@/schemas/form-upload";
+import { needsRuleAnalysis } from "@/schemas/answer-editor";
+import { exportForm, hasFormResult, type FormProcessingResult } from "@/schemas/form-upload";
 import { Button, Heading } from "@/ui/basic";
 import { CodeJson } from "@/ui/components/code-json";
 import { useForms, type FormEntry } from "../workspace";
+import { AnswerEditor } from "./answer-editor";
 import { PdfPreview } from "./pdf-preview";
+import { SemanticReview } from "./semantic-review";
 
 function FormResult({ entry, result }: { entry: FormEntry; result: FormProcessingResult }) {
   const t = useTranslations("forms");
@@ -18,19 +21,24 @@ function FormResult({ entry, result }: { entry: FormEntry; result: FormProcessin
   const [hovered, setHovered] = useState<string>();
   const [selected, setSelected] = useState<string>();
   const [page, setPage] = useState(1);
+  const [showIr, setShowIr] = useState(false);
+  const [view, setView] = useState<"json" | "form">("json");
+  const [editorOpened, setEditorOpened] = useState(false);
   const json = useRef<HTMLElement>(null);
   const active = hovered ?? selected;
   const mime = entry.result.media_type;
   const resultLocations = result.mode === "pipeline" ? result.field_locations : undefined;
   const resultConfidences = result.mode === "pipeline" ? result.field_confidences : undefined;
+  const ir = result.mode === "pipeline" ? result.form_ir : undefined;
   const score = resultConfidences?.find(item => item.field_id === active);
   const fields = useMemo(() => fieldNames(result), [result]);
+  const displayed = useMemo(() => exportForm(result, true), [result]);
   const percentage = (value: number) => formatter.number(value, { style: "percent", maximumFractionDigits: 1 });
 
   async function copyJson() {
     setCopyStatus(undefined);
     try {
-      await navigator.clipboard.writeText(formatFormResult(result));
+      await navigator.clipboard.writeText(JSON.stringify(displayed, null, 2));
       setCopyStatus("jsonCopied");
     } catch {
       setCopyStatus("jsonCopyFailed");
@@ -109,31 +117,60 @@ function FormResult({ entry, result }: { entry: FormEntry; result: FormProcessin
     </section>
     <section ref={json} className="min-w-0 rounded-lg border border-panel-border bg-panel">
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-panel-border p-4">
-        <Heading level={2} className="text-lg">{t("json")}</Heading>
-        <Button type="button" size="sm" tone="main-outline" onClick={() => void copyJson()}>
-          <Clipboard aria-hidden="true" className="size-4" />
-          {t("copyJson")}
-        </Button>
+        <Heading level={2} className="text-lg">{t(view === "form" ? "formPreview" : "json")}</Heading>
+        <div className="flex flex-wrap items-center gap-2">
+          {result.mode === "pipeline" && <Button type="button" size="sm" tone="main-outline" onClick={() => {
+            setEditorOpened(true);
+            setView(view === "json" ? "form" : "json");
+          }}>{t(view === "json" ? "openPreview" : "showJson")}</Button>}
+          <a download href={entry.previewUrl + "?result=1&answers=1"} className="inline-flex items-center gap-1 rounded-md border border-primary px-3 py-1 text-sm text-primary hover:bg-primary hover:text-white">
+            <Download aria-hidden="true" />{t("download")}
+          </a>
+          <Button type="button" size="sm" tone="main-outline" onClick={() => void copyJson()}>
+            <Clipboard aria-hidden="true" className="size-4" />
+            {t("copyJson")}
+          </Button>
+        </div>
         <span role="status" className={copyStatus ? "w-full text-sm" : "sr-only"}>
           {copyStatus && t(copyStatus)}
         </span>
       </div>
-      {!!resultConfidences?.length && <p className="min-h-10 border-b border-panel-border px-4 py-2 text-sm tabular-nums">
-        {score ? t("qwenConfidence", { score: percentage(score.confidence) }) : t("confidenceHint")}
-        {score?.ocr_confidence != null && <> · {t("ocrConfidence", { score: percentage(score.ocr_confidence) })}</>}
-      </p>}
-      <CodeJson value={result.mode === "bypass" ? result : result.draft} fields={fields} activeId={active}
-        onActive={id => { setHovered(id); showField(id); }} className="max-h-[65vh] p-4" />
-      {resultLocations && resultLocations.length > 0 && <details className="border-t border-panel-border p-4">
-        <summary className="cursor-pointer text-sm font-medium">{t("fieldCoordinates")}</summary>
-        <CodeJson value={resultLocations} fields={fields} activeId={active}
-          onActive={id => { setHovered(id); showField(id); }} className="mt-2 max-h-64 p-1 text-xs" />
-      </details>}
-      {!!resultConfidences?.length && <details className="border-t border-panel-border p-4">
-        <summary className="cursor-pointer text-sm font-medium">{t("fieldConfidences")}</summary>
-        <CodeJson value={resultConfidences} fields={fields} activeId={active}
-          onActive={id => { setHovered(id); showField(id); }} className="mt-2 max-h-64 p-1 text-xs" />
-      </details>}
+      <div hidden={view !== "json"}>
+        {ir && <div className="space-y-2 border-b border-panel-border p-4 text-sm">
+          <p className="font-medium">{t(`profileStatus.${ir.procedure.status}`)}</p>
+          {ir.extended && <SemanticReview id={entry.id} revision={entry.file.lastModified} profile={ir.extended} />}
+          {ir.procedure.candidates.map(profile => <div key={profile.id}>
+            <strong>{profile.label}</strong>
+            <ul className="ml-5 list-disc">{profile.releaseGates.map(gate => <li key={gate}>{gate}</li>)}</ul>
+          </div>)}
+          <details onToggle={event => setShowIr(event.currentTarget.open)}>
+            <summary className="cursor-pointer">{t("formIr")}</summary>
+            {showIr && <CodeJson value={ir} className="mt-2 max-h-80 p-2" />}
+          </details>
+        </div>}
+        {!!resultConfidences?.length && <p className="min-h-10 border-b border-panel-border px-4 py-2 text-sm tabular-nums">
+          {score ? t("qwenConfidence", { score: percentage(score.confidence) }) : t("confidenceHint")}
+          {score?.ocr_confidence != null && <> · {t("ocrConfidence", { score: percentage(score.ocr_confidence) })}</>}
+        </p>}
+        <CodeJson value={displayed} fields={fields} activeId={active}
+          onActive={id => { setHovered(id); showField(id); }} className="max-h-[65vh] p-4" />
+        {resultLocations && resultLocations.length > 0 && <details className="border-t border-panel-border p-4">
+          <summary className="cursor-pointer text-sm font-medium">{t("fieldCoordinates")}</summary>
+          <CodeJson value={resultLocations} fields={fields} activeId={active}
+            onActive={id => { setHovered(id); showField(id); }} className="mt-2 max-h-64 p-1 text-xs" />
+        </details>}
+        {!!resultConfidences?.length && <details className="border-t border-panel-border p-4">
+          <summary className="cursor-pointer text-sm font-medium">{t("fieldConfidences")}</summary>
+          <CodeJson value={resultConfidences} fields={fields} activeId={active}
+            onActive={id => { setHovered(id); showField(id); }} className="mt-2 max-h-64 p-1 text-xs" />
+        </details>}
+      </div>
+      <div hidden={view !== "form"}>
+        {editorOpened && result.mode === "pipeline" && (needsRuleAnalysis(result)
+        ? <p className="col-span-full">{t("answers.reanalyze")}</p>
+        : <AnswerEditor key={[result.processed_at, result.answer_revision, ir?.extended?.candidates.filter(c => c.resolution).length].join(":")}
+            id={entry.id} revision={entry.file.lastModified} result={result} />)}
+      </div>
     </section>
   </div>;
 }
@@ -155,9 +192,9 @@ export default function FormDetailsPage() {
   const { id } = useParams<{ id: string }>();
   const t = useTranslations("forms");
   const entry = useForms().entries.find(item => item.id === id);
-  return <main className="mx-auto w-full max-w-7xl space-y-5 px-4 py-8 sm:px-6">
+  return <main className="w-full min-w-0 space-y-5 px-4 py-8 sm:px-6">
     <Link href="/forms" className="text-accent underline">{t("back")}</Link>
-    <Heading level={1} className="break-words">{entry?.file.name || t("detailsTitle")}</Heading>
+    <Heading level={1} className="break-words">{entry?.processingJson?.draft.title || entry?.file.name || t("detailsTitle")}</Heading>
     {entry?.processingJson && hasFormResult(entry.processingJson)
       ? <FormResult key={entry.id} entry={entry} result={entry.processingJson} />
       : <p>{t(entry ? "awaitingProcessing" : "missing")}</p>}

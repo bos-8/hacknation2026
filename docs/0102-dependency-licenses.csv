@@ -806,3 +806,11 @@ Python;typing-extensions;4.16.0;pośrednia;PSF-2.0;inna deklaracja;lokalne METAD
 Python;typing-inspection;0.4.5;pośrednia;MIT;inna deklaracja;lokalne METADATA
 Python;tzdata;2026.6;pośrednia;Apache-2.0;Apache-2.0;lokalne METADATA
 Python;uvicorn;0.54.0;bezpośrednia;BSD-3-Clause;inna deklaracja;lokalne METADATA
+Python;jsonschema;4.26.0;bezpośrednia;MIT;inna deklaracja;lokalne METADATA
+Python;pypdf;7.1.1;bezpośrednia;BSD-3-Clause;inna deklaracja;lokalne METADATA
+Python;pillow;13.0.0;bezpośrednia;MIT-CMU;inna deklaracja;lokalne METADATA
+Python;pypdfium2;5.15.2;bezpośrednia;BSD-3-Clause lub Apache-2.0 oraz licencje zależności;inna deklaracja;lokalne METADATA
+Python;attrs;26.1.0;pośrednia;MIT;inna deklaracja;lokalne METADATA
+Python;jsonschema-specifications;2025.9.1;pośrednia;MIT;inna deklaracja;lokalne METADATA
+Python;referencing;0.37.0;pośrednia;MIT;inna deklaracja;lokalne METADATA
+Python;rpds-py;2026.9.1;pośrednia;MIT;inna deklaracja;lokalne METADATA

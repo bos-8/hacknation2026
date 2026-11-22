@@ -15,13 +15,15 @@ from pyworker.coi import (
     Extraction,
     FieldType,
     ReadDocument,
-    convert_to_coi,
 )
+from pyworker.form_compiler import convert_to_coi
+from pyworker.form_title import TITLE, heading_at
+from pyworker.observed_answers import labelled_value, observation_lines
+from pyworker.vision import compile_pages
 
 BLANK = re.compile(r"(?:\.{3,}|…+|_{2,}|[·.]\s*[·.]\s*[·.])")
 FOOTNOTE = re.compile(r"[¹²³⁴⁵⁶⁷⁸⁹⁰]+\)?")
 HEADING = re.compile(r"^#{1,6}\s+")
-TITLE = re.compile(r"^(?:wniosek|formularz|deklaracja|zgłoszenie|oświadczenie|podanie)\b", re.I)
 PARTY = re.compile(r"^(?:wnioskodawc\w*|adresat|organ|dane (?:wnioskodawcy|podmiotu))$", re.I)
 NOTICE = re.compile(r"^(?:klauzula informacyjna|pouczenie|informacja o przetwarzaniu)\b", re.I)
 INLINE_LABEL = re.compile(r"^(?:i\s+)?(?:w|we|przy)\s+", re.I)
@@ -31,6 +33,11 @@ CONTACT = re.compile(r"^(?:numer telefonu|nr telefonu|telefon|(?:adres )?e[ -]?m
 REPEATING = re.compile(r"\b(?:dla każd\w*|powtarzaj\w*)\b", re.I)
 ATTACH = re.compile(r"^(?:dołącz|załącz)\s+", re.I)
 NUMBERED = re.compile(r"^\d{1,4}[.)]\s+")
+SECTION_HEADING = re.compile(
+    r"^(?:\d{1,2}\.)+\s+(?P<title>(?:Dane|Wnioskodawca|Osiągnięcia|Klauzula informacyjna|"
+    r"Zgod[ay]|Instrukcja wypełnienia)\b[^:;!?]{0,85})$",
+    re.I,
+)
 ORG_START = re.compile(r"^(?:urząd (?:gminy|miasta)|starostwo powiatowe)\b", re.I)
 CHOICE_HEADING = re.compile(r"\b(?:wybierz|proszę)\s*:$", re.I)
 STAR_NOTE = re.compile(r"^\*\s*\w")
@@ -50,17 +57,18 @@ INPUT_TYPES: tuple[tuple[FieldType, re.Pattern[str]], ...] = (
 
 @dataclass(frozen=True, slots=True)
 class Observation:
-    kind: Literal["heading", "label", "choice", "text", "blank"]
+    kind: Literal["heading", "section", "label", "choice", "text", "blank"]
     text: str
     required: bool = False
     single_choice: bool = False
     paragraph_start: bool = False
+    answer: str | None = None
 
 
 def detect_items(text: str) -> tuple[str, list[Observation]]:
     lines = []
     paragraph_start = True
-    for raw in text.splitlines():
+    for raw in observation_lines(text):
         if not (raw := raw.strip()):
             paragraph_start = True
             continue
@@ -72,9 +80,10 @@ def detect_items(text: str) -> tuple[str, list[Observation]]:
             )
         )
         paragraph_start = False
-    for i, (heading, line, paragraph_start) in enumerate(lines[:-1]):
-        if heading and TITLE.fullmatch(line) and lines[i + 1][1].lower().startswith("o "):
-            lines[i : i + 2] = [(True, f"{line} {lines[i + 1][1]}", paragraph_start)]
+    for i, (heading, line, paragraph_start) in enumerate(lines):
+        if TITLE.match(line) and not BLANK.search(line):
+            printed, count = heading_at([item[1] for item in lines], i)
+            lines[i : i + count] = [(heading or count > 1, printed, paragraph_start)]
             break
     title = next((line for heading, line, _ in lines if heading and TITLE.match(line)), "")
     title = title or next(
@@ -95,7 +104,11 @@ def detect_items(text: str) -> tuple[str, list[Observation]]:
                 observations.append(Observation("choice", option, single_choice=True))
             continue
         numbered_choices = bool(CHOICE_HEADING.search(line))
-        if (
+        if numbered_section := SECTION_HEADING.fullmatch(section_name):
+            name = numbered_section["title"]
+            observations.append(Observation("section", name))
+            in_notice = bool(NOTICE.match(name))
+        elif (
             line == title
             or heading
             or PARTY.fullmatch(section_name)
@@ -113,6 +126,16 @@ def detect_items(text: str) -> tuple[str, list[Observation]]:
             observations.append(Observation("label", "Załączniki"))
         elif BLANK.fullmatch(line):
             observations.append(Observation("blank", line))
+        elif not CHOICE.search(line) and (observed := labelled_value(line)):
+            label, answer = observed
+            observations.append(
+                Observation(
+                    "label",
+                    label,
+                    required=line.split(":", 1)[0].rstrip().endswith("*"),
+                    answer=answer,
+                )
+            )
         elif CHOICE.search(line):
             prefix, *marked = CHOICE.split(line)
             if prefix.strip():
@@ -126,13 +149,17 @@ def detect_items(text: str) -> tuple[str, list[Observation]]:
             clean = FOOTNOTE.sub("", line).strip()
             if re.fullmatch(r"\([^().]{1,80}\)", clean):
                 labels = [clean[1:-1]]
+            elif re.fullmatch(r"/[^/\n]{1,80}/", clean):
+                labels = [clean[1:-1].strip()]
             elif BLANK.search(clean):
                 labels = BLANK.split(clean)[:-1]
             elif previous_blank and re.fullmatch(r"[\w /-]{1,90}", clean):
                 labels = [clean]
             else:
                 labels = [clean.rstrip(":")] if clean.endswith(":") and len(clean) <= 100 else []
-            labels = [INLINE_LABEL.sub("", label.strip(" .,:;()-")) for label in labels]
+            labels = [
+                INLINE_LABEL.sub("", label.strip().strip(" .,:;()-")).strip() for label in labels
+            ]
             labels = [label for label in labels if label and not label.isdecimal()]
             if any(len(label) > 60 for label in labels):
                 observations.append(Observation("text", line, paragraph_start=paragraph_start))
@@ -207,7 +234,7 @@ def render_prose(lines: list[Observation]) -> str:
     return "".join(paragraphs)
 
 
-def group_fields(title: str, items: list[Observation]) -> Extraction:
+def group_fields(title: str, items: list[Observation]) -> Extraction | None:
     groups: dict[str, list[ExtractedSection]] = {}
     section_title = "Dane ogólne"
     tab_title = "Dane"
@@ -217,13 +244,17 @@ def group_fields(title: str, items: list[Observation]) -> Extraction:
     printed = False
     notice = False
 
-    def flush():
+    def flush_prose():
         if prose:
             if printed and not notice:
                 fields.append(field("Dane adresata", value="\n".join(item.text for item in prose)))
             else:
                 label = section_title if notice else "Informacje z formularza"
                 fields.append(field(label, kind="TEXT_BLOCK", description=render_prose(prose)))
+            prose.clear()
+
+    def flush():
+        flush_prose()
         if footnotes:
             fields.append(field("Przypisy", kind="TEXT_BLOCK", description=render_prose(footnotes)))
         if fields:
@@ -243,14 +274,15 @@ def group_fields(title: str, items: list[Observation]) -> Extraction:
         item = items[index]
         index += 1
         line = item.text
-        if item.kind == "heading":
+        if item.kind in {"heading", "section"}:
             flush()
             section_title = line
-            tab_title = (
-                "Dane sprawy"
-                if line == title
-                else ("Dane" if PARTY.fullmatch(section_title) else section_title[:255])
-            )
+            if item.kind == "heading":
+                tab_title = (
+                    "Dane sprawy"
+                    if line == title
+                    else ("Dane" if PARTY.fullmatch(section_title) else section_title[:255])
+                )
             printed = section_title.casefold() in {"adresat", "organ"}
             notice = bool(NOTICE.match(section_title))
             continue
@@ -262,6 +294,8 @@ def group_fields(title: str, items: list[Observation]) -> Extraction:
             continue
         if item.kind == "blank":
             continue
+        if item.kind in {"label", "choice"} or ATTACH.match(line):
+            flush_prose()
         if CONSENT.match(line) and (item.kind == "choice" or "zgod" in section_title.casefold()):
             fields.append(
                 field(
@@ -303,7 +337,9 @@ def group_fields(title: str, items: list[Observation]) -> Extraction:
             kind = next(
                 (kind for kind, pattern in INPUT_TYPES if pattern.search(label)), "TEXT_FIELD"
             )
-            fields.append(field(label, kind=kind, required=item.required))
+            control = field(label, kind=kind, required=item.required)
+            control.observed_value = item.answer
+            fields.append(control)
         elif ATTACH.match(line):
             fields.append(field(ATTACH.sub("", line), kind="FILE_UPLOADER"))
         elif (
@@ -316,7 +352,7 @@ def group_fields(title: str, items: list[Observation]) -> Extraction:
 
     flush()
     if not groups:
-        raise ValueError("No fields or text found in the source form")
+        return None
     contact = []
     for group_title, sections in list(groups.items()):
         for section in sections[:]:
@@ -354,10 +390,34 @@ def group_fields(title: str, items: list[Observation]) -> Extraction:
     )
 
 
-def form_from_text(text: str, ocr: bool, form_id: UUID) -> CoiResult:
+def form_from_text(
+    text: str,
+    ocr: bool,
+    form_id: UUID,
+    *,
+    document: ReadDocument | None = None,
+    grid_pages=(),
+    char_limit=200_000,
+    semantic_mode="EXTENDED",
+    as_of=None,
+) -> CoiResult:
     title, items = detect_items(text)
+    doc = document or ReadDocument(blocks=[Block(id=1, page=1, kind="text", text=text)], ocr=ocr)
+    extracted = group_fields(title, items) if items else None
+    if grid_pages:
+        grids, doc = compile_pages(grid_pages, doc.sha256, char_limit, base_blocks=doc.blocks)
+        for n, tab in enumerate(grids.tabs, 1):
+            tab.title = "Tabele" if n == 1 else f"Tabele ({n})"
+        extracted = Extraction(
+            title=title, tabs=[*(extracted.tabs if extracted else []), *grids.tabs]
+        )
+    if extracted is None:
+        raise ValueError("No fields found")
     return convert_to_coi(
-        group_fields(title, items),
-        ReadDocument(blocks=[Block(id=1, page=1, kind="text", text=text)], ocr=ocr),
+        extracted,
+        doc,
         form_id,
+        semantic_mode=semantic_mode,
+        as_of=as_of,
+        visual=bool(grid_pages),
     )

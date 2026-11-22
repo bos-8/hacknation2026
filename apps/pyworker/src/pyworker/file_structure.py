@@ -13,6 +13,7 @@ from pyworker.docx import STRICT_WORD, WORD, read_package_xml
 CONTENT_TYPES = "{http://schemas.openxmlformats.org/package/2006/content-types}"
 OFFICE = "{urn:oasis:names:tc:opendocument:xmlns:office:1.0}"
 ODS = "application/vnd.oasis.opendocument.spreadsheet"
+XLSX = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 PACKAGES = {".docx": "word/document.xml", ".xlsx": "xl/workbook.xml", ".ods": "content.xml"}
 SPREADSHEET = "{http://schemas.openxmlformats.org/spreadsheetml/2006/main}"
 STRICT_SPREADSHEET = "{http://purl.oclc.org/ooxml/spreadsheetml/main}"

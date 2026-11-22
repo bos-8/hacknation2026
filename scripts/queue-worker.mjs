@@ -7,6 +7,7 @@ import { collectHealth, cleanupHealth } from '../packages/monitoring/dist/index.
 import { ROOT } from './lib/runtime.mjs';
 import { createPythonExecutor } from './lib/pyworker-client.mjs';
 import { startQueueBridge } from './lib/queue-bridge.mjs';
+import { processStoredForm } from "../apps/web/scripts/form-jobs.mjs";
 import { documentJobs } from '../apps/web/scripts/document-jobs.mjs';
 import { writeFile, rm } from 'node:fs/promises';
 import { workerControl } from './lib/worker-control.mjs';
@@ -59,6 +60,7 @@ process.once('disconnect', () => void stop());
 try {
   await queue.startWorker(createPythonExecutor(process.env));
   await queue.startDocuments(documents.process);
+  await queue.startForms((id, job, signal) => processStoredForm(database, documents.readSource, id, job, signal));
   if (process.env.FORMIQ_DEV_PREPARED === 'true') closeControl = await workerControl(ROOT, 'queue', stop);
   queueBridge = await startQueueBridge({
     queue,

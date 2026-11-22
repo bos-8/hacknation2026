@@ -3,11 +3,14 @@ name = "formiq-pyworker"
 version = "0.1.0"
 description = "Internal Python task executor for the FORMIQ PostgreSQL queue."
 requires-python = ">=3.12,<3.15"
-dependencies = ["fastapi==0.163.1", "uvicorn==0.54.0", "httpx2==2.16.2", "psycopg==3.3.9", "psycopg-binary==3.3.9", "psycopg-pool==3.3.3", "python-multipart==0.0.34"]
+dependencies = ["pypdf==7.1.1", "pypdfium2==5.15.2", "pillow==13.0.0", "jsonschema==4.26.0", "fastapi==0.163.1", "uvicorn==0.54.0", "httpx2==2.16.2", "psycopg==3.3.9", "psycopg-binary==3.3.9", "psycopg-pool==3.3.3", "python-multipart==0.0.34"]
 
 [project.optional-dependencies]
 pii = ["torch==2.15.0", "transformers==5.23.0"]
 dev = ["ruff==0.17.5"]
+
+[tool.setuptools.package-data]
+pyworker = ["form_system_prompt.txt", "schemas/v1/*.json", "schemas/v1/teryt.sqlite3"]
 
 [tool.ruff]
 target-version = "py312"

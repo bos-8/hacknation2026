@@ -5,7 +5,7 @@ tags: [architektura, nextjs, prisma, keycloak, ocr]
 
 # Architektura FORMIQ
 
-[Wymagania aplikacji i kryteria COI](0203-application-requirements.pl.md) · [Dokumenty i API panelu administracyjnego](0208-document-redaction.pl.md)
+[Wymagania aplikacji i kryteria COI](0203-application-requirements.pl.md) · [Profil EXTENDED i przegląd wniosku o nadpłatę](0204-extended-review.pl.md) · [Dokumenty i API panelu administracyjnego](0208-document-redaction.pl.md)
 
 ## Działający stos
 
@@ -15,6 +15,7 @@ FORMIQ działa bez Nginx. Przeglądarka łączy się przez HTTPS bezpośrednio z
 Przeglądarka → Next.js (HTTPS) ↔ Keycloak (OIDC) → keycloak_db
                   ├── Prisma → app_db (sesje, wersje plików, wyniki i zatwierdzenia)
                   ├── S3 → SeaweedFS (pliki źródłowe i eksporty)
+                  ├── prywatne HTTP → Pyworker (konwersja formularzy i przeliczenie szkicu po decyzji)
                   └── zadania → pg-boss / queue_db → worker Node.js → pyworker (diagnostyka)
 ```
 
@@ -30,11 +31,11 @@ W panelu Formularze przycisk **Wgraj formularz** wysyła oryginał do Next.js (`
 
 Przycisk **Wyślij do przetworzenia** uruchamia bezpośrednie żądanie Next.js do Pyworkera. Next.js pobiera oryginalne bajty z S3 i wysyła multipart z plikiem oraz metadanymi JSON pochodzącymi z sesji i bazy. Pyworker sprawdza kolejno płatność, metadane nadawcy i zgodność typu dokumentu z rozszerzeniem. Brak płatności zwraca HTTP 402 `payment_required`.
 
-W lokalnym DEV do prób integracyjnych `apps/pyworker/.env` wybiera `PYWORKER_FORM_MODE=eden`. Prywatny `EDENAI_API_KEY` uwierzytelnia upload, OCR i Chat Completions. Domyślny model LLM dla DEV to `EDENAI_LLM_MODEL=qwen3.8-27b`. Pyworker wywołuje go przez Eden AI Chat Completions. Trzy adresy oraz modele są w `apps/pyworker/.env.example`. `EDENAI_TIMEOUT_SECONDS` ustala wspólny limit uploadu, OCR i LLM. Wartość domyślna to 300 sekund, a dopuszczalny zakres to 1–300 sekund. Po zmianie prywatnego `.env` uruchom ponownie proces DEV. Przekroczenie limitu kończy żądanie kodem HTTP 504 i komunikatem w panelu. JPG i PNG przechodzą przez upload oraz synchroniczny OCR. PDF korzysta z wielostronicowego OCR Eden AI (domyślnie `EDENAI_PDF_OCR_MODEL=ocr/ocr_async/mistral`). Pyworker odpytuje status zadania w ramach wspólnego limitu konwersji. TXT i JSON trafiają do modelu jako tekst. Z DOCX Pyworker odczytuje lokalnie akapity i wiersze tabel, a do modelu przekazuje uzyskany tekst. Pozostałe pliki są przekazywane do modelu jako załączniki, których obsługa zależy od wybranego modelu. Eden AI otrzymuje dokument lub odczytany tekst i może przechowywać wgrane pliki zgodnie ze swoją polityką retencji. [Upload Eden AI](https://www.edenai.co/docs/v3/llms/file-upload) · [OCR Eden AI](https://www.edenai.co/docs/v3/expert-models/features/ocr/ocr)
+W trybie integracyjnym `PYWORKER_FORM_MODE=eden` Pyworker korzysta z Eden AI. Prywatny `EDENAI_API_KEY` uwierzytelnia upload, OCR i Chat Completions. Domyślny model LLM dla DEV to `EDENAI_LLM_MODEL=qwen3.8-27b`. Pyworker wywołuje go przez Eden AI Chat Completions. Trzy adresy oraz modele są w `apps/pyworker/.env.example`. `EDENAI_TIMEOUT_SECONDS` ustala wspólny limit uploadu, OCR i LLM. Wartość domyślna to 300 sekund, a dopuszczalny zakres to 1–300 sekund. Po zmianie prywatnego `.env` uruchom ponownie proces DEV. Przekroczenie limitu kończy żądanie kodem HTTP 504 i komunikatem w panelu. JPG i PNG przechodzą przez upload oraz synchroniczny Mistral OCR 4.1 (`EDENAI_OCR_MODEL=ocr/ocr/mistral/mistral-ocr-4-1`). Pyworker najpierw odczytuje warstwę tekstową PDF. Jeżeli któraś strona wymaga OCR, tryb Eden wysyła PDF do wielostronicowego OCR Eden AI (domyślnie `EDENAI_PDF_OCR_MODEL=ocr/ocr_async/mistral/mistral-ocr-4-1`). Pyworker odpytuje status zadania w ramach wspólnego limitu konwersji. TXT i JSON trafiają do modelu jako tekst. Z DOCX Pyworker odczytuje lokalnie akapity i wiersze tabel, a do modelu przekazuje uzyskany tekst. Pozostałe pliki są przekazywane do modelu jako załączniki, których obsługa zależy od wybranego modelu. Eden AI otrzymuje dokument lub odczytany tekst i może przechowywać wgrane pliki zgodnie ze swoją polityką retencji. [Upload Eden AI](https://www.edenai.co/docs/v3/llms/file-upload) · [OCR Eden AI](https://www.edenai.co/docs/v3/expert-models/features/ocr/ocr)
 
 Tryb `pipeline` używa Docling, Apache POI, PaddleOCR‑VL‑1.6 i pomocniczego PP‑StructureV3. Klasyfikuje strony PDF indywidualnie, a wyniki odczytu wiąże z numerami stron i współrzędnymi, gdy źródło ma stały układ. Qwen zwraca pola i identyfikatory fragmentów w odpowiedzi zgodnej ze schematem ekstrakcji. Pyworker sprawdza odwołania, tworzy JSON COI i dołącza `field_locations`. Instrukcja uruchomienia jest w [README](../README.md#lokalny-pipeline-formularzy).
 
-Next.js zapisuje wynik przy formularzu w PostgreSQL. Za przetworzony uznaje formularz z konfiguracją COI. Szczegóły kolorują składnię JSON i przy podświetleniu pola zaznaczają odpowiadający obszar PDF lub zdjęcia. Pobierany JSON zawiera konfigurację formularza. Tryby `eden` i `bypass` służą do prób oraz zwracają odpowiednio szkic i wynik walidacji.
+Next.js zapisuje wynik przy formularzu w PostgreSQL. Za przetworzony uznaje formularz z konfiguracją COI. Szczegóły kolorują składnię JSON i przy podświetleniu pola zaznaczają odpowiadający obszar PDF lub zdjęcia. Pobierany JSON zawiera konfigurację formularza. Tryby `ocr`, `eden` i `pipeline` korzystają ze wspólnego kompilatora COI. Zwracają również `form_ir` z modelem procedury, regułami i pochodzeniem pól. Tryb `bypass` zwraca wynik walidacji. [Schemat, katalog i aktualizacja zasobów](../README.md#model-formularza-i-profile-procedur)
 
 ## Projekt konwertera COI
 
